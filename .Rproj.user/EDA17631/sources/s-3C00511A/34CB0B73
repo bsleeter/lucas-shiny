@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1568751912857.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "34CB0B73",
+    "lastKnownWriteTime" : 1568752210,
+    "last_content_update" : 1568752210706,
+    "path" : "E:/california-carbon-futures/github/lucas-shiny/app.R",
+    "project_path" : "app.R",
+    "properties" : {
+        "cursorPosition" : "84,19",
+        "scrollLine" : "70"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
