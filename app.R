@@ -70,14 +70,17 @@ ui = fluidPage(theme="common.css",
                             
                         ),
                         
-                        # Show a plot of the generated distribution
+                        # Plot 1
                         mainPanel(
-                            plotOutput("stocksPlot"),
+                            
+                            plotOutput("stocksPlot1"),
                             
                             sliderInput("years",
                                         label = h4("Year Range"),
-                                        min = 2001, max = 2100, value = c(2001,2100), sep = "", width ="100%")
-                        )
+                                        min = 2001, max = 2100, value = c(2001,2100), sep = "", width ="100%"),
+                            
+                            plotOutput("stocksPlot2")
+                        ),
                       )
                  ),
                  tabPanel("Landover Totals", value = "Landcover Totals"
@@ -86,22 +89,12 @@ ui = fluidPage(theme="common.css",
              #)
            
         ),
-<<<<<<< HEAD
+
         
-        # Plot 1
-        mainPanel(
-            
-            plotOutput("stocksPlot1"),
-            
-            sliderInput("years",
-                        label = h4("Year Range"),
-                        min = 2001, max = 2100, value = c(2001,2100), sep = "", width ="100%"),
-            
-            plotOutput("stocksPlot2")
-        )
-=======
+       
+
        includeHTML("www/footer.html")
->>>>>>> d799c9f5d2ab0fa4ac8b7664fd7874bd6efb2c8f
+
     )
                                             
                                             
