@@ -11,14 +11,14 @@ library(shiny)
 library(shinythemes)
 library(dplyr)
 library(ggplot2)
-library(readr)
-library(hrbrthemes)
+library(tidyverse)
 
-stocksEco = read_csv("data/ecoregion_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes")
+
+stocksEco = read_csv("C:/Users/jsherba/OneDrive - DOI/2019_Working/2019_09_16_lucas_shiny/data/sf_stocks/sf_stocks/sf-stocks-ecoregion/ecoregion_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes")
 stocksEcoTEC = stocksEco %>% group_by(LUC,GCM,RCP,Timestep, EcoregionID, EcoregionName, Ecosystem) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
     mutate(StockGroup="TEC")
 
-stocksState = read_csv("data/state_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes") %>%
+stocksState = read_csv("C:/Users/jsherba/OneDrive - DOI/2019_Working/2019_09_16_lucas_shiny/data/sf_stocks/sf_stocks/sf-stocks-state/state_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes") %>%
     mutate(EcoregionID=0, EcoregionName="State")
 stocksStateTEC = stocksState %>% group_by(LUC,GCM,RCP,Timestep, EcoregionID, EcoregionName, Ecosystem) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
     mutate(StockGroup="TEC")
@@ -30,29 +30,27 @@ stockList = unique(stocks$StockGroup)
 
 # Define UI for application that draws a histogram
 ui = fluidPage(theme="common.css",
-       includeHTML("www/header.html"),
-       navbarPage(title="California Carbon Scenarios", theme = shinytheme("simplex"),
-           #navbarMenu(title="Change dataset",
-                 tabPanel("Carbon Stocks",value = "Carbon Stocks",
-                      # Application title
-                      #titlePanel("Carbon Stocks"),
-                      # Sidebar with a slider input for number of bins 
-                      sidebarLayout(
-                          sidebarPanel(
-    
+        includeHTML("www/header.html"),
+        navbarPage(title="California Carbon Scenarios", theme = shinytheme("simplex"),
+            #navbarMenu(title="Change dataset",
+            navbarMenu(title=textOutput("change_dataset"),
+            tabsetPanel(id = "tabs",
+                tabPanel("Carbon Stocks",value = "Carbon Stocks",
+                    # Application title
+                    #titlePanel("Carbon Stocks"),
+                    # Sidebar with a slider input for number of bins 
+                    sidebarLayout(
+                        sidebarPanel(
+                            
                             selectInput("ecoregion", 
                                         label = h4("Region"),
                                         choices = unique(stocks$EcoregionName),
                                         selected = "State"),
                             
-                            selectInput("stockGroup",
-                                        label = h4("Carbon Stock"),
-                                        choices = unique(stocks$StockGroup),
-                                        selected="TEC"),
-                            
-                            selectInput("luc",
+                            checkboxGroupInput("luc",
                                         label = h4("Land Use Scenario"),
-                                        choices = unique(stocks$LUC),
+                                        choiceValues = unique(stocks$LUC),
+                                        choiceNames = c("Business as Usual", "High", "Low", "Medium"),
                                         selected="BAU"),
                             
                             checkboxGroupInput("rcp",
@@ -65,10 +63,17 @@ ui = fluidPage(theme="common.css",
                                         label = h4("Climate Model"),
                                         choiceValues = unique(stocks$GCM),
                                         choiceNames = c("Average (CanESM2)","Warm-Wet (CNRM-CM5)", "Hot-Dry (HadGEM2-ES)", "Complement (MIROC5)"),
-                                        selected="CanESM2")
+                                        selected="CanESM2"),
+                            
+                            checkboxGroupInput("stockGroup",
+                                        label = h4("Carbon Stock"),
+                                        choiceValues = unique(stocks$StockGroup),
+                                        choiceNames = c("Dead Organic Matter", "Living Biomass", "Soil Organic Carbon", "Total Ecosystem Carbon"),
+                                        selected="TEC")
+                            
                             
                         ),
-                        
+                            
                         # Show a plot of the generated distribution
                         mainPanel(
                             plotOutput("stocksPlot"),
@@ -77,22 +82,20 @@ ui = fluidPage(theme="common.css",
                                         label = h4("Year Range"),
                                         min = 2001, max = 2100, value = c(2001,2100), sep = "", width ="100%")
                         )
-                      )
-                 ),
-                 tabPanel("Landover Totals", value = "Landcover Totals"
-                          #ui for second tab goes here
-                         )
-             #)
-           
-        ),
-       includeHTML("www/footer.html")
-    )
-                                            
-                                            
+                    )
+                ),
+                tabPanel("Landover totals", value = "Landcover Totals")
+            )
+            )
+    
+          ),
+          includeHTML("www/footer.html")
+        )
+
+
 
 
 server = (function(input, output) {
-    
 
     selectData = reactive({
         stocks %>% filter(Ecosystem=="Yes", 
@@ -105,15 +108,21 @@ server = (function(input, output) {
     })
     
     output$stocksPlot <- renderPlot({
-        ggplot(data=selectData(), aes(x=Timestep, y=Mean/1000, fill=GCM, color=GCM)) +
-            geom_ribbon(aes(ymin=Lower/1000, ymax=Upper/1000), alpha=0.3, color=NA) +
+        ggplot(data=selectData(), aes(x=Timestep, y=Mean/1000, fill=GCM, color=StockGroup)) +
+            geom_ribbon(aes(ymin=Lower/1000, ymax=Upper/1000), alpha=0.3) +
             geom_line() + 
-            scale_fill_brewer(palette="Set1") +
+            geom_point() +
             scale_color_brewer(palette="Set1") +
             facet_wrap(RCP~LUC) +
-            theme_ipsum_rc(14) +
+            theme_minimal() +
             labs(x="Year", y="Million Metric Tons of Carbon") +
-            theme(legend.position = "bottom") 
+            theme(legend.position = "bottom")
+        
+    })
+    
+    output$change_dataset <- renderText({
+       
+        input$tabs
         
     })
 })

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1568748547279.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "BDA54AD6",
+    "lastKnownWriteTime" : 1568750447,
+    "last_content_update" : 1568750447317,
+    "path" : "C:/Users/jsherba/OneDrive - DOI/2019_Working/2019_09_19_lucas_shiny/lucas-shiny/app.R",
+    "project_path" : "app.R",
+    "properties" : {
+        "cursorPosition" : "84,15",
+        "scrollLine" : "61"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
