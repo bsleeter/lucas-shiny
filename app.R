@@ -13,6 +13,7 @@ library(dplyr)
 library(ggplot2)
 library(readr)
 library(hrbrthemes)
+library(extrafont)
 
 stocksEco = read_csv("data/ecoregion_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes")
 stocksEcoTEC = stocksEco %>% group_by(LUC,GCM,RCP,Timestep, EcoregionID, EcoregionName, Ecosystem) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
@@ -70,13 +71,16 @@ ui = (fluidPage(theme = shinytheme("simplex"),
             
         ),
         
-        # Show a plot of the generated distribution
+        # Plot 1
         mainPanel(
-            plotOutput("stocksPlot"),
+            
+            plotOutput("stocksPlot1"),
             
             sliderInput("years",
                         label = h4("Year Range"),
-                        min = 2001, max = 2100, value = c(2001,2100), sep = "", width ="100%")
+                        min = 2001, max = 2100, value = c(2001,2100), sep = "", width ="100%"),
+            
+            plotOutput("stocksPlot2")
         )
     )
 ))
@@ -87,7 +91,7 @@ ui = (fluidPage(theme = shinytheme("simplex"),
 server = (function(input, output) {
     
 
-    selectData = reactive({
+    selectData1 = reactive({
         stocks %>% filter(Ecosystem=="Yes", 
                           LUC %in% input$luc, 
                           GCM %in% input$gcm, 
@@ -97,14 +101,36 @@ server = (function(input, output) {
                           filter(Timestep>=input$years[1], Timestep<=input$years[2])
     })
     
-    output$stocksPlot <- renderPlot({
-        ggplot(data=selectData(), aes(x=Timestep, y=Mean/1000, fill=GCM, color=GCM)) +
-            geom_ribbon(aes(ymin=Lower/1000, ymax=Upper/1000), alpha=0.3, color=NA) +
+    output$stocksPlot1 <- renderPlot({
+        ggplot(data=selectData1(), aes(x=Timestep, y=Mean/1000, fill=GCM, color=GCM)) +
+            geom_ribbon(aes(ymin=Lower/1000, ymax=Upper/1000), alpha=0.5, color=NA) +
             geom_line() + 
-            scale_fill_brewer(palette="Set1") +
-            scale_color_brewer(palette="Set1") +
+            scale_fill_ipsum() +
+            scale_color_ipsum() +
             facet_wrap(RCP~LUC) +
-            theme_ipsum_rc(14) +
+            theme_ipsum_rc(14, grid="XY") +
+            labs(x="Year", y="Million Metric Tons of Carbon") +
+            theme(legend.position = "bottom") 
+        
+    })
+    
+    selectData2 = reactive({
+        stocks %>% filter(Ecosystem=="Yes", 
+                          LUC %in% input$luc, 
+                          GCM %in% input$gcm, 
+                          RCP %in% input$rcp, 
+                          EcoregionName==input$ecoregion, 
+                          StockGroup!="TEC") %>%
+            filter(Timestep>=input$years[1], Timestep<=input$years[2])
+    })
+    
+    output$stocksPlot2 <- renderPlot({
+        ggplot(data=selectData2(), aes(x=Timestep, y=Mean/1000, fill=StockGroup, color=StockGroup)) +
+            geom_bar(stat="identity") + 
+            scale_fill_ipsum() +
+            scale_color_ipsum() +
+            facet_wrap(RCP~GCM) +
+            theme_ipsum_rc(14, grid="XY") +
             labs(x="Year", y="Million Metric Tons of Carbon") +
             theme(legend.position = "bottom") 
         
