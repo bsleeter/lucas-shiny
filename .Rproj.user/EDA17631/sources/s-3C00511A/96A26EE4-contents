@@ -30,63 +30,46 @@ lucList = unique(stocks$LUC)
 stockList = unique(stocks$StockGroup)
 
 # Define UI for application that draws a histogram
-ui = fluidPage(theme="common.css",
-       includeHTML("www/header.html"),
-       navbarPage(title="California Carbon Scenarios", theme = shinytheme("simplex"),
-           #navbarMenu(title="Change dataset",
-                 tabPanel("Carbon Stocks",value = "Carbon Stocks",
-                      # Application title
-                      #titlePanel("Carbon Stocks"),
-                      # Sidebar with a slider input for number of bins 
-                      sidebarLayout(
-                          sidebarPanel(
+ui = (fluidPage(theme = shinytheme("simplex"),
     
-                            selectInput("ecoregion", 
-                                        label = h4("Region"),
-                                        choices = unique(stocks$EcoregionName),
-                                        selected = "State"),
-                            
-                            selectInput("stockGroup",
-                                        label = h4("Carbon Stock"),
-                                        choices = unique(stocks$StockGroup),
-                                        selected="TEC"),
-                            
-                            selectInput("luc",
-                                        label = h4("Land Use Scenario"),
-                                        choices = unique(stocks$LUC),
-                                        selected="BAU"),
-                            
-                            checkboxGroupInput("rcp",
-                                        label = h4("Climate Scenario"),
-                                        choiceValues = unique(stocks$RCP),
-                                        choiceNames = c("Low Emissions (RCP 4.5)", "High Emissions (RCP 8.5)"),
-                                        selected="rcp45"),
-                            
-                            checkboxGroupInput("gcm",
-                                        label = h4("Climate Model"),
-                                        choiceValues = unique(stocks$GCM),
-                                        choiceNames = c("Average (CanESM2)","Warm-Wet (CNRM-CM5)", "Hot-Dry (HadGEM2-ES)", "Complement (MIROC5)"),
-                                        selected="CanESM2")
-                            
-                        ),
-                        
-                        # Show a plot of the generated distribution
-                        mainPanel(
-                            plotOutput("stocksPlot"),
-                            
-                            sliderInput("years",
-                                        label = h4("Year Range"),
-                                        min = 2001, max = 2100, value = c(2001,2100), sep = "", width ="100%")
-                        )
-                      )
-                 ),
-                 tabPanel("Landover Totals", value = "Landcover Totals"
-                          #ui for second tab goes here
-                         )
-             #)
-           
+    # Application title
+    titlePanel("California Carbon Scenarios"),
+    
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+            
+            selectInput("ecoregion", 
+                        label = h4("Region"),
+                        choices = unique(stocks$EcoregionName),
+                        selected = "State"),
+            
+            selectInput("stockGroup",
+                        label = h4("Carbon Stock"),
+                        choices = unique(stocks$StockGroup),
+                        selected="TEC"),
+            
+            selectInput("luc",
+                        label = h4("Land Use Scenario"),
+                        choices = unique(stocks$LUC),
+                        selected="BAU"),
+            
+            checkboxGroupInput("rcp",
+                        label = h4("Climate Scenario"),
+                        choiceValues = unique(stocks$RCP),
+                        choiceNames = c("Low Emissions (RCP 4.5)", "High Emissions (RCP 8.5)"),
+                        selected="rcp45"),
+            
+            checkboxGroupInput("gcm",
+                        label = h4("Climate Model"),
+                        choiceValues = unique(stocks$GCM),
+                        choiceNames = c("Average (CanESM2)","Warm-Wet (CNRM-CM5)", "Hot-Dry (HadGEM2-ES)", "Complement (MIROC5)"),
+                        selected="CanESM2")
+            
+
+            
+            
         ),
-<<<<<<< HEAD
         
         # Plot 1
         mainPanel(
@@ -99,12 +82,10 @@ ui = fluidPage(theme="common.css",
             
             plotOutput("stocksPlot2")
         )
-=======
-       includeHTML("www/footer.html")
->>>>>>> d799c9f5d2ab0fa4ac8b7664fd7874bd6efb2c8f
     )
-                                            
-                                            
+))
+
+
 
 
 server = (function(input, output) {
