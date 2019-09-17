@@ -1,0 +1,3 @@
+# Files to ignore #
+data\ecoregion_flows_by_scenario_timestep_95ci.csv
+data\ecoregion_transitions_by_scenario_timestep_95ci.csv
