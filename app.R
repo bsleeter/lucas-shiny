@@ -12,6 +12,7 @@ library(shinythemes)
 library(dplyr)
 library(ggplot2)
 library(readr)
+library(hrbrthemes)
 
 stocksEco = read_csv("data/ecoregion_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes")
 stocksEcoTEC = stocksEco %>% group_by(LUC,GCM,RCP,Timestep, EcoregionID, EcoregionName, Ecosystem) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
@@ -47,10 +48,9 @@ ui = (fluidPage(theme = shinytheme("simplex"),
                         choices = unique(stocks$StockGroup),
                         selected="TEC"),
             
-            checkboxGroupInput("luc",
+            selectInput("luc",
                         label = h4("Land Use Scenario"),
-                        choiceValues = unique(stocks$LUC),
-                        choiceNames = c("Business as Usual", "High", "Low", "Medium"),
+                        choices = unique(stocks$LUC),
                         selected="BAU"),
             
             checkboxGroupInput("rcp",
@@ -104,7 +104,7 @@ server = (function(input, output) {
             scale_fill_brewer(palette="Set1") +
             scale_color_brewer(palette="Set1") +
             facet_wrap(RCP~LUC) +
-            theme_minimal() +
+            theme_ipsum_rc(14) +
             labs(x="Year", y="Million Metric Tons of Carbon") +
             theme(legend.position = "bottom") 
         
