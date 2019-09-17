@@ -1,0 +1,120 @@
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+
+library(shiny)
+library(shinythemes)
+library(dplyr)
+library(ggplot2)
+
+
+stocksEco = read_csv("E:/california-carbon-futures/Data/GCB_Tables/sf-stocks/ecoregion_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes")
+stocksEcoTEC = stocksEco %>% group_by(LUC,GCM,RCP,Timestep, EcoregionID, EcoregionName, Ecosystem) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
+    mutate(StockGroup="TEC")
+
+stocksState = read_csv("E:/california-carbon-futures/Data/GCB_Tables/sf-stocks/state_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes") %>%
+    mutate(EcoregionID=0, EcoregionName="State")
+stocksStateTEC = stocksState %>% group_by(LUC,GCM,RCP,Timestep, EcoregionID, EcoregionName, Ecosystem) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
+    mutate(StockGroup="TEC")
+
+stocks = bind_rows(stocksEco, stocksState, stocksEcoTEC, stocksStateTEC)
+ecoList = unique(stocks$EcoregionName)
+lucList = unique(stocks$LUC)
+stockList = unique(stocks$StockGroup)
+
+# Define UI for application that draws a histogram
+ui = (fluidPage(theme = shinytheme("simplex"),
+    
+    # Application title
+    titlePanel("California Carbon Scenarios"),
+    
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+            
+            selectInput("ecoregion", 
+                        label = h4("Region"),
+                        choices = unique(stocks$EcoregionName),
+                        selected = "State"),
+            
+            selectInput("stockGroup",
+                        label = h4("Carbon Stock"),
+                        choices = unique(stocks$StockGroup),
+                        selected="TEC"),
+            
+            checkboxGroupInput("luc",
+                        label = h4("Land Use Scenario"),
+                        choiceValues = unique(stocks$LUC),
+                        choiceNames = c("Business as Usual", "High", "Low", "Medium"),
+                        selected="BAU"),
+            
+            checkboxGroupInput("rcp",
+                        label = h4("Climate Scenario"),
+                        choiceValues = unique(stocks$RCP),
+                        choiceNames = c("Low Emissions (RCP 4.5)", "High Emissions (RCP 8.5)"),
+                        selected="rcp45"),
+            
+            checkboxGroupInput("gcm",
+                        label = h4("Climate Model"),
+                        choiceValues = unique(stocks$GCM),
+                        choiceNames = c("Average (CanESM2)","Warm-Wet (CNRM-CM5)", "Hot-Dry (HadGEM2-ES)", "Complement (MIROC5)"),
+                        selected="CanESM2")
+            
+
+            
+            
+        ),
+        
+        # Show a plot of the generated distribution
+        mainPanel(
+            plotOutput("stocksPlot"),
+            
+            sliderInput("years",
+                        label = h4("Year Range"),
+                        min = 2001, max = 2100, value = c(2001,2100), sep = "", width ="100%")
+        )
+    )
+))
+
+
+
+
+server = (function(input, output) {
+    
+
+    selectData = reactive({
+        stocks %>% filter(Ecosystem=="Yes", 
+                          LUC %in% input$luc, 
+                          GCM %in% input$gcm, 
+                          RCP %in% input$rcp, 
+                          EcoregionName==input$ecoregion, 
+                          StockGroup==input$stockGroup) %>%
+                          filter(Timestep>=input$years[1], Timestep<=input$years[2])
+    })
+    
+    output$stocksPlot <- renderPlot({
+        ggplot(data=selectData(), aes(x=Timestep, y=Mean/1000, fill=GCM, color=GCM)) +
+            geom_ribbon(aes(ymin=Lower/1000, ymax=Upper/1000), alpha=0.3, color=NA) +
+            geom_line() + 
+            scale_fill_brewer(palette="Set1") +
+            scale_color_brewer(palette="Set1") +
+            facet_wrap(RCP~LUC) +
+            theme_minimal() +
+            labs(x="Year", y="Million Metric Tons of Carbon") +
+            theme(legend.position = "bottom") 
+        
+    })
+})
+
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+
+
+
