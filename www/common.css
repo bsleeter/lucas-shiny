@@ -351,6 +351,7 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	padding-left:90px;
 	padding-top: 30px;
 	background-color: #e7e7e7 !important;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
 }
 .nav > li > a[data-value='Net Carbon Fluxes']{
 	background-image: url("fluxes_80.png");                     /* <------ */
@@ -359,7 +360,8 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	padding-left:90px;
 	padding-top: 30px;
 	background-color: #e7e7e7 !important;
-	margin-left:25px
+	margin-left:25px;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
 	
 }
 .nav > li > a[data-value='Landcover Totals']{
@@ -369,7 +371,8 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	padding-left:90px;
 	padding-top: 30px;
 	background-color: #e7e7e7 !important;
-	margin-left:25px
+	margin-left:25px;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
 	
 }
 .nav > li > a[data-value='Landcover Transition']{
@@ -379,6 +382,11 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	padding-left:90px;
 	padding-top: 30px;
 	background-color: #e7e7e7 !important;
-	margin-left:25px
+	margin-left:25px;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
 	
+}
+.navbar-default {
+   
+    border-color: white !important;
 }
