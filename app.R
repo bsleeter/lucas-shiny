@@ -40,10 +40,12 @@ lucList = unique(stocks$LUC)
 stockList = unique(stocks$StockGroup)
 
 # Define UI for application that draws a histogram
-ui = fluidPage(theme="common.css",
+ui = fluidPage(
        includeHTML("www/header.html"),
-       
-       navbarPage(title="California Carbon Scenarios", theme = shinytheme("simplex"),
+       tags$head(includeCSS("www/common.css")),   
+       titlePanel("California Carbon Scenarios"),
+        
+       navbarPage(title="", theme = shinytheme("simplex"),
            
                  
            tabPanel("Carbon Stocks",value = "Carbon StocksProjected Carbon Storage in California",
@@ -93,7 +95,15 @@ ui = fluidPage(theme="common.css",
                         )
                     )
                           
-                         )
+            ),
+           tabPanel("Landcover Totals", value="Landcover Totals",
+                    
+                    titlePanel("Landcover Totals")
+           ),
+           tabPanel("Landcover Transition", value="Landcover Transition",
+                    
+                    titlePanel("Landcover Transition")
+           )
              
            
         ),
