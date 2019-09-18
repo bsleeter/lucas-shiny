@@ -1,0 +1,27 @@
+selectData2 = reactive({
+  stocks %>% filter(Ecosystem=="Yes", LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion, StockGroup!="TEC") %>%
+    filter(Timestep>=input$years[1], Timestep<=input$years[2])
+})
+
+output$stocksPlot2 <- renderPlot({
+  ggplot(data=selectData2(), aes(x=Timestep, y=Mean/1000, fill=StockGroup, color=StockGroup)) +
+    geom_bar(stat="identity") + 
+    scale_fill_ipsum() +
+    scale_color_ipsum() +
+    facet_grid(RCP~GCM) +
+    theme_ipsum_rc(14, grid="Y") +
+    labs(x="Year", y="Million Metric Tons of Carbon", title="Average Projected Ecosystem Carbon Storage by Carbon Pool", subtitle="Living biomass (Live), dead organic matter (DOM), and soil organic carbon (SOC) storage") +
+    theme(legend.position = "top", plot.margin=margin(30,5,5,5))
+  
+})
+
+
+selectData2 = 
+  stocks %>% filter(Ecosystem=="Yes", LUC == "BAU", GCM == "CanESM2",  RCP == "rcp45", EcoregionName=="State", StockGroup!="TEC") %>%
+    filter(Timestep==2001 | Timestep==2100) %>% group_by(LUC,GCM,RCP,EcoregionName,StockGroup) %>% mutate(MeanChange=Mean-lag(Mean), LowerChange=Lower-lag(Lower), UpperChange=Upper-lag(Upper))
+selectData2
+
+selectData1 = 
+  stocks %>% filter(Ecosystem=="Yes", LUC == "BAU", GCM == "CanESM2", RCP == "rcp45", EcoregionName=="State", StockGroup=="TEC") %>%
+    filter(Timestep>=2050, Timestep<=2050)
+selectData1

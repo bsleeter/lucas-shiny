@@ -1,0 +1,47 @@
+
+library(extrafont)
+library(shiny)
+library(shinythemes)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(hrbrthemes)
+library(zoo)
+
+# Process Carbon Stock Data
+stocksEco = read_csv("data/ecoregion_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes")
+stocksEcoTEC = stocksEco %>% group_by(LUC,GCM,RCP,Timestep, EcoregionID, EcoregionName, Ecosystem) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
+    mutate(StockGroup="TEC")
+stocksState = read_csv("data/state_stocks_by_scenario_timestep_95ci.csv") %>% filter(Ecosystem=="Yes") %>%
+    mutate(EcoregionID=0, EcoregionName="State")
+stocksStateTEC = stocksState %>% group_by(LUC,GCM,RCP,Timestep, EcoregionID, EcoregionName, Ecosystem) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
+    mutate(StockGroup="TEC")
+stocks = bind_rows(stocksEco, stocksState, stocksEcoTEC, stocksStateTEC)
+
+# Process Net Flux List
+fluxEco = read_csv("data/ecoregion_netflux_by_scenario_timestep_95ci.csv")
+netFluxEco = fluxEco %>% filter(Flux %in% c("NPP","Rh","NEP","NECB"))
+
+fluxState = read_csv("data/state_netflux_by_scenario_timestep_95ci.csv")
+netFluxState = fluxState %>% filter(Flux %in% c("NPP","Rh","NEP","NECB")) %>% mutate(EcoregionID=0, EcoregionName="State")
+netFlux = bind_rows(netFluxEco, netFluxState)
+unique(netFluxState$Flux)
+
+
+ecoList = unique(stocks$EcoregionName)
+lucList = unique(stocks$LUC)
+stockList = unique(stocks$StockGroup)
+
+
+
+
+
+ui <- dashboardPage(
+    dashboardHeader(),
+    dashboardSidebar(),
+    dashboardBody()
+)
+
+server <- function(input, output) { }
+
+shinyApp(ui, server)
