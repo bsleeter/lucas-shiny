@@ -25,3 +25,93 @@ selectData1 =
   stocks %>% filter(Ecosystem=="Yes", LUC == "BAU", GCM == "CanESM2", RCP == "rcp45", EcoregionName=="State", StockGroup=="TEC") %>%
     filter(Timestep>=2050, Timestep<=2050)
 selectData1
+
+
+
+
+
+
+
+
+
+
+
+output$nppPlot <- renderPlotly({
+  npp = ggplot(data=nppData(), aes(x=GCM, y=yrMean, fill=GCM, ymin=minMean, ymax=maxMean)) +
+    geom_crossbar(stat="identity", show.legend = FALSE) +
+    scale_fill_ipsum() +
+    scale_color_ipsum() +
+    facet_wrap(RCP~LUC) +
+    theme_minimal() +
+    labs(y="MMT C", caption="Average Annual NPP") +
+    theme(plot.margin=margin(0,0,0,0), axis.text.x=element_blank())
+  
+  ggplotly(npp)
+  
+})
+
+
+
+rhData = reactive({
+  netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux=="Rh") %>%
+    filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% summarise(yrMean=mean(Mean), minMean=min(Mean), maxMean=max(Mean))
+})
+
+
+output$rhPlot <- renderPlotly({
+  rh = ggplot(data=rhData(), aes(x=GCM, y=yrMean, fill=GCM, ymin=minMean, ymax=maxMean)) +
+    geom_crossbar(stat="identity", show.legend = FALSE) +
+    scale_fill_ipsum() +
+    scale_color_ipsum() +
+    facet_wrap(RCP~LUC) +
+    theme_minimal() +
+    labs(y="MMT C", caption="Average Annual NPP") +
+    theme(plot.margin=margin(0,0,0,0), axis.text.x=element_blank())
+  
+  ggplotly(rh)
+  
+})
+
+
+nepData = reactive({
+  netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux=="NEP") %>%
+    filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% summarise(yrMean=mean(Mean), minMean=min(Mean), maxMean=max(Mean))
+})
+
+
+output$nepPlot <- renderPlotly({
+  nep = ggplot(data=nepData(), aes(x=GCM, y=yrMean, fill=GCM, ymin=minMean, ymax=maxMean)) +
+    geom_crossbar(stat="identity", show.legend = FALSE) +
+    scale_fill_ipsum() +
+    scale_color_ipsum() +
+    facet_wrap(RCP~LUC) +
+    theme_minimal() +
+    labs(y="MMT C", caption="Average Annual NEP") +
+    theme(plot.margin=margin(0,0,0,0), axis.text.x=element_blank())
+  
+  ggplotly(nep)
+  
+})
+
+
+
+necbData = reactive({
+  netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux=="NECB") %>%
+    filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% summarise(yrMean=mean(Mean), minMean=min(Mean), maxMean=max(Mean))
+})
+
+
+output$necbPlot <- renderPlotly({
+  necb = ggplot(data=necbData(), aes(x=GCM, y=yrMean, fill=GCM, ymin=minMean, ymax=maxMean)) +
+    geom_crossbar(stat="identity", show.legend = FALSE) +
+    scale_fill_ipsum() +
+    scale_color_ipsum() +
+    facet_wrap(RCP~LUC) +
+    theme_minimal() +
+    labs(y="MMT C", caption="Average Annual NECB") +
+    theme(plot.margin=margin(0,0,0,0), axis.text.x=element_blank())
+  
+  ggplotly(necb)
+  
+})
+

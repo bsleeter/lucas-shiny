@@ -43,11 +43,24 @@ lucList = unique(stocks$LUC)
 stockList = unique(stocks$StockGroup)
 
 # Define UI for application that draws a histogram
-ui = fluidPage(theme="common.css",
+ui = fluidPage(
        includeHTML("www/header.html"),
+<<<<<<< HEAD
        navbarPage(title="California Carbon Scenarios", theme = shinytheme("simplex"),
         
             tabPanel("Carbon Stocks",value = "Carbon Stocks Projected Carbon Storage in California", icon=icon("bar-chart-o"),
+=======
+       tags$head(includeCSS("www/common.css")),   
+       titlePanel("California Carbon Scenarios"),
+        
+       navbarPage(title="", theme = shinytheme("simplex"),
+           
+                 
+           tabPanel("Carbon Stocks",value = "Carbon StocksProjected Carbon Storage in California",
+                      
+                      titlePanel("Carbon Stocks"),
+                      
+>>>>>>> 2403802a7386a1626b84b8b8f39a3b9221808039
                       sidebarLayout(
                           sidebarPanel(h3("Carbon Stocks"), width=3,
                             selectInput("ecoregion", label=h4("Region"), choices=unique(stocks$EcoregionName), selected="State"),
@@ -91,7 +104,15 @@ ui = fluidPage(theme="common.css",
                         )
                     )
                           
-                         )
+            ),
+           tabPanel("Landcover Totals", value="Landcover Totals",
+                    
+                    titlePanel("Landcover Totals")
+           ),
+           tabPanel("Landcover Transition", value="Landcover Transition",
+                    
+                    titlePanel("Landcover Transition")
+           )
              
            
         ),
@@ -101,7 +122,7 @@ ui = fluidPage(theme="common.css",
 
        includeHTML("www/footer.html")
 
-    )
+    ),
                                             
                                             
 

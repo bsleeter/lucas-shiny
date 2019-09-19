@@ -46,14 +46,11 @@ stockList = unique(stocks$StockGroup)
 ui = fluidPage(
        includeHTML("www/header.html"),
 
-       navbarPage(title="California Carbon Scenarios", theme = shinytheme("simplex"),
-        
-            tabPanel("Carbon Stocks",value = "Carbon Stocks Projected Carbon Storage in California", icon=icon("bar-chart-o"),
-
+       
        tags$head(includeCSS("www/common.css")),   
        titlePanel("California Carbon Scenarios"),
         
-       navbarPage(title="", theme = shinytheme("simplex"),
+       
            
                  
            tabPanel("Carbon Stocks",value = "Carbon StocksProjected Carbon Storage in California",
@@ -112,19 +109,19 @@ ui = fluidPage(
            tabPanel("Landcover Transition", value="Landcover Transition",
                     
                     titlePanel("Landcover Transition")
-           )
+           ),
              
            
-        ),
+        
 
         
        
 
        includeHTML("www/footer.html")
 
-    ),
+    
                                             
-       ))                                            
+       )                                            
 
 
 server = (function(input, output) {

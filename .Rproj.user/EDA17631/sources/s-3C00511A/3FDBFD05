@@ -2,18 +2,18 @@
     "collab_server" : "",
     "contents" : "",
     "created" : 1568824998835.000,
-    "dirty" : true,
+    "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "740667125",
+    "hash" : "2032306991",
     "id" : "3FDBFD05",
-    "lastKnownWriteTime" : 1568841127,
-    "last_content_update" : 1568841182404,
+    "lastKnownWriteTime" : 1568921744,
+    "last_content_update" : 1568921744171,
     "path" : "E:/california-carbon-futures/github/lucas-shiny/dashboard/dashboard.R",
     "project_path" : "dashboard/dashboard.R",
     "properties" : {
-        "cursorPosition" : "95,66",
-        "scrollLine" : "76"
+        "cursorPosition" : "215,24",
+        "scrollLine" : "204"
     },
     "read_only" : false,
     "read_only_alternatives" : [
