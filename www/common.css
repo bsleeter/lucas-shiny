@@ -342,7 +342,13 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 /* If you would prefer not to have the social media links, you can remove the comment out slashes and astricks surrounding the content below */
   .footer-social-links { 
 	display: none} 
-	
+
+#dashboardTabset{
+	display:none
+}
+#navTabset{
+	float:right
+}
 /* 	
 .nav > li > a[data-value='Carbon StocksProjected Carbon Storage in California']{
 	background-image: url("stocks_80.png");                     

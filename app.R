@@ -67,86 +67,122 @@ ui = fluidPage(
        useShinyjs(),
        includeHTML("www/header.html"),
        tags$head(includeCSS("www/common.css")),
-    
-    titlePanel("California Carbon Scenarios"),
-       
-       sidebarLayout(
-           
-           sidebarPanel(style = "background: #00264c; color: #ffffff",
-               h3("Carbon Stocks"), 
-               width=3,
-               selectInput("ecoregion", label=h4("Region"), choices=unique(stocks$EcoregionName), selected="State"),
-               selectInput("luc", label=h4("Land Use Scenario"), choices=unique(stocks$LUC), selected="BAU"),
-               checkboxGroupInput("rcp", label=h4("Climate Scenario"),choiceValues=unique(stocks$RCP),choiceNames=c("Low Emissions (RCP 4.5)", "High Emissions (RCP 8.5)"), selected="rcp45"),
-               checkboxGroupInput("gcm",label=h4("Climate Model"),choiceValues=unique(stocks$GCM),choiceNames=c("Average (CanESM2)","Warm-Wet (CNRM-CM5)", "Hot-Dry (HadGEM2-ES)", "Complement (MIROC5)"), selected="CanESM2"),
-               sliderInput("years", label=h4("Year Range"), min=2001, max=2100, value=c(2001,2100), sep="", width="100%"),
-               checkboxInput("ci1", "Toggle 95% Confidence Intervals", value=TRUE)),
-           
-           mainPanel(width=9,
-               
-               tabsetPanel(
-                   tabPanel("Carbon Stocks",value = "Carbon StocksProjected Carbon Storage in California", width=12, 
-                            
-                       wellPanel(style = "background: #ffffff",
-                           fluidRow(     
-                            column(width=12))),
+       navbarPage("California Carbon Scenarios",id="navTabset",
+            tabPanel("Home",value = "homePanel",
+                  
+                     actionButton('jumpToP1', 'Carbon Stocks'),
+                     actionButton('jumpToP2', 'Carbon Net Flux'),
+                     actionButton('jumpToP3', 'Land Cover State'),
+                     actionButton('jumpToP4', 'Land Cover Transition')
+            ),
+            tabPanel("Dashboard",value ="dashboardPanel",
+                fluidPage(
+                   sidebarLayout(
                        
-                       wellPanel(style = "background: #ffffff", 
-                           fluidRow(
-                            column(width=12,
-                                   radioGroupButtons(width=250,
-                                       inputId = "stockGroup", label = h4("Select Carbon Stock"), 
-                                       choices = unique(stocks$StockGroup),
-                                       selected="TEC",
-                                       size="sm",
-                                       justified = TRUE, 
-                                       checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                            
-                                   plotOutput("stocksPlot1", height="800", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
-                                   uiOutput("stocksPlot1_hover_info"),
-                                   
-                                   #checkboxInput("showStockTable","View/Download Chart Data", FALSE),
-                                   prettySwitch(
-                                       inputId = "showStockTable",
-                                       label = "View Chart Data", 
-                                       value=FALSE,
-                                       status="success",
-                                       fill = TRUE),
-                                   
-                                   DTOutput("stocktable")))),
+                       sidebarPanel(style = "background: #00264c; color: #ffffff",
+                           h3("Carbon Stocks"), 
+                           width=3,
+                           selectInput("ecoregion", label=h4("Region"), choices=unique(stocks$EcoregionName), selected="State"),
+                           selectInput("luc", label=h4("Land Use Scenario"), choices=unique(stocks$LUC), selected="BAU"),
+                           checkboxGroupInput("rcp", label=h4("Climate Scenario"),choiceValues=unique(stocks$RCP),choiceNames=c("Low Emissions (RCP 4.5)", "High Emissions (RCP 8.5)"), selected="rcp45"),
+                           checkboxGroupInput("gcm",label=h4("Climate Model"),choiceValues=unique(stocks$GCM),choiceNames=c("Average (CanESM2)","Warm-Wet (CNRM-CM5)", "Hot-Dry (HadGEM2-ES)", "Complement (MIROC5)"), selected="CanESM2"),
+                           sliderInput("years", label=h4("Year Range"), min=2001, max=2100, value=c(2001,2100), sep="", width="100%"),
+                           checkboxInput("ci1", "Toggle 95% Confidence Intervals", value=TRUE)),
                        
-                       wellPanel(style = "background: #ffffff",
-                           fluidRow(       
-                            column(width=12,
-                                   plotOutput("stocksPlot2", height="600", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
-                                   uiOutput("stocksPlot2_hover_info"))))),
+                       mainPanel(width=9,   
+                           
+                           tabsetPanel(id="dashboardTabset",
+                               tabPanel("Carbon Stocks",value = "Carbon Stocks Projected Carbon Storage in California", width=12, 
+                                        
+                                   wellPanel(style = "background: #ffffff",
+                                       fluidRow(     
+                                        column(width=12))),
+                                   
+                                   wellPanel(style = "background: #ffffff", 
+                                       fluidRow(
+                                        column(width=12,
+                                               radioGroupButtons(width=250,
+                                                   inputId = "stockGroup", label = h4("Select Carbon Stock"), 
+                                                   choices = unique(stocks$StockGroup),
+                                                   selected="TEC",
+                                                   size="sm",
+                                                   justified = TRUE, 
+                                                   checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                                        
+                                               plotOutput("stocksPlot1", height="800", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
+                                               uiOutput("stocksPlot1_hover_info"),
+                                               
+                                               #checkboxInput("showStockTable","View/Download Chart Data", FALSE),
+                                               prettySwitch(
+                                                   inputId = "showStockTable",
+                                                   label = "View Chart Data", 
+                                                   value=FALSE,
+                                                   status="success",
+                                                   fill = TRUE),
+                                               
+                                               DTOutput("stocktable")))),
+                                   
+                                   wellPanel(style = "background: #ffffff",
+                                       fluidRow(       
+                                        column(width=12,
+                                               plotOutput("stocksPlot2", height="600", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
+                                               uiOutput("stocksPlot2_hover_info"))))),
+                               
+                               tabPanel("Net Carbon Fluxes", value="Net Carbon Fluxes", icon=icon("calendar"), width=12,
+                                        
+                                        column(width=12, 
+                                               selectInput("netFlux",label=h4("Net Flux"), choices=unique(netFlux$Flux),selected="NECB"),
+                                               checkboxInput("ci", "Add 95% Confidence Intervals", value=FALSE),
+                                               checkboxInput("annual", "Add Annual Projections", value=FALSE)),
+                                        column(width=12,
+                                               plotOutput("fluxplot1", height="400"),
+                                               plotOutput("fluxplot2", height="400"))),
+                               
+                               tabPanel("Landcover Totals", value="Landcover Totals"),
+                               
+                               tabPanel("Landcover Transition", value="Landcover Transition"))))
                    
-                   tabPanel("Net Carbon Fluxes", value="Net Carbon Fluxes", icon=icon("calendar"), width=12,
-                            
-                            column(width=12, 
-                                   selectInput("netFlux",label=h4("Net Flux"), choices=unique(netFlux$Flux),selected="NECB"),
-                                   checkboxInput("ci", "Add 95% Confidence Intervals", value=FALSE),
-                                   checkboxInput("annual", "Add Annual Projections", value=FALSE)),
-                            column(width=12,
-                                   plotOutput("fluxplot1", height="400"),
-                                   plotOutput("fluxplot2", height="400"))),
                    
-                   tabPanel("Landcover Totals", value="Landcover Totals"),
                    
-                   tabPanel("Landcover Transition", value="Landcover Transition")))),
-       
-       
-       includeHTML("www/footer.html")
-       
-)
-       
+                   
+                  ),
+                  includeHTML("www/footer.html")
+            )
+       )
            
-                 
+)                 
                            
 
 
-server = (function(input, output) {
-    
+server = (function(input, output, session) {
+  ## starts app in dashboard app with first tab selected
+  updateTabsetPanel(session, "navTabset",
+                    selected = "dashboardPanel")
+  
+  observeEvent(input$jumpToP1, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Carbon Stocks Projected Carbon Storage in California")
+  })
+  observeEvent(input$jumpToP2, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Net Carbon Fluxes")
+  })
+  observeEvent(input$jumpToP3, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Landcover Totals") 
+  })
+  observeEvent(input$jumpToP4, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Landcover Transition")
+  })
 # Carbon Stocks Page
     selectData1 = reactive({
         stocks %>% filter(Ecosystem=="Yes", LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, StockGroup==input$stockGroup) %>%
