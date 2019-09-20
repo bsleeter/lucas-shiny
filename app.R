@@ -10,6 +10,7 @@
 
 library(shiny)
 library(shinyjs)
+library(shinyWidgets)
 library(dplyr)
 library(ggplot2)
 library(readr)
@@ -62,7 +63,8 @@ stockList = unique(stocks$StockGroup)
 
 # Define UI for application that draws a histogram
 ui = fluidPage(
-    useShinyjs(),
+       setBackgroundColor(color="#f1f1f1", gradient=c("linear"), direction=c("bottom"), shinydashboard = FALSE),
+       useShinyjs(),
        includeHTML("www/header.html"),
        tags$head(includeCSS("www/common.css")),
     
@@ -80,25 +82,40 @@ ui = fluidPage(
                sliderInput("years", label=h4("Year Range"), min=2001, max=2100, value=c(2001,2100), sep="", width="100%"),
                checkboxInput("ci1", "Toggle 95% Confidence Intervals", value=TRUE)),
            
-           mainPanel(
+           mainPanel(width=9,
                
                tabsetPanel(
                    tabPanel("Carbon Stocks",value = "Carbon StocksProjected Carbon Storage in California", width=12, 
                             
                        wellPanel(style = "background: #ffffff",
                            fluidRow(     
-                            column(width=6, tags$br(),
-                                   selectInput("stockGroup",label="Select Carbon Stock Type", choices=unique(stocks$StockGroup),selected="TEC")))),
+                            column(width=12))),
                        
-                       wellPanel(style = "background: #f3f3f3",
+                       wellPanel(style = "background: #ffffff", 
                            fluidRow(
-                            column(width=12, 
-                                   plotOutput("stocksPlot1", height="400", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
+                            column(width=12,
+                                   radioGroupButtons(width=250,
+                                       inputId = "stockGroup", label = h4("Select Carbon Stock"), 
+                                       choices = unique(stocks$StockGroup),
+                                       selected="TEC",
+                                       size="sm",
+                                       justified = TRUE, 
+                                       checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                            
+                                   plotOutput("stocksPlot1", height="800", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
                                    uiOutput("stocksPlot1_hover_info"),
-                                   checkboxInput("showStockTable","View/Download Chart Data", FALSE),
+                                   
+                                   #checkboxInput("showStockTable","View/Download Chart Data", FALSE),
+                                   prettySwitch(
+                                       inputId = "showStockTable",
+                                       label = "View Chart Data", 
+                                       value=FALSE,
+                                       status="success",
+                                       fill = TRUE),
+                                   
                                    DTOutput("stocktable")))),
                        
-                       wellPanel(style = "background: #f3f3f3",
+                       wellPanel(style = "background: #ffffff",
                            fluidRow(       
                             column(width=12,
                                    plotOutput("stocksPlot2", height="600", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
@@ -136,6 +153,11 @@ server = (function(input, output) {
                           filter(Timestep>=input$years[1], Timestep<=input$years[2])
     })
     
+    stocksRangeData = reactive({
+        stocks %>% filter(Ecosystem=="Yes", EcoregionName==input$ecoregion, StockGroup==input$stockGroup) %>%
+            filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(Timestep, EcoregionName, StockGroup) %>% summarise(Mean=mean(Mean), Min=min(Lower), Max=max(Upper))
+    })
+    
     output$stocktable = renderDT(server = FALSE, {
         DT::datatable(selectData1(),  
                                  extensions='Buttons', 
@@ -148,29 +170,44 @@ server = (function(input, output) {
 
     
     output$stocksPlot1 <-  renderPlot({
-        p1 = ggplot(data=selectData1(), aes(x=Timestep, y=Mean, fill=GCM, color=GCM)) +
-            geom_line() +
-            geom_point(size=2, shape=16, data=filter(selectData1(), Timestep %in% seq(2001,2101,1))) +
+        p1 = ggplot() +
+            geom_ribbon(data=stocksRangeData(), aes(x=Timestep, y=Mean, ymin=Min, ymax=Max), fill="gray95", alpha=0.5) +
+            geom_line(data=selectData1(), aes(x=Timestep, y=Mean, fill=GCM, color=GCM)) +
+            geom_point(aes(x=Timestep, y=Mean, fill=GCM, color=GCM),
+                       size=2, shape=16, data=filter(selectData1(), Timestep %in% seq(2001,2101,1))) +
             scale_fill_brewer(palette = "Dark2") +
             scale_color_brewer(palette = "Dark2") +
-            facet_wrap(~RCP) +
+            facet_wrap(~RCP, scales="free") +
             theme_light(18) +
-            labs(y="MMT C", x="", title="Total Ecosystem Carbon Storage by Scenario") +
-            theme(legend.position = "bottom", 
+            scale_x_continuous(limits=c(2000,2102), expand = c(0,0)) +
+            labs(y="Million Metric Tons of Carbon", x="", 
+                 title="Projected Carbon Storage by Scenario",
+                 subtitle="Carbon stored in live vegetation and soils\ndeclines while carbon dead vegetation increases sharply") +
+            theme(legend.position = "top",
+                  legend.justification = "left",
+                  legend.title = element_blank(),
+                  legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+                  
+                  plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                  plot.title = element_text(size=32),
+                  plot.subtitle = element_text(size=16),
                   plot.margin=margin(5,5,5,5),
-                  legend.title = element_blank(), 
-                  strip.background = element_rect(fill="#00264c", color="#00264c"),
-                  panel.grid.major = element_line(linetype = "solid", size=0.5),
-                  panel.grid.minor = element_line(linetype = "dashed", size=0.1),
-                  panel.border = element_rect(size = 1, colour = "#00264c"),
-                  plot.title = element_text(hjust=0.5, face="bold"),
+                  
+                  strip.background = element_blank(),
+                  strip.text = element_text(color="gray20"),
+                  
+                  panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+                  panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
+                  panel.border = element_blank(),
+                  panel.spacing.x = unit(3, "lines"),
+                  
                   axis.title = element_text(size = 14),
-                  plot.background = element_rect(fill="#f3f3f3", color="#f3f3f3"),
-                  legend.background = element_rect(fill="#f3f3f3", color="#f3f3f3"))
+                  axis.line = element_line(color="gray60", size=0.5))
+                  
         
         if(input$ci1)
-            p1 = p1 + geom_ribbon(aes(ymin=Lower, ymax=Upper), alpha=0.5, color=NA)
-        
+            p1 = p1 + geom_ribbon(data=selectData1(), aes(x=Timestep, y=Mean, ymin=Lower, ymax=Upper, fill=GCM), alpha=0.5, color=NA)
+       
         p1 
         
     })
@@ -178,7 +215,7 @@ server = (function(input, output) {
     output$stocksPlot1_hover_info <- renderUI({
         hover <- input$stocksPlot1_hover
         
-        point <- nearPoints(selectData1(), hover, threshold = 20, maxpoints = 1, addDist = TRUE)
+        point <- nearPoints(selectData1(), hover, threshold = 5, maxpoints = 1, addDist = TRUE)
         if (nrow(point) == 0) return(NULL)
         left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
         top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
@@ -216,17 +253,26 @@ server = (function(input, output) {
             facet_wrap(~GCM, ncol=4) +
             theme_light(18) +
             labs(x="RCP Scenario", y="MMT C", title="Net Change in Carbon Stocks by Scenario") +
-            theme(legend.position = "bottom", 
+            theme(legend.position = "top",
+                  legend.justification = "left",
+                  legend.title = element_blank(),
+                  legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+                  
+                  plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                  plot.title = element_text(size=32),
+                  plot.subtitle = element_text(size=16),
                   plot.margin=margin(5,5,5,5),
-                  legend.title = element_blank(), 
-                  strip.background = element_rect(fill="#00264c", color="#00264c"),
-                  panel.grid.major = element_line(linetype = "solid", size=0.5),
-                  panel.grid.minor = element_line(linetype = "dashed", size=0.1),
-                  panel.border = element_rect(size = 1, colour = "#00264c"),
-                  plot.title = element_text(hjust=0.5, face="bold"),
+                  
+                  strip.background = element_blank(),
+                  strip.text = element_text(color="gray20"),
+                  
+                  panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+                  panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
+                  panel.border = element_blank(),
+                  panel.spacing.x = unit(3, "lines"),
+                  
                   axis.title = element_text(size = 14),
-                  plot.background = element_rect(fill="#f3f3f3", color="#f3f3f3"),
-                  legend.background = element_rect(fill="#f3f3f3", color="#f3f3f3"))
+                  axis.line = element_line(color="gray60", size=0.5))
         
         if(input$ci1)
             p2 = p2 + geom_errorbar(aes(ymin=LowerChange, ymax=UpperChange), color="black", width=0.9, position = "dodge") 
