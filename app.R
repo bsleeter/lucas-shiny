@@ -56,10 +56,37 @@ netFluxState = fluxState %>%
     mutate(EcoregionName="State")
 
 netFlux = bind_rows(netFluxEco, netFluxState)
+netFlux$Flux = factor(netFlux$Flux, levels=c("NECB","NEP","Rh","NPP"))
+unique(netFlux$Flux)
+
+# Process Transition Data
+transList = c("FIRE", "FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity", "INSECTS", "URBANIZATION", "AGRICULTURAL EXPANSION", "AGRICULTURAL CONTRACTION","HARVEST")
+transFire = c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity")
+transDist = c("FIRE", "INSECTS")
+
+transEco = read_csv("data/ecoregion_transitions_by_scenario_timestep_95ci.csv") %>% filter(TransitionGroup %in% transList)
+transState = read_csv("data/state_transitions_by_scenario_timestep_95ci.csv") %>% filter(TransitionGroup %in% transList) %>% mutate(EcoregionName="State")
+transitions = bind_rows(transEco, transState) %>% select(-EcoregionID, -GroupType)
+transitionsFire = transitions %>% filter(TransitionGroup %in% transFire)
+transitionsFire$TransitionGroup = factor(transitionsFire$TransitionGroup, levels=c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity"))
+
+transitionsDist = transitions %>% filter(TransitionGroup %in% transDist)
+unique(transitionsDist$TransitionGroup)
+
+
+
+
+
+# Define color palettes
 
 ecoList = unique(stocks$EcoregionName)
 lucList = unique(stocks$LUC)
 stockList = unique(stocks$StockGroup)
+
+stockPal = c("DOM"="#d9d9d9", "Live"="#b3de69", "Soil"="#ffffb3", "TEC"="#fb8072")
+gcmPal = c("CanESM2"="#009E73", "CNRM-CM5"="#56B4E9", "HadGEM2-ES"="#E69F00", "MIROC5"="#F0E442")
+fluxPal = c("NPP"="#2CA02C", "Rh"="#8C564B", "NEP"="#1F77B4", "NECB"="#E1750E")
+firePal = c("FIRE: High Severity"="#f03b20", "FIRE: Medium Severity"="#feb24c", "FIRE: Low Severity"="#ffeda0")
 
 # Define UI for application that draws a histogram
 ui = fluidPage(
@@ -78,69 +105,176 @@ ui = fluidPage(
             tabPanel("Dashboard",value ="dashboardPanel",
                 fluidPage(
                    sidebarLayout(
-                       
-                       sidebarPanel(style = "background: #00264c; color: #ffffff",
-                           h3("Carbon Stocks"), 
-                           width=3,
-                           selectInput("ecoregion", label=h4("Region"), choices=unique(stocks$EcoregionName), selected="State"),
-                           selectInput("luc", label=h4("Land Use Scenario"), choices=unique(stocks$LUC), selected="BAU"),
-                           checkboxGroupInput("rcp", label=h4("Climate Scenario"),choiceValues=unique(stocks$RCP),choiceNames=c("Low Emissions (RCP 4.5)", "High Emissions (RCP 8.5)"), selected="rcp45"),
-                           checkboxGroupInput("gcm",label=h4("Climate Model"),choiceValues=unique(stocks$GCM),choiceNames=c("Average (CanESM2)","Warm-Wet (CNRM-CM5)", "Hot-Dry (HadGEM2-ES)", "Complement (MIROC5)"), selected="CanESM2"),
-                           sliderInput("years", label=h4("Year Range"), min=2001, max=2100, value=c(2001,2100), sep="", width="100%"),
-                           checkboxInput("ci1", "Toggle 95% Confidence Intervals", value=TRUE)),
+                       sidebarPanel(width=3, style = "background: #ffffff; color: #000000", h4("Scenario Controls"), 
+                           awesomeRadio(
+                             inputId="ecoregion",
+                             label="Region of Interest",
+                             choices=sort(unique(stocks$EcoregionName)),
+                             selected="State",
+                             width="100%",
+                             checkbox=TRUE),
+                           awesomeRadio(
+                             inputId="luc",
+                             label="Land Use Scenario",
+                             choices=sort(unique(stocks$LUC)),
+                             selected="BAU",
+                             width="100%",
+                             checkbox=TRUE),
+                           checkboxGroupButtons(inputId="rcp", 
+                                                label="Climate Scenarios", 
+                                                choiceValues=unique(stocks$RCP),
+                                                choiceNames=c("Low Emissions (RCP 4.5)", "High Emissions (RCP 8.5)"),
+                                                selected="rcp45",
+                                                direction="vertical",
+                                                size="sm",
+                                                width="100%",
+                                                checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                           checkboxGroupButtons(inputId="gcm", 
+                                                label="Climate Models", 
+                                                choiceValues=unique(stocks$GCM),
+                                                choiceNames=c("Average (CanESM2)","Warm-Wet (CNRM-CM5)", "Hot-Dry (HadGEM2-ES)", "Complement (MIROC5)"),
+                                                selected="CanESM2",
+                                                direction="vertical",
+                                                size="sm",
+                                                width="100%",
+                                                checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                           sliderTextInput(inputId="years",
+                                           label="Select years to plot",
+                                           choices=seq(2001,2101,1),
+                                           selected=c(2001,2100),
+                                           width="100%",
+                                           grid=FALSE,
+                                           force_edges=T),
+                           prettySwitch(
+                             inputId="ci1",
+                             label="Toggle 95% Confidence Intervals",
+                             value=TRUE,
+                             status="primary",
+                             slim=TRUE)),
                        
                        mainPanel(width=9,   
-                           
                            tabsetPanel(id="dashboardTabset",
                                tabPanel("Carbon Stocks",value = "Carbon Stocks Projected Carbon Storage in California", width=12, 
-                                        
-                                   wellPanel(style = "background: #ffffff",
-                                       fluidRow(     
-                                        column(width=12))),
-                                   
                                    wellPanel(style = "background: #ffffff", 
                                        fluidRow(
-                                        column(width=12,
+                                        column(width=12, align="right",
                                                radioGroupButtons(width=250,
-                                                   inputId = "stockGroup", label = h4("Select Carbon Stock"), 
+                                                   inputId = "stockGroup", label = "Select Carbon Stock", 
                                                    choices = unique(stocks$StockGroup),
                                                    selected="TEC",
                                                    size="sm",
                                                    justified = TRUE, 
                                                    checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                        
-                                               plotOutput("stocksPlot1", height="800", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
+                                               plotOutput("stocksPlot1", height="600", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
                                                uiOutput("stocksPlot1_hover_info"),
-                                               
-                                               #checkboxInput("showStockTable","View/Download Chart Data", FALSE),
                                                prettySwitch(
                                                    inputId = "showStockTable",
                                                    label = "View Chart Data", 
                                                    value=FALSE,
                                                    status="success",
                                                    fill = TRUE),
-                                               
                                                DTOutput("stocktable")))),
-                                   
                                    wellPanel(style = "background: #ffffff",
                                        fluidRow(       
                                         column(width=12,
                                                plotOutput("stocksPlot2", height="600", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
                                                uiOutput("stocksPlot2_hover_info"))))),
                                
-                               tabPanel("Net Carbon Fluxes", value="Net Carbon Fluxes", icon=icon("calendar"), width=12,
+                               
+                               tabPanel("Net Carbon Fluxes", value="Net Carbon Fluxes", width=12,
+                                  wellPanel(style = "background: #ffffff",
+                                      fluidRow(
+                                        column(width=6, allign="left",
+                                               prettySwitch(
+                                                 inputId="annual",
+                                                 label="Add Annual Projections",
+                                                 value=FALSE,
+                                                 status="primary",
+                                                 slim=TRUE),
+                                               prettySwitch(
+                                                 inputId="smooth",
+                                                 label="Add Trend Line",
+                                                 value=FALSE,
+                                                 status="primary",
+                                                 slim=TRUE)),
+                                        column(width=6, align="right",
+                                               radioGroupButtons(width=250,
+                                                                 inputId = "netflux", label = "Select Flux Type", 
+                                                                 choices = c("NPP","Rh","NEP","NECB"),
+                                                                 selected="NECB",
+                                                                 size="sm",
+                                                                 justified = TRUE, 
+                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                        column(width=12, align="right",
+                                               plotOutput("fluxplot1", height="600"),
+                                               prettySwitch(
+                                                 inputId = "showFluxTable",
+                                                 label = "View Chart Data", 
+                                                 value=FALSE,
+                                                 status="success",
+                                                 fill = TRUE),
+                                               DTOutput("fluxtable")))),
                                         
-                                        column(width=12, 
-                                               selectInput("netFlux",label=h4("Net Flux"), choices=unique(netFlux$Flux),selected="NECB"),
-                                               checkboxInput("ci", "Add 95% Confidence Intervals", value=FALSE),
-                                               checkboxInput("annual", "Add Annual Projections", value=FALSE)),
-                                        column(width=12,
-                                               plotOutput("fluxplot1", height="400"),
-                                               plotOutput("fluxplot2", height="400"))),
+                                  wellPanel(style = "background: #ffffff",
+                                      fluidRow(
+                                        column(width=6, align="left"),
+                                        column(width=6, align="right",
+                                               checkboxGroupButtons(inputId="netflux2", 
+                                                                    label="Flux Type", 
+                                                                    choices=c("NPP","Rh","NEP","NECB"),
+                                                                    selected="NECB",
+                                                                    direction="horizontal",
+                                                                    size="sm",
+                                                                    width="100%",
+                                                                    checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                        column(width=12, align="right",
+                                               plotOutput("fluxplot2", height="600"))))),
+                               
                                
                                tabPanel("Landcover Totals", value="Landcover Totals"),
                                
-                               tabPanel("Landcover Transition", value="Landcover Transition"))))
+                               tabPanel("Landcover Transition", value="Landcover Transition", width=12,
+                                        wellPanel(style = "background: #ffffff",
+                                                  fluidRow(
+                                                    column(width=12, align="right",
+                                                           radioGroupButtons(width="200px",
+                                                                             inputId = "transitionsDist", label = "Select Disturbance Type", 
+                                                                             choices = unique(transitionsDist$TransitionGroup),
+                                                                             selected="FIRE",
+                                                                             size="sm",
+                                                                             justified = TRUE, 
+                                                                             checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                                    column(width=12, align="right",
+                                                           prettySwitch(
+                                                             inputId="smoothDist",
+                                                             label="Add Trend Line",
+                                                             value=FALSE,
+                                                             status="primary",
+                                                             slim=TRUE)),
+                                                    column(width=12, align="right",
+                                                           plotOutput("transitionsDistPlot", height="600"),
+                                                           prettySwitch(
+                                                             inputId = "showTransitionTable",
+                                                             label = "View Chart Data", 
+                                                             value=FALSE,
+                                                             status="success",
+                                                             fill = TRUE),
+                                                           DTOutput("transitiontable")))),
+                                        
+                                        wellPanel(style = "background: #ffffff",
+                                                  fluidRow(
+                                                    column(width=12, align="right",
+                                                           checkboxGroupButtons(inputId="transitionsFire", 
+                                                                                label="Flux Type", 
+                                                                                choiceValues=c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity"),
+                                                                                choiceNames=c("High","Medium","Low"),
+                                                                                selected=c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity"),
+                                                                                direction="horizontal",
+                                                                                size="sm",
+                                                                                width="100%",
+                                                                                checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                                    column(width=12, align="right",
+                                                           plotOutput("transitionsFirePlot", height="600"))))))))
                    
                    
                    
@@ -207,43 +341,39 @@ server = (function(input, output, session) {
     
     output$stocksPlot1 <-  renderPlot({
         p1 = ggplot() +
-            geom_ribbon(data=stocksRangeData(), aes(x=Timestep, y=Mean, ymin=Min, ymax=Max), fill="gray95", alpha=0.5) +
+            geom_ribbon(data=stocksRangeData(), aes(x=Timestep, y=Mean, ymin=Min, ymax=Max), fill="gray90", alpha=0.5) +
             geom_line(data=selectData1(), aes(x=Timestep, y=Mean, fill=GCM, color=GCM)) +
-            geom_point(aes(x=Timestep, y=Mean, fill=GCM, color=GCM),
-                       size=2, shape=16, data=filter(selectData1(), Timestep %in% seq(2001,2101,1))) +
-            scale_fill_brewer(palette = "Dark2") +
-            scale_color_brewer(palette = "Dark2") +
+            #geom_point(aes(x=Timestep, y=Mean, fill=GCM, color=GCM),
+                       #size=2, shape=16, data=filter(selectData1(), Timestep %in% seq(2001,2101,1))) +
+            scale_fill_manual(values=gcmPal) +
+            scale_color_manual(values=gcmPal) +
             facet_wrap(~RCP, scales="free") +
             theme_light(18) +
-            scale_x_continuous(limits=c(2000,2102), expand = c(0,0)) +
-            labs(y="Million Metric Tons of Carbon", x="", 
-                 title="Projected Carbon Storage by Scenario",
-                 subtitle="Carbon stored in live vegetation and soils\ndeclines while carbon dead vegetation increases sharply") +
+            labs(fill="Climate Model",
+                 color="Climate Model",
+                 y="Million Metric Tons of Carbon", x="", 
+                 title="Projected Carbon Storage in California by Scenario",
+                 subtitle="Carbon storage estimates were calculated based on 100 Monte Carlo replications of each of the 32 unique scenario pathways.\nThe gray shaded area represents the full range of variability for a 95% confidence interval across all model simulations.") +
             theme(legend.position = "top",
                   legend.justification = "left",
-                  legend.title = element_blank(),
+                  legend.title = element_text(size=14),
+                  legend.text = element_text(size=14),
                   legend.background = element_rect(fill="#ffffff", color="#ffffff"),
-                  
                   plot.background = element_rect(fill="#ffffff", color="#ffffff"),
-                  plot.title = element_text(size=32),
-                  plot.subtitle = element_text(size=16),
+                  plot.title = element_text(size=28),
+                  plot.subtitle = element_text(size=12),
                   plot.margin=margin(5,5,5,5),
-                  
                   strip.background = element_blank(),
-                  strip.text = element_text(color="gray20"),
-                  
+                  strip.text = element_text(color="gray20", size=14),
                   panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
                   panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
                   panel.border = element_blank(),
                   panel.spacing.x = unit(3, "lines"),
-                  
                   axis.title = element_text(size = 14),
                   axis.line = element_line(color="gray60", size=0.5))
-                  
         
         if(input$ci1)
-            p1 = p1 + geom_ribbon(data=selectData1(), aes(x=Timestep, y=Mean, ymin=Lower, ymax=Upper, fill=GCM), alpha=0.5, color=NA)
-       
+            p1 = p1 + geom_ribbon(data=selectData1(), aes(x=Timestep, y=Mean, ymin=Lower, ymax=Upper, fill=GCM), alpha=0.3, color=NA)
         p1 
         
     })
@@ -282,40 +412,41 @@ server = (function(input, output, session) {
     })
     
     output$stocksPlot2 <- renderPlot({
-        p2 = ggplot(data=selectData2(), aes(x=RCP, y=MeanChange, fill=StockGroup, color=StockGroup)) +
+      p2 = ggplot(data=selectData2(), aes(x=RCP, y=MeanChange, fill=StockGroup, color=StockGroup)) +
             geom_bar(stat="identity", color="black", position="dodge") + 
-            scale_fill_brewer(palette = "Accent") +
-            scale_color_brewer(palette = "Accent") +
-            facet_wrap(~GCM, ncol=4) +
+            scale_fill_manual(values=stockPal) +
+            scale_color_manual(values=stockPal) +
+            facet_wrap(~GCM, ncol=4, scales="free") +
+            ylim(-1300,300) +
             theme_light(18) +
-            labs(x="RCP Scenario", y="MMT C", title="Net Change in Carbon Stocks by Scenario") +
+            labs(fill="Carbon Stock Type",
+                 x="Climate Scenario (RCP)", 
+                 y="Million Metric Tons Carbon", 
+                 title="Net Change in Carbon Stocks by Scenario",
+                 subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
             theme(legend.position = "top",
-                  legend.justification = "left",
-                  legend.title = element_blank(),
-                  legend.background = element_rect(fill="#ffffff", color="#ffffff"),
-                  
-                  plot.background = element_rect(fill="#ffffff", color="#ffffff"),
-                  plot.title = element_text(size=32),
-                  plot.subtitle = element_text(size=16),
-                  plot.margin=margin(5,5,5,5),
-                  
-                  strip.background = element_blank(),
-                  strip.text = element_text(color="gray20"),
-                  
-                  panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
-                  panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
-                  panel.border = element_blank(),
-                  panel.spacing.x = unit(3, "lines"),
-                  
-                  axis.title = element_text(size = 14),
-                  axis.line = element_line(color="gray60", size=0.5))
+                legend.justification = "left",
+                legend.title = element_text(size=14),
+                legend.text = element_text(size=14),
+                legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.title = element_text(size=28),
+                plot.subtitle = element_text(size=12),
+                plot.margin=margin(5,5,5,5),
+                strip.background = element_blank(),
+                strip.text = element_text(color="gray20", size=14),
+                panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.border = element_blank(),
+                panel.spacing.x = unit(0, "lines"),
+                axis.title = element_text(size = 14),
+                axis.line = element_line(color="gray60", size=0.5))
         
         if(input$ci1)
             p2 = p2 + geom_errorbar(aes(ymin=LowerChange, ymax=UpperChange), color="black", width=0.9, position = "dodge") 
         p2
         
     })
-    
     
     output$stocksPlot2_hover_info <- renderUI({
         hover <- input$stocksPlot2_hover
@@ -326,7 +457,6 @@ server = (function(input, output, session) {
         top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
         left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
         top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
-        
         
         style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.95); ",
                         "left:", left_px + 2, "px; top:", top_px + 2, "px;")
@@ -341,67 +471,232 @@ server = (function(input, output, session) {
                 "<b> Stock Group: </b>", point$StockGroup, "<br/>",
                 "<b> Mean Carbon (MMT): </b>", round(point$Mean,1), "<br/>",
                 "<b> Lower Bound (MMT): </b>", round(point$Lower,1), "<br/>",
-                "<b> Upper Bound (MMT): </b>", round(point$Upper,1), "<br/>"
-                
-                
-            )))
-        )
+                "<b> Upper Bound (MMT): </b>", round(point$Upper,1), "<br/>"))))
     })
     
     
     
     
-    # Carbon Flux Page    
+
+    
+    
+##### Carbon Flux Page  #####  
     selectData3 = reactive({
-        netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux==input$netFlux) %>%
-            filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% 
-            mutate(Mean10=rollmean(Mean, 10, fill=NA, align=c("center")), Lower10=rollmean(Lower, 10, fill=NA, align=c("center")), Upper10=rollmean(Upper, 10, fill=NA, align=c("center")))
+        netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux==input$netflux) %>%
+        group_by(LUC,GCM,RCP,EcoregionName,Flux) %>%
+        mutate(Mean10=rollmean(Mean, 10, fill=NA, align=c("center")), 
+               Lower10=rollmean(Lower, 10, fill=NA, align=c("center")), 
+               Upper10=rollmean(Upper, 10, fill=NA, align=c("center"))) %>%
+        filter(Timestep>=input$years[1], Timestep<=input$years[2])
     })
+    
+    fluxRange = reactive({
+      netFlux %>% filter(EcoregionName==input$ecoregion, Flux==input$netflux) %>% 
+        filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% 
+        group_by(Timestep, EcoregionName, Flux) %>% summarise(Mean=mean(Mean), Min=min(Lower), Max=max(Upper))
+    })
+    
+    observeEvent(input$showFluxTable, {
+      toggle("fluxtable")
+    })
+    
+    output$fluxtable = renderDT(server = FALSE, {
+      DT::datatable(selectData3(),  
+                    extensions='Buttons', 
+                    options=list(pageLength=5, searching=TRUE, autoWidth=TRUE, ordering=TRUE, dom ='Blfrtip',buttons=c('copy', 'csv', 'excel', "pdf")))
+    })
+    
     
     output$fluxplot1 <- renderPlot({
-        p = ggplot(data=selectData3(), aes(x=Timestep, y=Mean10, fill=GCM, color=GCM)) +
-            geom_line(size=1) + 
-            geom_hline(yintercept=0, color="black", size=0.5) +
-            scale_fill_brewer() +
-            scale_color_brewer() +
-            facet_wrap(RCP~LUC) +
-            theme_minimal(20) +
-            labs(x="Year", y="Million Metric Tons of Carbon", title="Net Ecosystem Carbon Flux by Scenario", subtitle="Rolling annual 10-year average net carbon fluxes by scenario") +
-            theme(legend.position = "top", plot.margin=margin(5,5,5,5))
+        p3 = ggplot() +
+          geom_ribbon(data=fluxRange(), aes(x=Timestep, mean=Mean, ymin=Min, ymax=Max), fill="gray90") +
+          geom_line(data=fluxRange(), aes(x=Timestep, y=Mean), color="gray35", linetype="dotted", size=0.7) +
+          geom_line(data=selectData3(), aes(x=Timestep, y=Mean10, color=GCM), size=1) + 
+          geom_hline(yintercept=0, color="black", size=0.5) +
+          scale_fill_manual(values=gcmPal) +
+          scale_color_manual(values=gcmPal) +
+          facet_wrap(~RCP, scales="free") +
+          theme_minimal(20) +
+          labs(fill="Climate Model",
+               color="Climate Model",
+               x="Climate Model", 
+               y="Million Metric Tons Carbon", 
+               title="Net Change in Carbon Stocks by Scenario",
+               subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
+          theme(legend.position = "top",
+                legend.justification = "left",
+                legend.title = element_text(size=14),
+                legend.text = element_text(size=14),
+                legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.title = element_text(size=28),
+                plot.subtitle = element_text(size=12),
+                plot.margin=margin(5,5,5,5),
+                strip.background = element_blank(),
+                strip.text = element_text(color="gray20", size=14),
+                panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.border = element_blank(),
+                panel.spacing.x = unit(0, "lines"),
+                axis.title = element_text(size = 14),
+                axis.line = element_line(color="gray60", size=0.5))
         
-        if(input$smooth)
-            p = p + geom_smooth(method="lm", se=FALSE)
-        if(input$ci)
-            p = p + geom_ribbon(aes(ymin=Lower10, ymax=Upper10), alpha=0.5, color=NA)
+
+        if(input$ci1)
+            p3 = p3 + geom_ribbon(data=selectData3(), aes(x=Timestep, y=Mean, ymin=Lower10, ymax=Upper10, fill=GCM), alpha=0.3, color=NA)
         if(input$annual)
-            p = p + geom_line(data=selectData3(), aes(x=Timestep, y=Mean), alpha=0.2)
+            p3 = p3 + geom_line(data=selectData3(), aes(x=Timestep, y=Mean, color=GCM), alpha=0.2, show.legend = FALSE)
+        if(input$smooth)
+          p3 = p3 + geom_smooth(data=selectData3(), aes(x=Timestep, y=Mean, fill=GCM, color=GCM), show.legend = FALSE, se=FALSE)
         
-        p
+        p3
         
     })
     
     
     
     selectData4 = reactive({
-        netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux=="NECB") %>%
-            filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
+        netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux %in% input$netflux2) %>%
+        filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% 
+        group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
     })
     
     output$fluxplot2 <- renderPlot({
-        p4 = ggplot(data=selectData4(), aes(x=GCM, y=Mean, fill=GCM, color=GCM)) +
-            geom_bar(stat="identity") + 
+        p4 = ggplot(data=selectData4(), aes(x=Flux, y=Mean, fill=Flux)) +
+            geom_bar(stat="identity", position="dodge", color="black") + 
             geom_hline(yintercept=0) +
-            scale_fill_brewer() +
-            scale_color_brewer() +
-            facet_wrap(RCP~LUC) +
+            coord_flip() +
+            scale_fill_manual(values=fluxPal) +
+            scale_color_manual(values=fluxPal) +
+            facet_grid(GCM~RCP) +
             theme_minimal(20) +
-            labs(y="Million Metric Tons of Carbon", title="Net Ecosystem Carbon Balance (NECB) by Scenario", subtitle="Rolling annual 10-year average net carbon fluxes by scenario") +
-            theme(legend.position = "top", plot.margin=margin(5,5,5,5))
+          labs(fill="Carbon Flux Type",
+               x="",
+               y="Million Metric Tons Carbon", 
+               title="Cumulative Carbon Flux by Scenario",
+               subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
+          theme(legend.position = "top",
+                legend.justification = "left",
+                legend.title = element_text(size=14),
+                legend.text = element_text(size=14),
+                legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.title = element_text(size=28),
+                plot.subtitle = element_text(size=12),
+                plot.margin=margin(5,5,5,5),
+                strip.background = element_blank(),
+                strip.text = element_text(color="gray20", size=14),
+                panel.grid.major.x = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor.x = element_blank(),
+                panel.grid.major.y = element_blank(),
+                panel.grid.minor.y = element_blank(),
+                panel.border = element_blank(),
+                panel.spacing.x = unit(2, "lines"),
+                axis.title = element_text(size = 14),
+                axis.text.y=element_blank(),
+                axis.line = element_line(color="gray60", size=0.5))
         
-        if(input$ci)
+        if(input$ci1)
             p4 = p4 + geom_errorbar(aes(ymin=Lower, ymax=Upper), alpha=0.5, color="black", width=0.5)
         p4
         
+    })
+    
+    
+    
+    
+##### Transition Area #####    
+    selectData5 = reactive({
+      transitionsDist %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionsDist) %>%
+        filter(Timestep>=input$years[1], Timestep<=input$years[2])
+    })
+    
+    distRange = reactive({
+      transitionsDist %>% filter(EcoregionName==input$ecoregion, TransitionGroup==input$transitionsDist) %>% 
+                                   group_by(Timestep,EcoregionName,TransitionGroup) %>% summarise(Mean=mean(Mean), Min=min(Lower), Max=max(Upper))
+    })
+    
+    
+    
+    output$transitionsDistPlot = renderPlot({
+     p5 = ggplot() +
+       geom_ribbon(data=distRange(), aes(x=Timestep, y=Mean, ymin=Min, ymax=Max), fill="gray90", alpha=0.5) +
+       geom_line(data=selectData5(), aes(x=Timestep, y=Mean, color=GCM, fill=GCM)) +
+       facet_grid(RCP~GCM) +
+       scale_fill_manual(values=gcmPal) +
+       scale_color_manual(values=gcmPal) +
+       theme_minimal(20) +
+       labs(fill="Climate Model",
+            color="Climate Model",
+            x="",
+            y="km2", 
+            title="Wildfire Area by Year and Scenario",
+            subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
+       theme(legend.position = "top",
+             legend.justification = "left",
+             legend.title = element_text(size=14),
+             legend.text = element_text(size=14),
+             legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+             plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+             plot.title = element_text(size=28),
+             plot.subtitle = element_text(size=12),
+             plot.margin=margin(5,5,5,5),
+             strip.background = element_blank(),
+             strip.text = element_text(color="gray20", size=14),
+             panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+             panel.grid.minor = element_blank(),
+             #panel.border = element_blank(),
+             panel.spacing.x = unit(2, "lines"),
+             axis.title = element_text(size = 14),
+             axis.text = element_text(size = 14),
+             axis.line = element_line(color="gray60", size=0.5))
+       
+       if(input$ci1)
+         p5 = p5 + geom_ribbon(data=selectData5(), aes(x=Timestep, ymin=Lower, ymax=Upper, fill=GCM), alpha=0.5, width=0.5, color=NA)
+       if(input$smoothDist)
+         p5 = p5 + geom_smooth(data=selectData5(), aes(x=Timestep, y=Mean, ymin=Lower, ymax=Upper, color=GCM), method="loess", se=FALSE, size=1)
+       p5
+
+   }) 
+    
+    
+    
+    selectData6 = reactive({
+      transitionsFire %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionsFire) %>%
+        filter(Timestep>=input$years[1], Timestep<=input$years[2])
+    }) 
+    
+    output$transitionsFirePlot = renderPlot({
+      p6 = ggplot(data=selectData6(), aes(x=Timestep, y=Mean, fill=TransitionGroup)) +
+        geom_bar(stat="identity") +
+        facet_grid(RCP~GCM) +
+        scale_fill_manual(values = firePal) +
+        theme_minimal(20) +
+        labs(fill="Fire Severity",
+             x="",
+             y="km2", 
+             title="Average Projected Wildfire Area by Severity Type and Scenario",
+             subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
+        theme(legend.position = "top",
+              legend.justification = "left",
+              legend.title = element_text(size=14),
+              legend.text = element_text(size=14),
+              legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+              plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+              plot.title = element_text(size=28),
+              plot.subtitle = element_text(size=12),
+              plot.margin=margin(5,5,5,5),
+              strip.background = element_blank(),
+              strip.text = element_text(color="gray20", size=14),
+              panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+              panel.grid.minor = element_blank(),
+              #panel.border = element_blank(),
+              panel.spacing.x = unit(2, "lines"),
+              axis.title = element_text(size = 14),
+              axis.text = element_text(size = 14),
+              axis.line = element_line(color="gray60", size=0.5))
+      p6
+    
     })
     
     
