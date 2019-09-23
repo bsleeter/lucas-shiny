@@ -19,74 +19,34 @@ library(DT)
 
 
 # Process Carbon Stock Data
-stocksEco = read_csv("data/ecoregion_stocks_by_scenario_timestep_95ci.csv") %>% 
-    filter(Ecosystem=="Yes") %>% 
-    mutate(Mean=Mean/1000, Lower=Lower/1000, Upper=Upper/1000) %>% 
-    select(-EcoregionID)
-
-stocksEcoTEC = stocksEco %>% 
-    group_by(LUC,GCM,RCP,Timestep, EcoregionName, Ecosystem) %>% 
-    summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
-    mutate(StockGroup="TEC")
-
-stocksState = read_csv("data/state_stocks_by_scenario_timestep_95ci.csv") %>% 
-    filter(Ecosystem=="Yes") %>% 
-    mutate(Mean=Mean/1000, Lower=Lower/1000, Upper=Upper/1000) %>%
-    mutate(EcoregionName="State")
-
-stocksStateTEC = stocksState %>% 
-    group_by(LUC,GCM,RCP,Timestep, EcoregionName, Ecosystem) %>% 
-    summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
-    mutate(StockGroup="TEC")
-
-stocks = bind_rows(stocksEco, stocksState, stocksEcoTEC, stocksStateTEC) %>%
-    mutate(Mean=round(Mean,3), Lower=round(Lower,3), Upper=round(Upper,3))
+stocks = read_csv("data/stocks.csv")
+stocks$StockGroup = factor(stocks$StockGroup, levels=c("TEC","Soil","Live","DOM"))
 
 # Process Net Flux List
-fluxEco = read_csv("data/ecoregion_netflux_by_scenario_timestep_95ci.csv") %>% 
-    select(-EcoregionID)
-
-netFluxEco = fluxEco %>% 
-    filter(Flux %in% c("NPP","Rh","NEP","NECB"))
-
-fluxState = read_csv("data/state_netflux_by_scenario_timestep_95ci.csv")
-
-netFluxState = fluxState %>% 
-    filter(Flux %in% c("NPP","Rh","NEP","NECB")) %>% 
-    mutate(EcoregionName="State")
-
-netFlux = bind_rows(netFluxEco, netFluxState)
+netFlux = read_csv("data/net_flux.csv")
 netFlux$Flux = factor(netFlux$Flux, levels=c("NECB","NEP","Rh","NPP"))
 unique(netFlux$Flux)
 
 # Process Transition Data
-transList = c("FIRE", "FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity", "INSECTS", "URBANIZATION", "AGRICULTURAL EXPANSION", "AGRICULTURAL CONTRACTION","HARVEST")
-transFire = c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity")
-transDist = c("FIRE", "INSECTS")
-
-transEco = read_csv("data/ecoregion_transitions_by_scenario_timestep_95ci.csv") %>% filter(TransitionGroup %in% transList)
-transState = read_csv("data/state_transitions_by_scenario_timestep_95ci.csv") %>% filter(TransitionGroup %in% transList) %>% mutate(EcoregionName="State")
-transitions = bind_rows(transEco, transState) %>% select(-EcoregionID, -GroupType)
-transitionsFire = transitions %>% filter(TransitionGroup %in% transFire)
-transitionsFire$TransitionGroup = factor(transitionsFire$TransitionGroup, levels=c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity"))
-
-transitionsDist = transitions %>% filter(TransitionGroup %in% transDist)
-unique(transitionsDist$TransitionGroup)
+disturbanceData = read_csv("data/disturbances.csv")
+disturbanceData$Severity = factor(disturbanceData$Severity, levels=c("High", "Medium", "Low"))
+disturbanceData$LUC = factor(disturbanceData$LUC, levels=c("BAU", "High", "Medium", "Low"))
 
 
-
-
-
-# Define color palettes
-
+# Define unique lists
 ecoList = unique(stocks$EcoregionName)
 lucList = unique(stocks$LUC)
 stockList = unique(stocks$StockGroup)
 
-stockPal = c("DOM"="#d9d9d9", "Live"="#b3de69", "Soil"="#ffffb3", "TEC"="#fb8072")
-gcmPal = c("CanESM2"="#009E73", "CNRM-CM5"="#56B4E9", "HadGEM2-ES"="#E69F00", "MIROC5"="#F0E442")
+# Define color palettes
+stockPal = c("DOM"="#D55E00", "Live"="#009E73", "Soil"="#E69F00", "TEC"="#f3f3f3")
+gcmPal = c("CanESM2"="#F0E442", "CNRM-CM5"="#0072B2", "HadGEM2-ES"="#D55E00", "MIROC5"="#CC79A7")
 fluxPal = c("NPP"="#2CA02C", "Rh"="#8C564B", "NEP"="#1F77B4", "NECB"="#E1750E")
-firePal = c("FIRE: High Severity"="#f03b20", "FIRE: Medium Severity"="#feb24c", "FIRE: Low Severity"="#ffeda0")
+sevPal = c("High"="#f03b20", "Medium"="#feb24c", "Low"="#ffeda0")
+statePal = c("Forest"="#009E73", "Grassland"="#F0E442", "Shrubland"="#E69F00")
+
+
+
 
 # Define UI for application that draws a histogram
 ui = fluidPage(
@@ -160,7 +120,7 @@ ui = fluidPage(
                                         column(width=12, align="right",
                                                radioGroupButtons(width=250,
                                                    inputId = "stockGroup", label = "Select Carbon Stock", 
-                                                   choices = unique(stocks$StockGroup),
+                                                   choices = c("TEC","Soil","Live","DOM"),
                                                    selected="TEC",
                                                    size="sm",
                                                    justified = TRUE, 
@@ -239,8 +199,8 @@ ui = fluidPage(
                                                     column(width=12, align="right",
                                                            radioGroupButtons(width="200px",
                                                                              inputId = "transitionsDist", label = "Select Disturbance Type", 
-                                                                             choices = unique(transitionsDist$TransitionGroup),
-                                                                             selected="FIRE",
+                                                                             choices = unique(disturbanceData$TransitionGroup),
+                                                                             selected="Fire",
                                                                              size="sm",
                                                                              justified = TRUE, 
                                                                              checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
@@ -263,18 +223,29 @@ ui = fluidPage(
                                         
                                         wellPanel(style = "background: #ffffff",
                                                   fluidRow(
-                                                    column(width=12, align="right",
-                                                           checkboxGroupButtons(inputId="transitionsFire", 
-                                                                                label="Flux Type", 
-                                                                                choiceValues=c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity"),
-                                                                                choiceNames=c("High","Medium","Low"),
-                                                                                selected=c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity"),
+                                                    column(width=6, align="center",
+                                                           checkboxGroupButtons(inputId="severityTypes", 
+                                                                                label="Severity Class", 
+                                                                                choices=c("High", "Medium", "Low"),
+                                                                                selected="High",
                                                                                 direction="horizontal",
                                                                                 size="sm",
                                                                                 width="100%",
-                                                                                checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
-                                                    column(width=12, align="right",
-                                                           plotOutput("transitionsFirePlot", height="600"))))))))
+                                                                                checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                                                    
+                                                           plotOutput("transitionsFirePlot", height="600")),
+                                        
+                                                    column(width=6, align="center",
+                                                          checkboxGroupButtons(inputId="stateTypes", 
+                                                                    label="Land Cover Class", 
+                                                                    choices=c("Forest", "Grassland", "Shrubland"),
+                                                                    selected="Forest",
+                                                                    direction="horizontal",
+                                                                    size="sm",
+                                                                    width="100%",
+                                                                    checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                                               
+                                                         plotOutput("transitionsFirePlot2", height="600"))))))))
                    
                    
                    
@@ -317,7 +288,11 @@ server = (function(input, output, session) {
     updateTabsetPanel(session, "dashboardTabset",
                       selected = "Landcover Transition")
   })
-# Carbon Stocks Page
+
+  
+  
+##### Carbon Stocks Page #####
+##### Stock Plot 1 #####
     selectData1 = reactive({
         stocks %>% filter(Ecosystem=="Yes", LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, StockGroup==input$stockGroup) %>%
                           filter(Timestep>=input$years[1], Timestep<=input$years[2])
@@ -341,10 +316,8 @@ server = (function(input, output, session) {
     
     output$stocksPlot1 <-  renderPlot({
         p1 = ggplot() +
-            geom_ribbon(data=stocksRangeData(), aes(x=Timestep, y=Mean, ymin=Min, ymax=Max), fill="gray90", alpha=0.5) +
+            geom_ribbon(data=stocksRangeData(), aes(x=Timestep, y=Mean, ymin=Min, ymax=Max), fill="gray95") +
             geom_line(data=selectData1(), aes(x=Timestep, y=Mean, fill=GCM, color=GCM)) +
-            #geom_point(aes(x=Timestep, y=Mean, fill=GCM, color=GCM),
-                       #size=2, shape=16, data=filter(selectData1(), Timestep %in% seq(2001,2101,1))) +
             scale_fill_manual(values=gcmPal) +
             scale_color_manual(values=gcmPal) +
             facet_wrap(~RCP, scales="free") +
@@ -404,7 +377,7 @@ server = (function(input, output, session) {
     
     
 
-##### Stock Change Plot #####    
+##### Stock Plot 2 #####    
     
     selectData2 = reactive({
         stocks %>% filter(Ecosystem=="Yes", LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion) %>%
@@ -414,10 +387,10 @@ server = (function(input, output, session) {
     output$stocksPlot2 <- renderPlot({
       p2 = ggplot(data=selectData2(), aes(x=RCP, y=MeanChange, fill=StockGroup, color=StockGroup)) +
             geom_bar(stat="identity", color="black", position="dodge") + 
+            geom_hline(yintercept = 0, color="gray20", size=0.2) +
             scale_fill_manual(values=stockPal) +
             scale_color_manual(values=stockPal) +
-            facet_wrap(~GCM, ncol=4, scales="free") +
-            ylim(-1300,300) +
+            facet_wrap(~GCM, ncol=4) +
             theme_light(18) +
             labs(fill="Carbon Stock Type",
                  x="Climate Scenario (RCP)", 
@@ -435,10 +408,12 @@ server = (function(input, output, session) {
                 plot.margin=margin(5,5,5,5),
                 strip.background = element_blank(),
                 strip.text = element_text(color="gray20", size=14),
-                panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
-                panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.major.x = element_blank(),
+                panel.grid.minor.x = element_blank(),
+                panel.grid.major.y = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor.y = element_line(linetype = "dashed", color="gray90", size=0.1),
                 panel.border = element_blank(),
-                panel.spacing.x = unit(0, "lines"),
+                panel.spacing.x = unit(2, "lines"),
                 axis.title = element_text(size = 14),
                 axis.line = element_line(color="gray60", size=0.5))
         
@@ -480,7 +455,10 @@ server = (function(input, output, session) {
 
     
     
-##### Carbon Flux Page  #####  
+
+    
+##### Carbon Flux Page  ##### 
+##### Flux Plot 1 #####
     selectData3 = reactive({
         netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux==input$netflux) %>%
         group_by(LUC,GCM,RCP,EcoregionName,Flux) %>%
@@ -500,12 +478,16 @@ server = (function(input, output, session) {
       toggle("fluxtable")
     })
     
+    selectData3Round = reactive({
+      netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux==input$netflux) %>%
+        mutate(Mean=round(Mean,2), Lower=round(Lower,2), Upper=round(Upper,2))
+    })
+    
     output$fluxtable = renderDT(server = FALSE, {
-      DT::datatable(selectData3(),  
+      DT::datatable(selectData3Round(),  
                     extensions='Buttons', 
                     options=list(pageLength=5, searching=TRUE, autoWidth=TRUE, ordering=TRUE, dom ='Blfrtip',buttons=c('copy', 'csv', 'excel', "pdf")))
     })
-    
     
     output$fluxplot1 <- renderPlot({
         p3 = ggplot() +
@@ -515,11 +497,11 @@ server = (function(input, output, session) {
           geom_hline(yintercept=0, color="black", size=0.5) +
           scale_fill_manual(values=gcmPal) +
           scale_color_manual(values=gcmPal) +
-          facet_wrap(~RCP, scales="free") +
+          facet_grid(RCP~GCM) +
           theme_minimal(20) +
           labs(fill="Climate Model",
                color="Climate Model",
-               x="Climate Model", 
+               x="", 
                y="Million Metric Tons Carbon", 
                title="Net Change in Carbon Stocks by Scenario",
                subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
@@ -537,8 +519,9 @@ server = (function(input, output, session) {
                 panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
                 panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
                 panel.border = element_blank(),
-                panel.spacing.x = unit(0, "lines"),
-                axis.title = element_text(size = 14),
+                panel.spacing.x = unit(2, "lines"),
+                axis.title = element_blank(),
+                axis.text = element_text(size = 14),
                 axis.line = element_line(color="gray60", size=0.5))
         
 
@@ -554,7 +537,7 @@ server = (function(input, output, session) {
     })
     
     
-    
+##### Flux Plot 2 #####    
     selectData4 = reactive({
         netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, Flux %in% input$netflux2) %>%
         filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% 
@@ -571,7 +554,7 @@ server = (function(input, output, session) {
             facet_grid(GCM~RCP) +
             theme_minimal(20) +
           labs(fill="Carbon Flux Type",
-               x="",
+               x="Carbon Stock Type",
                y="Million Metric Tons Carbon", 
                title="Cumulative Carbon Flux by Scenario",
                subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
@@ -594,6 +577,7 @@ server = (function(input, output, session) {
                 panel.spacing.x = unit(2, "lines"),
                 axis.title = element_text(size = 14),
                 axis.text.y=element_blank(),
+                axis.text.x = element_text(size = 14),
                 axis.line = element_line(color="gray60", size=0.5))
         
         if(input$ci1)
@@ -605,32 +589,37 @@ server = (function(input, output, session) {
     
     
     
-##### Transition Area #####    
+
+    
+##### Disturbances Page #####    
+##### Disturbance Area #####    
     selectData5 = reactive({
-      transitionsDist %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionsDist) %>%
-        filter(Timestep>=input$years[1], Timestep<=input$years[2])
+      disturbanceData %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionsDist) %>%
+        filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% 
+        group_by(LUC,GCM,RCP,Timestep,EcoregionName,TransitionGroup) %>% 
+        summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
     })
     
     distRange = reactive({
-      transitionsDist %>% filter(EcoregionName==input$ecoregion, TransitionGroup==input$transitionsDist) %>% 
-                                   group_by(Timestep,EcoregionName,TransitionGroup) %>% summarise(Mean=mean(Mean), Min=min(Lower), Max=max(Upper))
+      disturbanceData %>% filter(EcoregionName==input$ecoregion, TransitionGroup==input$transitionsDist) %>% 
+        group_by(LUC,GCM,RCP,Timestep,EcoregionName,TransitionGroup) %>% 
+        summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>%
+        group_by(Timestep,EcoregionName,TransitionGroup) %>% summarise(Mean=mean(Mean), Min=min(Lower), Max=max(Upper))
     })
-    
-    
     
     output$transitionsDistPlot = renderPlot({
      p5 = ggplot() +
-       geom_ribbon(data=distRange(), aes(x=Timestep, y=Mean, ymin=Min, ymax=Max), fill="gray90", alpha=0.5) +
+       geom_ribbon(data=distRange(), aes(x=Timestep, y=Mean, ymin=Min, ymax=Max), fill="gray95") +
        geom_line(data=selectData5(), aes(x=Timestep, y=Mean, color=GCM, fill=GCM)) +
-       facet_grid(RCP~GCM) +
+       facet_grid(GCM~RCP) +
        scale_fill_manual(values=gcmPal) +
        scale_color_manual(values=gcmPal) +
        theme_minimal(20) +
        labs(fill="Climate Model",
             color="Climate Model",
             x="",
-            y="km2", 
-            title="Wildfire Area by Year and Scenario",
+            y=expression(square~kilometers~(km^2)), 
+            title="Disturbance Area by Year and Scenario",
             subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
        theme(legend.position = "top",
              legend.justification = "left",
@@ -662,21 +651,25 @@ server = (function(input, output, session) {
     
     
     selectData6 = reactive({
-      transitionsFire %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionsFire) %>%
-        filter(Timestep>=input$years[1], Timestep<=input$years[2])
+      disturbanceData %>% 
+        filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionsDist, Severity %in% input$severityTypes) %>%  
+        filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>%
+        group_by(LUC,GCM,RCP,Timestep,EcoregionName,TransitionGroup, Severity) %>% 
+        summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
     }) 
     
     output$transitionsFirePlot = renderPlot({
-      p6 = ggplot(data=selectData6(), aes(x=Timestep, y=Mean, fill=TransitionGroup)) +
-        geom_bar(stat="identity") +
-        facet_grid(RCP~GCM) +
-        scale_fill_manual(values = firePal) +
+      p6 = ggplot(data=selectData6(), aes(x=RCP, y=Mean, fill=Severity)) +
+        geom_boxplot(outlier.alpha=0.9, outlier.size = 2, outlier.shape = 16) +
+        facet_wrap(~GCM, ncol=1) +
+        coord_flip() +
+        scale_fill_manual(values=sevPal) +
+        scale_color_manual(values=sevPal) +
         theme_minimal(20) +
         labs(fill="Fire Severity",
+             color="Fire Severity",
              x="",
-             y="km2", 
-             title="Average Projected Wildfire Area by Severity Type and Scenario",
-             subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
+             y=expression(square~kilometers~(km^2~yr))) +
         theme(legend.position = "top",
               legend.justification = "left",
               legend.title = element_text(size=14),
@@ -697,6 +690,49 @@ server = (function(input, output, session) {
               axis.line = element_line(color="gray60", size=0.5))
       p6
     
+    })
+    
+    
+    selectData7 = reactive({
+      disturbanceData %>% 
+        filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionsDist, StateClass %in% input$stateTypes) %>%  
+        filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>%
+        group_by(LUC,GCM,RCP,Timestep,EcoregionName,TransitionGroup, StateClass) %>% 
+        summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
+    }) 
+    
+    output$transitionsFirePlot2 = renderPlot({
+      p6 = ggplot(data=selectData7(), aes(x=RCP, y=Mean, fill=StateClass)) +
+        geom_boxplot(outlier.alpha=0.9, outlier.size = 2, outlier.shape = 16) +
+        facet_wrap(~GCM, ncol=1) +
+        coord_flip() +
+        scale_fill_manual(values=statePal) +
+        scale_color_manual(values=statePal) +
+        theme_minimal(20) +
+        labs(fill="State Class",
+             color="State Class",
+             x="",
+             y=expression(square~kilometers~(km^2~yr)))+
+        theme(legend.position = "top",
+              legend.justification = "left",
+              legend.title = element_text(size=14),
+              legend.text = element_text(size=14),
+              legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+              plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+              plot.title = element_text(size=28),
+              plot.subtitle = element_text(size=12),
+              plot.margin=margin(5,5,5,5),
+              strip.background = element_blank(),
+              strip.text = element_text(color="gray20", size=14),
+              panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+              panel.grid.minor = element_blank(),
+              #panel.border = element_blank(),
+              panel.spacing.x = unit(2, "lines"),
+              axis.title = element_text(size = 14),
+              axis.text = element_text(size = 14),
+              axis.line = element_line(color="gray60", size=0.5))
+      p6
+      
     })
     
     
