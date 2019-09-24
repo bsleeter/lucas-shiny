@@ -27,6 +27,12 @@ netFlux = read_csv("data/net_flux.csv")
 netFlux$Flux = factor(netFlux$Flux, levels=c("NECB","NEP","Rh","NPP"))
 unique(netFlux$Flux)
 
+# Process Transition Flows Data
+transFlows = read_csv("data/transitionFlows.csv") %>% mutate(Mean=Mean/1000, Lower=Lower/1000, Upper=Upper/1000)
+transFlows$LUC = factor(transFlows$LUC, levels=c("BAU", "High", "Medium", "Low"))
+transFlows$TransitionGroup = factor(transFlows$TransitionGroup, levels=c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"))
+
+
 # Process Transition Data
 disturbanceData = read_csv("data/disturbances.csv")
 disturbanceData$Severity = factor(disturbanceData$Severity, levels=c("High", "Medium", "Low"))
@@ -44,6 +50,8 @@ gcmPal = c("CanESM2"="#F0E442", "CNRM-CM5"="#0072B2", "HadGEM2-ES"="#D55E00", "M
 fluxPal = c("NPP"="#2CA02C", "Rh"="#8C564B", "NEP"="#1F77B4", "NECB"="#E1750E")
 sevPal = c("High"="#f03b20", "Medium"="#feb24c", "Low"="#ffeda0")
 statePal = c("Forest"="#009E73", "Grassland"="#F0E442", "Shrubland"="#E69F00")
+flowPal = c("Emission"="#a6cee3", "Harvest"="#33a02c", "Mortality"="#b2df8a", "Deadfall"="#1f78b4")
+transPal = c("Urbanization"="#e5c494", "Ag Expansion"="#fc8d62", "Orchard Removal"="#8da0cb", "Forest Selection"="#a6d854", "Forest Clearcut"="#66c2a5", "Fire"="#ffd92f", "Drought"="#e78ac3")
 
 
 
@@ -60,7 +68,8 @@ ui = fluidPage(
                      actionButton('jumpToP1', 'Carbon Stocks'),
                      actionButton('jumpToP2', 'Carbon Net Flux'),
                      actionButton('jumpToP3', 'Land Cover State'),
-                     actionButton('jumpToP4', 'Land Cover Transition')
+                     actionButton('jumpToP4', 'Land Cover Transition'),
+                     actionButton('jumpToP5', 'Land Use Fluxes')
             ),
             tabPanel("Dashboard",value ="dashboardPanel",
                 fluidPage(
@@ -245,7 +254,51 @@ ui = fluidPage(
                                                                     width="100%",
                                                                     checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
                                                
-                                                         plotOutput("transitionsFirePlot2", height="600"))))))))
+                                                         plotOutput("transitionsFirePlot2", height="600"))))),
+                               
+                               tabPanel("Land Use Fluxes", value="Land Use Fluxes", width=12,
+                                        
+                                        wellPanel(style = "background: #ffffff",
+                                                  fluidRow(
+                                                    column(width=12, align="center",
+                                                           radioGroupButtons(width="100%",
+                                                                             inputId = "transitionTypes", label = "Select Transition Type", 
+                                                                             choices = c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"),
+                                                                             selected = "Urbanization",
+                                                                             size = "sm",
+                                                                             justified = TRUE,
+                                                                             direction = "horizontal",
+                                                                             checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                                                           plotOutput("transitionFlows1", height="800")))),
+                                        
+                                        wellPanel(style = "background: #ffffff",
+                                                  fluidRow(
+                                                    column(width=12, align="center",
+                                                           radioGroupButtons(width="100%",
+                                                                                inputId = "transfluxTypes", 
+                                                                                label = "Select Carbon Flux Type", 
+                                                                                choices = c("Deadfall","Emission","Harvest","Mortality"),
+                                                                                selected = "Emission",
+                                                                                size = "sm",
+                                                                                justified = TRUE,
+                                                                                direction = "horizontal",
+                                                                                checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                                                           plotOutput("transitionFlows2", height="800")))),
+                                       
+                                        
+                                         wellPanel(style = "background: #ffffff",
+                                                    fluidRow(
+                                                      column(width=12, align="center",
+                                                           checkboxGroupButtons(width="100%",
+                                                                                inputId="transitionTypes2", 
+                                                                                label="Select Transition Type", 
+                                                                                choices = c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"),
+                                                                                selected = c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"),
+                                                                                direction = "horizontal",
+                                                                                size="sm",
+                                                                                checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                                                           plotOutput("transitionFlows3", height="800"))))
+                                                  ))))
                    
                    
                    
@@ -288,6 +341,13 @@ server = (function(input, output, session) {
     updateTabsetPanel(session, "dashboardTabset",
                       selected = "Landcover Transition")
   })
+  observeEvent(input$jumpToP5, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Land Use Fluxes")
+  })
+
 
   
   
@@ -591,7 +651,9 @@ server = (function(input, output, session) {
     
 
     
-##### Disturbances Page #####    
+
+    
+    ##### Disturbances Page #####    
 ##### Disturbance Area #####    
     selectData5 = reactive({
       disturbanceData %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionsDist) %>%
@@ -737,6 +799,149 @@ server = (function(input, output, session) {
     
     
     
+
+
+
+##### Transition Flows Page #####
+
+  selectData8 = reactive({
+    transFlows %>% filter(LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionTypes) %>%
+       filter(Timestep>=input$years[1], Timestep<=input$years[2]) 
+})
+
+      output$transitionFlows1 <- renderPlot({
+          p8 = ggplot(data=selectData8(), aes(x=Timestep, y=Mean, fill=Flow, color=Flow)) +
+          geom_area(color="gray40", size=0.2) +
+          scale_fill_manual(values=flowPal) +
+          scale_color_manual(values=flowPal) +
+          facet_grid(GCM~RCP) +
+          theme_light(18) +
+          labs(fill="Carbon Flux Type",
+               color="Carbon Flux Type",
+               x="", 
+               y="Million Metric Tons Carbon per Year", 
+               title="Carbon Fluxes by Land Change Type",
+               subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
+          theme(legend.position = "top",
+              legend.justification = "left",
+              legend.title = element_text(size=14),
+              legend.text = element_text(size=14),
+              legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+              plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+              plot.title = element_text(size=28),
+              plot.subtitle = element_text(size=12),
+              plot.margin=margin(5,5,5,5),
+              strip.background = element_blank(),
+              strip.text = element_text(color="gray20", size=14),
+              panel.grid.major.x = element_line(linetype = "dashed", color="gray90", size=0.1),
+              panel.grid.minor.x = element_line(linetype = "dashed", color="gray90", size=0.1),
+              panel.grid.major.y = element_line(linetype = "dashed", color="gray90", size=0.1),
+              panel.grid.minor.y = element_line(linetype = "dashed", color="gray90", size=0.1),
+              panel.border = element_blank(),
+              panel.spacing.x = unit(2, "lines"),
+              axis.title.x = element_blank(),
+              axis.title.y = element_text(size=14),
+              axis.line = element_line(color="gray60", size=0.5))
+  
+        p8
+})
+
+      
+      selectData9 = reactive({
+        transFlows %>% filter(LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion, Flow==input$transfluxTypes) %>%
+          filter(Timestep>=input$years[1], Timestep<=input$years[2]) 
+      })
+      
+      output$transitionFlows2 <- renderPlot({
+        p9 = ggplot(data=selectData9(), aes(x=Timestep, y=Mean, fill=TransitionGroup, color=TransitionGroup)) +
+          geom_area(color="gray40", size=0.2) +
+          scale_fill_manual(values=transPal) +
+          scale_color_manual(values=transPal) +
+          facet_grid(GCM~RCP) +
+          theme_light(18) +
+          labs(fill="Transition Type",
+               color="Transition Type",
+               x="", 
+               y="Million Metric Tons Carbon per Year", 
+               title="Carbon Fluxes by Land Change Type",
+               subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
+          theme(legend.position = "top",
+                legend.justification = "left",
+                legend.title = element_text(size=14),
+                legend.text = element_text(size=14),
+                legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.title = element_text(size=28),
+                plot.subtitle = element_text(size=12),
+                plot.margin=margin(5,5,5,5),
+                strip.background = element_blank(),
+                strip.text = element_text(color="gray20", size=14),
+                panel.grid.major.x = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor.x = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.major.y = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor.y = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.border = element_blank(),
+                panel.spacing.x = unit(2, "lines"),
+                axis.title.x = element_blank(),
+                axis.title.y = element_text(size=14),
+                axis.line = element_line(color="gray60", size=0.5))
+        
+        p9
+      })
+      
+      
+      selectData10 = reactive({
+        transFlows %>% filter(LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionTypes2) %>%
+          filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% 
+          group_by(LUC,GCM,RCP,EcoregionName,TransitionGroup,Flow) %>% summarize(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
+      })
+      
+      output$transitionFlows3 <- renderPlot({
+        p10 = ggplot(data=selectData10(), aes(x=TransitionGroup, y=Mean, fill=Flow, color=Flow)) +
+          geom_bar(stat="identity") +
+          scale_fill_manual(values=flowPal) +
+          scale_color_manual(values=flowPal) +
+          facet_grid(GCM~RCP) +
+          coord_flip() +
+          theme_light(18) +
+          labs(fill="Carbon Flux Type",
+               color="Carbon Flux Type",
+               x="", 
+               y="Million Metric Tons Carbon per Year", 
+               title="Carbon Fluxes by Land Change Type",
+               subtitle="Changes in carbon stocks are calculated between two points in time for each of the 32 scenario combinations.\nDOM is carbon stored in dead organic matter, Live is carbon stored in living biomass, and Soil is soil organic carbon.") +
+          theme(legend.position = "top",
+                legend.justification = "left",
+                legend.title = element_text(size=14),
+                legend.text = element_text(size=14),
+                legend.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.title = element_text(size=28),
+                plot.subtitle = element_text(size=12),
+                plot.margin=margin(5,5,5,5),
+                strip.background = element_blank(),
+                strip.text = element_text(color="gray20", size=14),
+                panel.grid.major.x = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor.x = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.major.y = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor.y = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.border = element_blank(),
+                panel.spacing.x = unit(2, "lines"),
+                axis.title.x = element_blank(),
+                axis.title.y = element_text(size=14),
+                axis.line = element_line(color="gray60", size=0.5))
+
+        p10
+      })
+      
+      
+      
+      
+      
+      
+      
+      
+      
 })
 
 

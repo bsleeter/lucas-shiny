@@ -44,12 +44,23 @@ netFlux$Flux = factor(netFlux$Flux, levels=c("NECB","NEP","Rh","NPP"))
 # Land Use Emissions
 df = read_csv("E:/california-carbon-futures/Data/eco_flows_by_scn_iter_ts.csv")
 unique(df$TransitionGroup)
-df1 = data.frame(TransitionGroup=c("AgExpand", "Fire", "Insects", "Clearcut", "Thinning", "OrchardRemoval", "Urban"),
-                 newName = c("Ag Expansion", "Fire", "Drought", "Forest Clearcut", "Forest Selection", "Orchard Removal", "Urbanization"))
+df1 = tibble(TransitionGroup=as.character(c("AgExpand", "Fire", "Insects", "Clearcut", "Thinning", "OrchardRemoval", "Urban")),
+                 newName = as.character(c("Ag Expansion", "Fire", "Drought", "Forest Clearcut", "Forest Selection", "Orchard Removal", "Urbanization")))
 
 df2 = df %>% left_join(df1, by="TransitionGroup") %>% select(-TransitionGroup) %>% rename("TransitionGroup"="newName") %>%
   group_by(LUC,GCM,RCP,Timestep,EcoregionName, TransitionGroup, Flow) %>%
   summarise(Mean=mean(Amount), Lower=quantile(Amount, 0.025), Upper=quantile(Amount, 0.975))
+df2$TransitionGroup = as.character(df2$TransitionGroup)
+
+df3 = df2 %>% filter(str_detect(Flow, "insects")) %>%
+  group_by(LUC,GCM,RCP,Timestep,EcoregionName,TransitionGroup) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>% mutate(Flow="Mortality")
+df4 = df2 %>% filter(TransitionGroup != "Drought") %>% bind_rows(df3)
+df5 = df4 %>% group_by(LUC,GCM,RCP,Timestep,TransitionGroup,Flow) %>% summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>% mutate(EcoregionName="State") %>%
+  bind_rows(df4)
+write_csv(df5, "data/transitionFlows.csv")
+unique(df5$TransitionGroup)
+
+
 
 
 
