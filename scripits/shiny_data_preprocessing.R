@@ -41,15 +41,21 @@ netFlux = bind_rows(netFluxEco, netFluxState) %>% write_csv("data/net_flux.csv")
 netFlux$Flux = factor(netFlux$Flux, levels=c("NECB","NEP","Rh","NPP"))
 
 
+# Land Use Emissions
+df = read_csv("E:/california-carbon-futures/Data/eco_flows_by_scn_iter_ts.csv")
+unique(df$TransitionGroup)
+df1 = data.frame(TransitionGroup=c("AgExpand", "Fire", "Insects", "Clearcut", "Thinning", "OrchardRemoval", "Urban"),
+                 newName = c("Ag Expansion", "Fire", "Drought", "Forest Clearcut", "Forest Selection", "Orchard Removal", "Urbanization"))
+
+df2 = df %>% left_join(df1, by="TransitionGroup") %>% select(-TransitionGroup) %>% rename("TransitionGroup"="newName") %>%
+  group_by(LUC,GCM,RCP,Timestep,EcoregionName, TransitionGroup, Flow) %>%
+  summarise(Mean=mean(Amount), Lower=quantile(Amount, 0.025), Upper=quantile(Amount, 0.975))
+
+
 
 # Process Transition Data
-transList = c("FIRE", "FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity", "INSECTS", "URBANIZATION", "AGRICULTURAL EXPANSION", "AGRICULTURAL CONTRACTION","HARVEST")
-transFire = c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity")
-transDist = c("FIRE", "INSECTS")
 
 transEco = read_csv("data/ecoregion_transitions_by_scenario_timestep_95ci.csv") 
-
-
 
 # Disturbance Transitions (Fire and Drought)
 fire = transEco %>% filter(str_detect(TransitionGroup, "FIRE"), GroupType=="Type") %>%
@@ -70,6 +76,12 @@ disturbanceState = disturbances %>% group_by(LUC,GCM,RCP,Timestep,TransitionGrou
   summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper)) %>% mutate(EcoregionName="State")
 
 disturbancesFinal = bind_rows(disturbances, disturbanceState) %>% write_csv("data/disturbances.csv")
+
+# Land Use Transitions
+unique(transEco$TransitionGroup)
+
+landuse = transEco %>% filter(str_detect(TransitionGroup, "URBAN") | str_detect(TransitionGroup, "AG"), GroupType=="Group") %>%
+  mutate(TransitionGroup = str_to_title(TransitionGroup))
 
 
   
