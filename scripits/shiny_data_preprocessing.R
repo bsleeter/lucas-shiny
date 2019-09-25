@@ -5,7 +5,7 @@ library(tidyverse)
 library(stringr)
 
 
-# Process Carbon Stock Data
+# Process Carbon Stock Data #####
 stocksEco = read_csv("data/ecoregion_stocks_by_scenario_timestep_95ci.csv") %>% 
   filter(Ecosystem=="Yes") %>% 
   mutate(Mean=Mean/1000, Lower=Lower/1000, Upper=Upper/1000) %>% 
@@ -30,7 +30,7 @@ stocks = bind_rows(stocksEco, stocksState, stocksEcoTEC, stocksStateTEC) %>%
   mutate(Mean=round(Mean,3), Lower=round(Lower,3), Upper=round(Upper,3)) %>% write_csv("data/stocks.csv")
 
 
-# Process Net Flux List
+# Process Net Flux List #####
 fluxEco = read_csv("data/ecoregion_netflux_by_scenario_timestep_95ci.csv") %>% select(-EcoregionID)
 fluxState = read_csv("data/state_netflux_by_scenario_timestep_95ci.csv")
 
@@ -41,7 +41,7 @@ netFlux = bind_rows(netFluxEco, netFluxState) %>% write_csv("data/net_flux.csv")
 netFlux$Flux = factor(netFlux$Flux, levels=c("NECB","NEP","Rh","NPP"))
 
 
-# Land Use Emissions
+# Land Use Emissions #####
 df = read_csv("E:/california-carbon-futures/Data/eco_flows_by_scn_iter_ts.csv")
 unique(df$TransitionGroup)
 df1 = tibble(TransitionGroup=as.character(c("AgExpand", "Fire", "Insects", "Clearcut", "Thinning", "OrchardRemoval", "Urban")),
@@ -64,8 +64,7 @@ unique(df5$TransitionGroup)
 
 
 
-# Process Transition Data
-
+# Process Transition Data #####
 transEco = read_csv("data/ecoregion_transitions_by_scenario_timestep_95ci.csv") 
 
 # Disturbance Transitions (Fire and Drought)
@@ -96,11 +95,63 @@ landuse = transEco %>% filter(str_detect(TransitionGroup, "URBAN") | str_detect(
 
 
   
+# State Class Data #####
+df = tibble(EcoregionName=c("Coast Range","Cascades","Sierra Nevada","California Chaparral and Oak Woodlands","Central California Valley",
+                            "Southern California Mountains","Eastern Cascades Slopes and Foothills","Central Basin and Range",
+                            "Mojave Basin and Range","Klamath Mountains","Northern Basin and Range","Sonoran Basin and Range","State"),
+            ShortName=c("Coast Range","Cascades","Sierra Nevada","Oak Woodlands","Central Valley","SoCal Mtns.","East Cascades","Central B&R","Mojave B&R","Klamath Mtns.", 
+                        "Northern B&R","Sonoran B&R","State"))
+df1 = read_csv("data/state_lulc_by_scenario_timestep_95ci.csv") %>% mutate(EcoregionName="State")
+df2 = read_csv("data/ecoregion_lulc_by_scenario_timestep_95ci.csv") %>% select(-EcoregionID) %>% bind_rows(df1) %>% left_join(df) %>%
+  select(-EcoregionName) %>% rename("EcoregionName"="ShortName") %>%
+  write_csv("data/lulc.csv")
 
-transState = read_csv("data/state_transitions_by_scenario_timestep_95ci.csv") %>% filter(TransitionGroup %in% transList) %>% mutate(EcoregionName="State")
-transitions = bind_rows(transEco, transState) %>% select(-EcoregionID, -GroupType)
-transitionsFire = transitions %>% filter(TransitionGroup %in% transFire)
-transitionsFire$TransitionGroup = factor(transitionsFire$TransitionGroup, levels=c("FIRE: High Severity", "FIRE: Medium Severity", "FIRE: Low Severity"))
+unique(df2$EcoregionName)
+unique(transEco$EcoregionName)
 
-transitionsDist = transitions %>% filter(TransitionGroup %in% transDist)
-unique(transitionsDist$TransitionGroup)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
