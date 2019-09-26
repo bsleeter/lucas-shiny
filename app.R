@@ -16,6 +16,7 @@ library(ggplot2)
 library(readr)
 library(zoo)
 library(DT)
+library(colorspace)
 
 
 # Process Carbon Stock Data
@@ -708,16 +709,20 @@ server = (function(input, output, session) {
 ##### Flux Plot 3 ##### 
     selectData20 = reactive({
       netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, Flux %in% input$netflux, EcoregionName!="State", Flux=="NECB") %>%
-        filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% mutate(CumSum=cumsum(Mean))
+        filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% mutate(CumSum=cumsum(Mean)) %>%
+        mutate(positive = ifelse(CumSum>=0, CumSum,0),
+               negative = ifelse(CumSum<0,CumSum, -1e-36))
+
     })
     
     output$netfluxPlot3 = renderPlot({
-      p20 = ggplot(data=selectData20(), aes(x=Timestep, y=CumSum, fill=EcoregionName, color=EcoregionName)) +
-        geom_bar(stat="identity") +
+      p20 = ggplot() +
+        geom_area(data=selectData20(), aes(x=Timestep, y=positive, fill=EcoregionName, color=EcoregionName), size=0.1) +
+        geom_area(data=selectData20(), aes(x=Timestep, y=negative, fill=EcoregionName, color=EcoregionName), size=0.1) +
         geom_hline(yintercept=0) +
         facet_grid(GCM~RCP) +
-        scale_fill_brewer(palette="Paired") +
-        scale_color_brewer(palette="Paired") +
+        scale_fill_discrete_qualitative(palette = "Dark 3") +
+        scale_color_discrete_qualitative(palette = "Dark 3") +
         theme_light(18) +
         labs(x="",
              y="Million Metric Tons of Carbon (MMT C)") +
