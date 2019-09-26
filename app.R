@@ -70,13 +70,78 @@ ui = fluidPage(
        includeHTML("www/header.html"),
        tags$head(includeCSS("www/common.css")),
        navbarPage("California Carbon Scenarios",id="navTabset",
-            tabPanel("Home",value = "homePanel",
-                  
-                     actionButton('jumpToP11', 'Carbon Stocks'),
-                     actionButton('jumpToP12', 'Carbon Net Flux'),
-                     actionButton('jumpToP13', 'Land Cover State'),
-                     actionButton('jumpToP14', 'Land Cover Transition'),
-                     actionButton('jumpToP15', 'Land Use Fluxes')
+        tabPanel("Home",value = "homePanel",  
+           #Banner
+           tags$div(
+             tags$div(  
+               tags$div(
+                 column(8, 
+                        tags$img(src = "ca_boxes.png", height = "200px", class="toolBoxImg"),
+                        tags$h1("California Carbon Scenarios", id="bannerHeader"),
+                        tags$p("Land change and carbon balance scenario projections for the State of California with the LUCAS model", id="bannerText"),
+                        offset = 2),
+                 class="row"),
+               class = "container"),
+             class="row", id="banner"),
+           #Tools Row
+           tags$div(
+             tags$div( 
+               #Tools Title
+               tags$div(
+                 tags$h1("Explore Projections", id="toolsTitle"),
+                 class="row", id="toolsTitleRows"), 
+               tags$div(
+                 tags$div(
+                   tags$h3("Carbon Stocks"),
+                   tags$div(
+                     tags$img(src = "stocks_80.png", height = "80px", class="toolBoxImg"),
+                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     actionButton('jumpToP1', 'Explore stocks'), 
+                     class ="row"),
+                   class="toolBox"),     
+                 tags$div(
+                   tags$h3("Carbon Net Flux"),
+                   tags$div(
+                     tags$img(src = "net_flux_80.png", height = "80px", class="toolBoxImg"),
+                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     actionButton('jumpToP2', 'Explore fluxes'),
+                     class ="row"),
+                   class="toolBox"),   
+                 tags$div(  
+                   tags$h3("Land Cover Fluxes"), 
+                   tags$div(
+                     tags$img(src = "transition_80.png", height = "80px", class="toolBoxImg"),
+                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     actionButton('jumpToP5', 'Explore fluxes'),
+                     class ="row"),
+                   class="toolBox"),  
+                # tags$div(
+                #   tags$h3("Carbon Flows"),
+                #   tags$div(
+                #     tags$img(src = "fluxes_80.png", height = "80px", class="toolBoxImg"),
+                #     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                #     actionButton('jumpToP', 'Explore flows'),
+                #     class ="row"),
+                #   class="toolBox"),      
+                 tags$div(
+                   tags$h3("Land Cover State Class"),
+                   tags$div(
+                     tags$img(src = "landuse_80.png", height = "80px", class="toolBoxImg"),
+                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     actionButton('jumpToP3', 'Explore state classes'), 
+                     class ="row"),
+                   class="toolBox"), 
+                 tags$div(
+                   tags$h3("Land Cover Disturbance"),
+                   tags$div(
+                     tags$img(src = "disturbance_80.png", height = "80px", class="toolBoxImg"),
+                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     actionButton('jumpToP4', 'Explore disturbance'),
+                     class ="row"),
+                   class="toolBox"),     
+                 id="toolsRow"),    
+               class = "container"),      
+             class="row", id="tools")    
             ),
             tabPanel("Dashboard",value ="dashboardPanel",
                 fluidPage(
@@ -130,7 +195,7 @@ ui = fluidPage(
                        
                        mainPanel(width=9,   
                            tabsetPanel(id="dashboardTabset",
-                               tabPanel("Carbon Stocks",value = "Carbon Stocks Projected Carbon Storage in California", width=12,
+                               tabPanel("Carbon Stocks",value = "Carbon Stocks", width=12,
                                   wellPanel(style = "background: #ffffff",
                                       fluidRow(      
                                         actionButton('jumpToP1', 'Carbon Stocks'),
@@ -284,7 +349,7 @@ ui = fluidPage(
                                
                                
                                
-                               tabPanel("Landcover Transition", value="Landcover Transition", width=12,
+                               tabPanel("Land Cover Disturbance", value="Land Cover Disturbance", width=12,
                                         wellPanel(style = "background: #ffffff",
                                                   fluidRow(
                                                     column(width=12, align="left", h2("This is the plot title")),
@@ -343,7 +408,7 @@ ui = fluidPage(
                                
                                
                                
-                               tabPanel("Landcover Totals", value="Landcover Totals",
+                               tabPanel("Land Cover Totals", value="Land Cover Totals",
                                         wellPanel(style = "background: #ffffff",
                                                   fluidRow(
                                                     column(width=12, align="left", h2("This is the plot title")),
@@ -364,34 +429,46 @@ ui = fluidPage(
                                                                              size="sm",
                                                                              justified = TRUE, 
                                                                              checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                           plotOutput("lulcPlot1", height="700")))))
-                               
-                               
-                               
-                               )))
+                                                           plotOutput("lulcPlot1", height="700"))))))))
                    
                    
                    
                    
-                  ),
-                  includeHTML("www/footer.html")
-            )
-       )
-           
+                )
+            ),
+        tabPanel("About",value ="aboutPanel",
+                 fluidPage(
+                   "About Panel"
+                 )
+        ),
+        tabPanel("Data",value ="dataPanel",
+                 fluidPage(
+                   "Data Panel"
+                 )
+        ),
+        tabPanel("Contact",value ="contactPanel",
+                 fluidPage(
+                   "Contact Panel"
+                 )
+        )
+       ),
+       
+       includeHTML("www/footer.html") 
+       
 )                 
                            
 
 
 server = (function(input, output, session) {
   ## starts app in dashboard app with first tab selected
-  updateTabsetPanel(session, "navTabset",
-                    selected = "dashboardPanel")
+  #updateTabsetPanel(session, "navTabset",
+                    #selected = "dashboardPanel")
   
   observeEvent(input$jumpToP1, {
     updateTabsetPanel(session, "navTabset",
                       selected = "dashboardPanel")
     updateTabsetPanel(session, "dashboardTabset",
-                      selected = "Carbon Stocks Projected Carbon Storage in California")
+                      selected = "Carbon Stocks")
   })
   observeEvent(input$jumpToP2, {
     updateTabsetPanel(session, "navTabset",
@@ -403,13 +480,13 @@ server = (function(input, output, session) {
     updateTabsetPanel(session, "navTabset",
                       selected = "dashboardPanel")
     updateTabsetPanel(session, "dashboardTabset",
-                      selected = "Landcover Totals") 
+                      selected = "Land Cover Totals") 
   })
   observeEvent(input$jumpToP4, {
     updateTabsetPanel(session, "navTabset",
                       selected = "dashboardPanel")
     updateTabsetPanel(session, "dashboardTabset",
-                      selected = "Landcover Transition")
+                      selected = "Land Cover Disturbance")
   })
   observeEvent(input$jumpToP5, {
     updateTabsetPanel(session, "navTabset",

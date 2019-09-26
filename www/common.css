@@ -349,7 +349,100 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 #navTabset{
 	float:right
 }
+#ca_image{
+	height:200px
+}
+#banner{
+	color: #ffffff;
+    margin-top: -20px;
+    padding-top: 80px;
+    padding-bottom: 80px;
+	background:  linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("./banners/24752452691_e72848d463_o.jpg") 50% 50% no-repeat; 
+	background-size: cover;
+}
+#bannerHeader{
+	font-size: 42px;
+}
+#bannerText{
+	font-size: 18px;
+}
+#tools{
+	background-color:#ffffff;
+	padding-top:25px;
+	padding-bottom:25px
+}
+.toolsRows{
+	padding-top:25px;
+	padding-bottom:25px;
+	text-align:center;
+	align-self: center;
+}
+.tool-card{
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18), 0 1px 5px 0 rgba(0,0,0,.15);
+	 display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+	margin-left:20px;
+	padding-top:20px;
+	padding-bottom:20px;
+	padding-left:30px;
+	padding-right:30px;
+	height:200px
+}
+
+
+#toolsRow{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
 	
+	background-color:#ffffff;
+	padding-top:25px;
+	padding-bottom:25px;
+	
+	
+}
+.toolBox{ 
+	flex-basis: 450px;
+    flex-grow: 1;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18), 0 1px 5px 0 rgba(0,0,0,.15);
+    text-align:left;
+    margin-right:10px;
+	margin-left:10px;
+	padding-top:10px;
+	padding-bottom:20px;
+	padding-left:30px;
+	padding-right:30px;
+	margin-top:20px;
+	border: 1px solid rgba(33,37,41,.125);
+	max-width: 450px;
+}
+
+.toolBoxImg{
+	
+	float:left;
+	margin-right:10px;
+	
+}
+
+@media (min-width: 1800px){
+	.container {
+		width: 1600px;
+	}
+}
+
+#toolsTitleRows{
+	display:flex;
+	justify-content: center;
+)
+
+
+
+/* 	
 .nav > li > a[data-value='Carbon StocksProjected Carbon Storage in California']{
 	background-image: url("stocks_80.png");                     
     background-repeat:   no-repeat;
@@ -391,19 +484,7 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	margin-left:25px;
 	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
 	
-}
-
-.nav > li > a[data-value='Land Use Flows']{
-	background-image: url("transition_80.png");                     
-    background-repeat:   no-repeat;
-	height:85px;
-	padding-left:90px;
-	padding-top: 30px;
-	background-color: #e7e7e7 !important;
-	margin-left:25px;
-	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
-	
-}
+}*/
 .navbar-default {
     border-color: white !important;
 }
