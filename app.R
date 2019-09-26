@@ -147,7 +147,14 @@ ui = fluidPage(
             ),
             tabPanel("Dashboard",value ="dashboardPanel",
                 fluidPage(
-                   sidebarLayout(
+                  actionBttn(inputId = "jumpToP10",label = "Carbon Stocks", style = "material-flat",color = "danger"),
+                  actionBttn(inputId = "jumpToP20",label = "Carbon Net Flux", style = "material-flat",color = "danger"),
+                  actionBttn(inputId = "jumpToP30",label = "Land Cover State", style = "material-flat",color = "danger"),
+                  actionBttn(inputId = "jumpToP40",label = "Land Cover Disturbance", style = "material-flat",color = "danger"),
+                  actionBttn(inputId = "jumpToP50",label = "Land Use Fluxes", style = "material-flat",color = "danger"),
+                   
+                
+                  sidebarLayout(
                        sidebarPanel(width=3, style = "background: #ffffff; color: #000000", h4("Scenario Controls"), 
                            awesomeRadio(
                              inputId="ecoregion",
@@ -490,6 +497,39 @@ server = (function(input, output, session) {
                       selected = "Land Cover Disturbance")
   })
   observeEvent(input$jumpToP5, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Land Use Fluxes")
+  })
+  
+  
+  
+  observeEvent(input$jumpToP10, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Carbon Stocks")
+  })
+  observeEvent(input$jumpToP20, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Net Carbon Fluxes")
+  })
+  observeEvent(input$jumpToP30, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Land Cover Totals") 
+  })
+  observeEvent(input$jumpToP40, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Land Cover Disturbance")
+  })
+  observeEvent(input$jumpToP50, {
     updateTabsetPanel(session, "navTabset",
                       selected = "dashboardPanel")
     updateTabsetPanel(session, "dashboardTabset",
