@@ -33,7 +33,6 @@ transFlows = read_csv("data/transitionFlows.csv") %>% mutate(Mean=Mean/1000, Low
 transFlows$LUC = factor(transFlows$LUC, levels=c("BAU", "High", "Medium", "Low"))
 transFlows$TransitionGroup = factor(transFlows$TransitionGroup, levels=c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"))
 
-
 # Process Transition Data
 disturbanceData = read_csv("data/disturbances.csv")
 disturbanceData$Severity = factor(disturbanceData$Severity, levels=c("High", "Medium", "Low"))
@@ -73,11 +72,11 @@ ui = fluidPage(
        navbarPage("California Carbon Scenarios",id="navTabset",
             tabPanel("Home",value = "homePanel",
                   
-                     actionButton('jumpToP1', 'Carbon Stocks'),
-                     actionButton('jumpToP2', 'Carbon Net Flux'),
-                     actionButton('jumpToP3', 'Land Cover State'),
-                     actionButton('jumpToP4', 'Land Cover Transition'),
-                     actionButton('jumpToP5', 'Land Use Fluxes')
+                     actionButton('jumpToP11', 'Carbon Stocks'),
+                     actionButton('jumpToP12', 'Carbon Net Flux'),
+                     actionButton('jumpToP13', 'Land Cover State'),
+                     actionButton('jumpToP14', 'Land Cover Transition'),
+                     actionButton('jumpToP15', 'Land Use Fluxes')
             ),
             tabPanel("Dashboard",value ="dashboardPanel",
                 fluidPage(
@@ -131,7 +130,14 @@ ui = fluidPage(
                        
                        mainPanel(width=9,   
                            tabsetPanel(id="dashboardTabset",
-                               tabPanel("Carbon Stocks",value = "Carbon Stocks Projected Carbon Storage in California", width=12, 
+                               tabPanel("Carbon Stocks",value = "Carbon Stocks Projected Carbon Storage in California", width=12,
+                                  wellPanel(style = "background: #ffffff",
+                                      fluidRow(      
+                                        actionButton('jumpToP1', 'Carbon Stocks'),
+                                        actionButton('jumpToP2', 'Carbon Net Flux'),
+                                        actionButton('jumpToP3', 'Land Cover State'),
+                                        actionButton('jumpToP4', 'Land Cover Transition'),
+                                        actionButton('jumpToP5', 'Land Use Fluxes'))),     
                                    wellPanel(style = "background: #ffffff", 
                                        fluidRow(
                                          column(width=12, align="left", h2("Projected Carbon Storage in California by Scenario")),
@@ -406,6 +412,38 @@ server = (function(input, output, session) {
                       selected = "Landcover Transition")
   })
   observeEvent(input$jumpToP5, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Land Use Fluxes")
+  })
+  
+
+  observeEvent(input$jumpToP11, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Carbon Stocks Projected Carbon Storage in California")
+  })
+  observeEvent(input$jumpToP12, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Net Carbon Fluxes")
+  })
+  observeEvent(input$jumpToP13, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Landcover Totals") 
+  })
+  observeEvent(input$jumpToP14, {
+    updateTabsetPanel(session, "navTabset",
+                      selected = "dashboardPanel")
+    updateTabsetPanel(session, "dashboardTabset",
+                      selected = "Landcover Transition")
+  })
+  observeEvent(input$jumpToP15, {
     updateTabsetPanel(session, "navTabset",
                       selected = "dashboardPanel")
     updateTabsetPanel(session, "dashboardTabset",
