@@ -65,8 +65,7 @@ ecoPal = c("Coast Range"="#31a354", "Cascades"="#78c679", "East Cascades"="#ffff
 
 
 # Define UI for application that draws a histogram
-ui = fluidPage(theme = "lumen",
-       setBackgroundColor(color="#f1f1f1", gradient=c("linear"), direction=c("bottom"), shinydashboard = FALSE),
+ui = fluidPage(
        useShinyjs(),
        includeHTML("www/header.html"),
        tags$head(includeCSS("www/common.css")),
@@ -148,15 +147,15 @@ ui = fluidPage(theme = "lumen",
             ),
             tabPanel("Dashboard",value ="dashboardPanel",
                 fluidPage(
-                    actionGroupButtons(inputIds = c("jumpToP10","jumpToP20","jumpToP50","jumpToP30","jumpToP40"), 
-                                     labels = c("Stocks","Net Fluxes","Land Use Fluxes","Land Use & Cover","Disturbance"), 
-                                     size="sm", 
-                                     direction = "horizontal", 
-                                     fullwidth = TRUE,
-                                     status = "myClass"),
+                    actionButton(inputId = "jumpToP10", label = "Carbon Stocks"),
+                    actionButton(inputId = "jumpToP20", label = "Net Fluxes"),
+                    actionButton(inputId = "jumpToP50", label = "Land Use Fluxes"),
+                    actionButton(inputId = "jumpToP30", label = "Land Use & Land Cover"),
+                    actionButton(inputId = "jumpToP40", label = "Wildfire & Drought"),
+                    hr(),
                 
                     sidebarLayout(
-                       sidebarPanel(width=3, style = "background: #ffffff; color: #000000", h4("Scenario Controls"), 
+                       sidebarPanel(width=3, style = "background-color: #00264c; color: #ffffff",
                            awesomeRadio(
                              inputId="ecoregion",
                              label="Region of Interest",
@@ -208,10 +207,10 @@ ui = fluidPage(theme = "lumen",
                                tabPanel("Carbon Stocks",value = "Carbon Stocks", width=12,
                                   tabsetPanel(
                                     tabPanel("Carbon stocks over time", 
-                                             wellPanel(style = "background: #ffffff",
+                                             
                                                        fluidRow(align="right",
                                                          radioGroupButtons(width=250,
-                                                                           inputId = "stockGroup", label = "Select Carbon Stock", 
+                                                                           inputId = "stockGroup", label = "", 
                                                                            choices = c("TEC","Soil","Live","DOM"),
                                                                            selected="TEC",
                                                                            size="sm",
@@ -231,9 +230,9 @@ ui = fluidPage(theme = "lumen",
                                                                           value=FALSE,
                                                                           status="success",
                                                                           fill = TRUE),
-                                                                        DTOutput("stocktable"))))),
+                                                                        DTOutput("stocktable")))),
                                     tabPanel("Net change in carbon stocks",
-                                            wellPanel(style = "background: #ffffff",
+                                            
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Net Change in Carbon Stocks by Scenario")),
                                                         column(width=12, align="left", "This plot shows the net change in carbon storage for each of the stock groups between two dates.
@@ -242,53 +241,53 @@ ui = fluidPage(theme = "lumen",
                                                                standing and dowed dead vegetation, and Live includes all above- and below-ground living vegetation. TEC is total ecosystem 
                                                                carbon and is the sum of the Soil, DOM, and Live pools."),
                                                         column(width=12,
-                                                                plotOutput("stocksPlot2", height="600", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
-                                                                uiOutput("stocksPlot2_hover_info"))))))),
+                                                                plotOutput("stocksPlot2", height="700", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
+                                                                uiOutput("stocksPlot2_hover_info")))))),
 
                                
                                tabPanel("Net Carbon Fluxes", value="Net Carbon Fluxes", width=12,
                                         tabsetPanel(
                                           tabPanel("NECB by Ecoregion",
-                                            wellPanel(style = "background: #ffffff",
+                                            
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Cumulative Net Ecosystem Carbon Balance (NECB) by Ecoregion and Scenario")),
                                                         column(width=12, align="left", "This plot shows the cumulative net ecosystem carbon balance, or the total net amount of carbon which was either stored or sequestered in ecosystems,
                                                                Each colored area shows the cumulative NECB over time. Positive values indicate the region was a net sink of carbon while negative values indicate that the region was a 
                                                                net source of carbon to the atmosphere."),
                                                         column(width=12,
-                                                              plotOutput("netfluxPlot3", height="500px"))))),
+                                                              plotOutput("netfluxPlot3", height="700px")))),
                                           tabPanel("Net flux over time",
-                                            wellPanel(style = "background: #ffffff",     
+                                               
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Net Carbon Flux over Time")),
                                                         column(width=12, align="left", "This plot shows a rolling 10-year average of four different carbon fluxes plotted over time for each scenario.
                                                                NPP is net primary productivity, Rh is heterotrophic respiration (respiration from dead organic matter and soils), NEP is net ecosystem productivity (NPP minus Rh),
                                                                and NECB is net ecosystem carbon balance (NEP minus carbon losses from land use and disturbances)."),
                                                         column(width=12, align="right",
-                                                               radioGroupButtons(width=250,inputId = "netflux", label = "Select Flux Type",choices = c("NPP","Rh","NEP","NECB"),selected="NECB",size="sm",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                                               radioGroupButtons(width=250,inputId = "netflux", label = "",choices = c("NPP","Rh","NEP","NECB"),selected="NECB",size="sm",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="right",
                                                                plotOutput("fluxplot1", height="600"),
                                                                prettySwitch(inputId = "showFluxTable",label = "View Chart Data", value=FALSE,status="success",fill = TRUE),
                                                                prettySwitch(inputId="annual",label="Add Annual Projections",value=FALSE,status="primary",slim=TRUE),
                                                                prettySwitch(inputId="smooth",label="Add Trend Line",value=FALSE,status="primary",slim=TRUE),
-                                                               DTOutput("fluxtable"))))),
+                                                               DTOutput("fluxtable")))),
                                         tabPanel("Cumulative Net Flux",  
-                                          wellPanel(style = "background: #ffffff",
+                                          
                                                     fluidRow(
                                                       column(width=12, align="left", h2("Cumulative Net Carbon Flux by Scenario")),
                                                       column(width=12, align="left", "This plot shows the mean cumulative net carbon flux and corresponding 95% confidence intervals for each climate model and scenario.
                                                              Negative values indicate a loss of carbon from ecosystems while positive values indicate ecosystems were a net sink of carbon."),
                                                       column(width=6, align="left"),
                                                       column(width=6, align="right",
-                                                             checkboxGroupButtons(inputId="netflux2",label="Flux Type", choices=c("NPP","Rh","NEP","NECB"),selected="NECB",direction="horizontal",size="sm",width="100%",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                                             checkboxGroupButtons(inputId="netflux2",label="", choices=c("NPP","Rh","NEP","NECB"),selected=c("NPP","Rh","NEP","NECB"),direction="horizontal",size="sm",width="100%",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                       column(width=12, align="right",
-                                                             plotOutput("fluxplot2", height="600"))))))),
+                                                             plotOutput("fluxplot2", height="600")))))),
 
                                
                                tabPanel("Land Use Fluxes", value="Land Use Fluxes", width=12,
                                         tabsetPanel(
                                           tabPanel("Fluxes by Land Use Change",
-                                                   wellPanel(style = "background: #ffffff",
+                                                   
                                                              fluidRow(
                                                                column(width=12, h2("Carbon fluxes from land use change and disturbance")),
                                                                column(width=12, "The LUCAS model projected a range of carbon fluxes resulting from land use change and disturbance. Use the sceanrio controls
@@ -303,9 +302,9 @@ ui = fluidPage(theme = "lumen",
                                                                              justified = TRUE,
                                                                              direction = "horizontal",
                                                                              checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                              plotOutput("transitionFlows1", height="500"))))),
+                                                              plotOutput("transitionFlows1", height="600")))),
                                           tabPanel("...by Flux Type",
-                                                   wellPanel(style = "background: #ffffff",
+                                                   
                                                              fluidRow(
                                                                       column(width=12, align="left", h2("This is the plot title")),
                                                                       column(width=12, align="left", "This is the plot subtitle which is used to convey additional information about the plot and the controls."),
@@ -319,9 +318,9 @@ ui = fluidPage(theme = "lumen",
                                                                                 justified = TRUE,
                                                                                 direction = "horizontal",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                           plotOutput("transitionFlows2", height="800"))))),
+                                                           plotOutput("transitionFlows2", height="600")))),
                                           tabPanel("Cumulative Land Use Fluxes",
-                                                   wellPanel(style = "background: #ffffff",
+                                                   
                                                              fluidRow(
                                                                       column(width=12, align="left", h2("This is the plot title")),
                                                                       column(width=12, align="left", "This is the plot subtitle which is used to convey additional information about the plot and the controls."),
@@ -334,7 +333,7 @@ ui = fluidPage(theme = "lumen",
                                                                                 direction = "horizontal",
                                                                                 size="sm",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                                             plotOutput("transitionFlows3", height="800"))))))),
+                                                                             plotOutput("transitionFlows3", height="600")))))),
                                
                                
                                
@@ -342,7 +341,7 @@ ui = fluidPage(theme = "lumen",
                                tabPanel("Land Cover Disturbance", value="Land Cover Disturbance", width=12,
                                         tabsetPanel(
                                           tabPanel("Disturbance over time",
-                                            wellPanel(style = "background: #ffffff",
+                                            
                                                   fluidRow(
                                                            column(width=12, align="left", h2("Annual Disturbance Area by Scenario")),
                                                            column(width=12, align="left", "Plot shows the mean and 95% confidence intervals of disturbed area over time for climate model and scenario. 
@@ -371,9 +370,9 @@ ui = fluidPage(theme = "lumen",
                                                                     value=FALSE,
                                                                     status="success",
                                                                     fill = TRUE),
-                                                                  DTOutput("transitiontable"))))),
+                                                                  DTOutput("transitiontable")))),
                                           tabPanel("Disturbance by severity class",
-                                            wellPanel(style = "background: #ffffff",
+                                            
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Disturbance by Severity Class")),
                                                         column(width=12, align="left", "The boxplot shows the distribution of mean annual disturbance area by scenario and has been disaggregated by severity class. 
@@ -389,9 +388,9 @@ ui = fluidPage(theme = "lumen",
                                                                                 width="100%",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="center",
-                                                           plotOutput("transitionsFirePlot", height="600"))))),
+                                                           plotOutput("transitionsFirePlot", height="600")))),
                                           tabPanel("Disturbance by Land Cover Class",
-                                            wellPanel(style = "background: #ffffff",
+                                            
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Disturbance by Land Cover Class")),
                                                         column(width=12, align="left", "The boxplot shows the distribution of mean annual disturbance area by scenario and has been disaggregated by land cover class. 
@@ -407,22 +406,22 @@ ui = fluidPage(theme = "lumen",
                                                                                 width="100%",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="center",
-                                                           plotOutput("transitionsFirePlot2", height="700"))))))),
+                                                           plotOutput("transitionsFirePlot2", height="600")))))),
                                
                                
                                
                                tabPanel("Land Cover Totals", value="Land Cover Totals",
                                   tabsetPanel(
                                     tabPanel("Land Use/Land Cover Area",
-                                        wellPanel(style = "background: #ffffff",
+                                        
                                                   fluidRow(
                                                     column(width=12, align="left", h2("Land Use/Land Cover Composition")),
                                                     column(width=12, align="left", "This plot shows the composition of land use & land cover for the selected region and scenario at two points in time.
                                                            Values are expressed as the percent of the regions total area."),
                                                     column(width=12, align="left",
-                                                          plotOutput("lulcPlot2", height="700"))))),
+                                                          plotOutput("lulcPlot2", height="700")))),
                                     tabPanel("Land Use/Land Cover over Time",
-                                        wellPanel(style = "background: #ffffff",
+                                        
                                                   fluidRow(
                                                     column(width=12, align="left", h2("Land Use/Land Cover Composition Over Time")),
                                                     column(width=12, align="left", "This plot shows the composition of land use and land cover over time. The gray shaded area represents the range of values
@@ -430,13 +429,13 @@ ui = fluidPage(theme = "lumen",
                                                     column(width=12, align="right",
                                                            
                                                            checkboxGroupButtons(width="100%",
-                                                                             inputId = "lulcType", label = "Select LULC Type", 
+                                                                             inputId = "lulcType", label = "", 
                                                                              choices = c("Agriculture","Developed","Forest","Grassland","Shrubland","Wetland"),
                                                                              selected = c("Agriculture","Developed","Forest","Grassland","Shrubland","Wetland"),
                                                                              size="sm",
                                                                              justified = TRUE, 
                                                                              checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                           plotOutput("lulcPlot1", height="700"))))))))))
+                                                           plotOutput("lulcPlot1", height="700")))))))))
                    
                    
                    
@@ -578,7 +577,7 @@ server = (function(input, output, session) {
                   legend.title = element_text(size=14),
                   legend.text = element_text(size=14),
                   legend.background = element_rect(fill="#ffffff", color="#ffffff"),
-                  plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                  plot.background = element_rect(fill="#ffffff", color=NA),
                   plot.title = element_blank(),
                   plot.subtitle = element_blank(),
                   plot.margin=margin(5,5,5,5),
@@ -646,7 +645,7 @@ server = (function(input, output, session) {
                 legend.title = element_text(size=14),
                 legend.text = element_text(size=14),
                 legend.background = element_rect(fill="#ffffff", color="#ffffff"),
-                plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.background = element_rect(fill="#ffffff", color=NA),
                 plot.title = element_blank(),
                 plot.subtitle = element_blank(),
                 plot.margin=margin(5,5,5,5),
@@ -754,7 +753,7 @@ server = (function(input, output, session) {
                 legend.title = element_text(size=14),
                 legend.text = element_text(size=14),
                 legend.background = element_rect(fill="#ffffff", color="#ffffff"),
-                plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.background = element_rect(fill="#ffffff", color=NA),
                 plot.title = element_blank(),
                 plot.subtitle = element_blank(),
                 plot.margin=margin(5,5,5,5),
@@ -798,14 +797,14 @@ server = (function(input, output, session) {
             facet_grid(GCM~RCP) +
             theme_minimal(20) +
           labs(fill="Carbon Flux Type",
-               x="Carbon Stock Type",
+               x="",
                y="Million Metric Tons Carbon") +
           theme(legend.position = "top",
                 legend.justification = "left",
                 legend.title = element_text(size=14),
                 legend.text = element_text(size=14),
                 legend.background = element_rect(fill="#ffffff", color="#ffffff"),
-                plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+                plot.background = element_rect(fill="#ffffff", color=NA),
                 plot.title = element_blank(),
                 plot.subtitle = element_blank(),
                 plot.margin=margin(5,5,5,5),
@@ -818,8 +817,8 @@ server = (function(input, output, session) {
                 panel.border = element_blank(),
                 panel.spacing.x = unit(2, "lines"),
                 axis.title = element_text(size = 14),
-                axis.text.y=element_blank(),
-                axis.text.x = element_text(size = 14),
+                axis.text.y = element_text(size = 14),
+                axis.text.x = element_blank(),
                 axis.line = element_line(color="gray60", size=0.5))
         
         if(input$ci1)
@@ -854,16 +853,14 @@ server = (function(input, output, session) {
               legend.title = element_text(size=14),
               legend.text = element_text(size=14),
               legend.background = element_rect(fill="#ffffff", color="#ffffff"),
-              plot.background = element_rect(fill="#ffffff", color="#ffffff"),
+              plot.background = element_rect(fill="#ffffff", color=NA),
               plot.title = element_blank(),
               plot.subtitle = element_blank(),
               plot.margin=margin(5,5,5,5),
               strip.background = element_blank(),
               strip.text = element_text(color="gray20", size=14),
-              panel.grid.major.x = element_line(linetype = "dashed", color="gray90", size=0.1),
-              panel.grid.minor.x = element_blank(),
-              panel.grid.major.y = element_blank(),
-              panel.grid.minor.y = element_blank(),
+              panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+              panel.grid.minor = element_line(linetype = "dashed", color="gray90", size=0.1),
               panel.border = element_blank(),
               panel.spacing.x = unit(2, "lines"),
               axis.title.x = element_blank(),
@@ -1193,10 +1190,8 @@ server = (function(input, output, session) {
                 plot.margin=margin(5,5,5,5),
                 strip.background = element_blank(),
                 strip.text = element_text(color="gray20", size=14),
-                panel.grid.major.x = element_line(linetype = "dashed", color="gray90", size=0.1),
-                panel.grid.minor.x = element_blank(),
-                panel.grid.major.y = element_line(linetype = "dashed", color="gray90", size=0.1),
-                panel.grid.minor.y = element_blank(),
+                panel.grid.major = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.minor = element_blank(),
                 panel.border = element_blank(),
                 panel.spacing.x = unit(2, "lines"),
                 axis.title.x = element_blank(),
@@ -1236,10 +1231,10 @@ server = (function(input, output, session) {
                 plot.margin=margin(5,5,5,5),
                 strip.background = element_blank(),
                 strip.text = element_text(color="gray20", size=14),
-                panel.grid.major.x = element_line(linetype = "dashed", color="gray90", size=0.1),
+                panel.grid.major.x = element_blank(),
                 panel.grid.minor.x = element_blank(),
                 panel.grid.major.y = element_line(linetype = "dashed", color="gray90", size=0.1),
-                panel.grid.minor.y = element_blank(),
+                panel.grid.minor.y = element_line(linetype = "dashed", color="gray90", size=0.1),
                 panel.border = element_blank(),
                 panel.spacing.x = unit(2, "lines"),
                 axis.title.x = element_blank(),

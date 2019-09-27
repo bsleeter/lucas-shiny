@@ -1,21 +1,9 @@
 @charset "UTF-8";
 /* CSS Document */
 
-.btn-myClass {
-	font-size: 16px;
-	background-color: #ffffff;
-	border: 1px solid #95a5a6;
-	float: left;
-	padding: 10px 20px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-}
 
-.btn-myClass:hover {
-  background-color: #f3f3f3;
-  color: #00264c;
-}
+
+
 
 footer, #navbar {
 	font-family: 'Source Sans Pro',sans-serif;
