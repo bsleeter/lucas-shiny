@@ -1,8 +1,28 @@
 @charset "UTF-8";
 /* CSS Document */
 
+.action-button {
+	color: #00264c;
+	background-color: #f3f3f3;
+	border-radius: 1px;
+}
 
+.action-button:focus, .action-button:hover  {
+	color: white;
+	background-color: #00264c;
+	border-radius: 1px;
+	outline: 3px auto white;
+}
 
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+	background-color: #00264c;
+	color: white;	
+}
+
+.nav-tabs>li>a, .nav-tabs>li>a:focus, .nav-tabs>li>a:hover {
+	background-color: #f3f3f3;
+	color: #00264c;
+}
 
 
 footer, #navbar {

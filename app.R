@@ -97,7 +97,7 @@ ui = fluidPage(
                    tags$h3("Carbon Stocks"),
                    tags$div(
                      tags$img(src = "stocks_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     tags$p("Explore projections of carbon stored in Living Biomass, Dead Organic Matter, and Soils"),
                      actionButton('jumpToP1', 'Explore stocks'), 
                      class ="row"),
                    class="toolBox"),     
@@ -105,7 +105,7 @@ ui = fluidPage(
                    tags$h3("Carbon Net Flux"),
                    tags$div(
                      tags$img(src = "net_flux_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     tags$p("Explore projections of net carbon fluxes including NPP, NEP, and NECB"),
                      actionButton('jumpToP2', 'Explore fluxes'),
                      class ="row"),
                    class="toolBox"),   
@@ -113,7 +113,7 @@ ui = fluidPage(
                    tags$h3("Land Cover Fluxes"), 
                    tags$div(
                      tags$img(src = "transition_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     tags$p("Explore projections of carbon fluxes resulting from land use change and ecosystem disturbance"),
                      actionButton('jumpToP5', 'Explore fluxes'),
                      class ="row"),
                    class="toolBox"),  
@@ -129,7 +129,7 @@ ui = fluidPage(
                    tags$h3("Land Cover State Class"),
                    tags$div(
                      tags$img(src = "landuse_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     tags$p("Explore projections of land use and land cover change across a range of land use scenarios"),
                      actionButton('jumpToP3', 'Explore state classes'), 
                      class ="row"),
                    class="toolBox"), 
@@ -137,7 +137,7 @@ ui = fluidPage(
                    tags$h3("Land Cover Disturbance"),
                    tags$div(
                      tags$img(src = "disturbance_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                     tags$p("Explore projections of ecosystem disturbances associated with a range of climate and land use scenarios"),
                      actionButton('jumpToP4', 'Explore disturbance'),
                      class ="row"),
                    class="toolBox"),     
@@ -156,7 +156,7 @@ ui = fluidPage(
                     hr(),
                 
                     sidebarLayout(
-                       sidebarPanel(width=3, style = "background-color: #00264c; color: #ffffff",
+                       sidebarPanel(width=3, 
                            awesomeRadio(
                              inputId="ecoregion",
                              label="Region of Interest",
@@ -251,10 +251,10 @@ ui = fluidPage(
                                           tabPanel("NECB by Ecoregion",
                                             
                                                       fluidRow(
-                                                        column(width=12, align="left", h2("Cumulative Net Ecosystem Carbon Balance (NECB) by Ecoregion and Scenario")),
-                                                        column(width=12, align="left", "This plot shows the cumulative net ecosystem carbon balance, or the total net amount of carbon which was either stored or sequestered in ecosystems,
-                                                               Each colored area shows the cumulative NECB over time. Positive values indicate the region was a net sink of carbon while negative values indicate that the region was a 
-                                                               net source of carbon to the atmosphere."),
+                                                        column(width=12, align="left", h2("Cumulative Net Ecosystem Carbon Balance")),
+                                                        column(width=12, align="left", "This plot shows the cumulative net ecosystem carbon balance, or the total net amount of carbon which was either stored or sequestered in ecosystems over time.
+                                                               Positive values indicate the region was a net sink of carbon while negative values indicate that the region was a net source of carbon to the atmosphere. The gray shaded area
+                                                               shows the cumulative flux for the entire state while the red area shows the cumulative flux for the selected region of interest."),
                                                         column(width=12,
                                                               plotOutput("netfluxPlot3", height="700px")))),
                                           tabPanel("Net flux over time",
@@ -417,16 +417,17 @@ ui = fluidPage(
                                         
                                                   fluidRow(
                                                     column(width=12, align="left", h2("Land Use/Land Cover Composition")),
-                                                    column(width=12, align="left", "This plot shows the composition of land use & land cover for the selected region and scenario at two points in time.
-                                                           Values are expressed as the percent of the regions total area."),
+                                                    column(width=12, align="left", "Use the selection tools at left to create bar graphs depicting land use/land cover composition by your preferred region, scenario, and range of years. 
+                                                    Values in the bar graphs represent percent of the regions total land area. Bar graph at left is the starting year, bar graph at right is the ending year in user-selected time range."),
                                                     column(width=12, align="left",
                                                           plotOutput("lulcPlot2", height="700")))),
                                     tabPanel("Land Use/Land Cover over Time",
                                         
                                                   fluidRow(
                                                     column(width=12, align="left", h2("Land Use/Land Cover Composition Over Time")),
-                                                    column(width=12, align="left", "This plot shows the composition of land use and land cover over time. The gray shaded area represents the range of values
-                                                           projected over all scenarios. "),
+                                                    column(width=12, align="left", "Use the selection tools at left to create line graph time series of land use and land cover change over your preferred region, scenario, 
+                                                           and range of years. Values in the line graph represent number of square kilometers (y-axis) of the selected land use/land cover in the region over time (x-axis), 
+                                                           grey background of each line graph shows the full range of outcomes across all scenarios."),
                                                     column(width=12, align="right",
                                                            
                                                            checkboxGroupButtons(width="100%",
@@ -447,21 +448,18 @@ ui = fluidPage(
                  fluidPage(
                    #About Title
                    tags$div(  
-                       tags$h1("About"),
+                       tags$h1("About the LUCAS California Model"),
                        tags$hr(),
-                       tags$p("Lorem ipsum dolor sit amet", a("Example Link", href="https://www.google.com/", target="_blank"), "consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
-                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
-                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam, vulputate feugiat accumsan vitae, rhoncus vitae tellus. Curabitur risus lorem, commodo
-                              quis magna" , a("Example Link2", href="https://www.google.com/", target="_blank"),"sit amet, rhoncus ultricies leo. Nam vestibulum varius diam non fringilla. Morbi elementum nisi purus, ut sagittis neque maximus volutpat. Nunc congue maximus
-                              euismod. Sed ac tempor nibh, quis iaculis est. Donec lobortis lectus vitae dui gravida, ut rhoncus risus accumsan. Aliquam porta congue nibh, et suscipit nisi tincidunt 
-                              facilisis. Proin tristique ipsum at felis sagittis efficitur. Donec maximus est eget libero aliquam, eu sollicitudin ante dapibus."),
-                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
-                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
-                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
-                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
-                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
-                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
-                       
+                       tags$p("The Land Use and Carbon Scenario Simulator - or LUCAS Model - was developed to explore alternative scenarios of land-use and land-cover (LULC) change and its impact on ecosystem carbon balance.
+                              The LUCAS model developed for California combines a state-and-transition simulation model (STSM) with a carbon stock-flow model, to estimate changes in carbon storage and flux across terrestrial ecosystems.
+                              The LUCAS STSM-SF approach has been described in numerous scientific publications. The LUCAS model uses the SyncroSim modeling framework - a general purpose software application for ecosystem-absed modeling applications.
+                              The modeling framework is thoroughly described in publications by", a("Daniel et al, 2016", href="", target="_blank"), "and", a("Daniel et al, 2018", href="", target="_blank")),
+                       tags$p("For a complete desctiption of the methods and models used to develop the projections used in these visualizations, see the publication by Sleeter et al., 2019 in", 
+                              a("Global Change Biology", href="https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.14677", target="_blank")),
+                       tags$p("Land use scenarios used in this study were developed to support California's Fourth Climate Change Assessment and are described in detail in Sleeter et al., 2018 in the journal",
+                              a("Earth's Future", href="https://agupubs.onlinelibrary.wiley.com/doi/10.1002/2017EF000560", target="_blank")),
+                       tags$p(""),
+
                    class="container")
                  )
         ),
@@ -864,7 +862,7 @@ server = (function(input, output, session) {
                 panel.spacing.x = unit(2, "lines"),
                 axis.title = element_text(size = 14),
                 axis.text.y = element_text(size = 14),
-                axis.text.x = element_blank(),
+                axis.text.x = element_text(size = 14),
                 axis.line = element_line(color="gray60", size=0.5))
         
         if(input$ci1)
@@ -876,21 +874,29 @@ server = (function(input, output, session) {
     
 ##### Flux Plot 3 ##### 
     selectData20 = reactive({
-      netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, Flux %in% input$netflux, EcoregionName!="State", Flux=="NECB") %>%
+      netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, Flux %in% input$netflux, EcoregionName==input$ecoregion, Flux=="NECB") %>%
         filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% mutate(CumSum=cumsum(Mean)) %>%
         mutate(positive = ifelse(CumSum>=0, CumSum,0),
                negative = ifelse(CumSum<0,CumSum, -1e-36))
 
     })
     
+    selectData20b = reactive({
+      netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, Flux %in% input$netflux, EcoregionName=="State", Flux=="NECB") %>%
+        filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% mutate(CumSum=cumsum(Mean)) %>%
+        mutate(positive = ifelse(CumSum>=0, CumSum,0),
+               negative = ifelse(CumSum<0,CumSum, -1e-36))
+      
+    })
+    
     output$netfluxPlot3 = renderPlot({
       p20 = ggplot() +
-        geom_area(data=selectData20(), aes(x=Timestep, y=positive, fill=EcoregionName, color=EcoregionName), size=0.1) +
-        geom_area(data=selectData20(), aes(x=Timestep, y=negative, fill=EcoregionName, color=EcoregionName), size=0.1) +
+        geom_area(data=selectData20b(), aes(x=Timestep, y=positive), size=0.1, fill="gray85", color="gray85") +
+        geom_area(data=selectData20b(), aes(x=Timestep, y=negative), size=0.1, fill="gray85", color="gray85") +
+        geom_area(data=selectData20(), aes(x=Timestep, y=positive), size=0.1, alpha=0.5, fill="red", color="red") +
+        geom_area(data=selectData20(), aes(x=Timestep, y=negative), size=0.1, alpha=0.5, fill="red", color="red") +
         geom_hline(yintercept=0) +
         facet_grid(GCM~RCP) +
-        scale_fill_discrete_qualitative(palette = "Dark 3") +
-        scale_color_discrete_qualitative(palette = "Dark 3") +
         theme_light(18) +
         labs(x="",
              y="Million Metric Tons of Carbon (MMT C)") +
