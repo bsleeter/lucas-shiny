@@ -432,7 +432,7 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	margin-right:10px;
 	
 }
-.container-fluid{
+.tab-content{
 	padding-bottom:30px;
 }
 
@@ -447,7 +447,7 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	justify-content: center;
 )
 
-
+	
 
 /* 	
 .nav > li > a[data-value='Carbon StocksProjected Carbon Storage in California']{

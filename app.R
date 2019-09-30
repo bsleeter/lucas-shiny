@@ -20,6 +20,7 @@ library(DT)
 library(colorspace)
 
 
+
 # Process Carbon Stock Data
 stocks = read_csv("data/stocks.csv")
 stocks$StockGroup = factor(stocks$StockGroup, levels=c("TEC","Soil","Live","DOM"))
@@ -71,7 +72,7 @@ ui = fluidPage(
        tags$head(includeCSS("www/common.css")),
        navbarPage("California Carbon Scenarios",id="navTabset",
         #Home layout
-        tabPanel("Home",value = "homePanel",  
+        tabPanel("Home",value = "homePanel",    
            #Banner
            tags$div(
              tags$div(  
@@ -82,7 +83,7 @@ ui = fluidPage(
                         tags$p("Land change and carbon balance scenario projections for the State of California with the LUCAS model", id="bannerText"),
                         offset = 2),
                  class="row"),
-               class = "container container-home"),
+               class = "container container-home"), 
              class="row", id="banner"),
            #Tools Row
            tags$div(
@@ -460,6 +461,7 @@ ui = fluidPage(
                        tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
                               In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
                               Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
+                       
                    class="container")
                  )
         ),
@@ -469,18 +471,22 @@ ui = fluidPage(
                    tags$div(  
                        tags$h1("Data"),
                        tags$hr(),
-                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
-                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
-                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam, vulputate feugiat accumsan vitae, rhoncus vitae tellus. Curabitur risus lorem, commodo
-                              quis magna sit amet, rhoncus ultricies leo. Nam vestibulum varius diam non fringilla. Morbi elementum nisi purus, ut sagittis neque maximus volutpat. Nunc congue maximus
-                              euismod. Sed ac tempor nibh, quis iaculis est. Donec lobortis lectus vitae dui gravida, ut rhoncus risus accumsan. Aliquam porta congue nibh, et suscipit nisi tincidunt 
-                              facilisis. Proin tristique ipsum at felis sagittis efficitur. Donec maximus est eget libero aliquam, eu sollicitudin ante dapibus."),
-                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
-                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
-                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
-                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
-                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
-                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
+                       tags$p("The LUCAS model was used to project changes in ecosystem carbon balance resulting from land use and land use change, 
+                              climate change, and ecosystem disturbances such as wildfire and drought in California. We simulated 32 unique scenarios, consisting of 4 land-use scenarios and 2 radiative forcing scenarios 
+                              as simulated by 4 global climate models. For each scenario, we ran 100 Monte Carlo realizations of the model, at a 1-km spatial resolution
+                              anually between 2001-2100."),
+                       tags$h4("Data Available for Download"),  
+                       tags$ul(
+                         tags$li("All", a("tabular simulation results", href="https://www.sciencebase.gov/catalog/item/5d03f536e4b0e3d3115806dc", target="_blank"), "for the 32 scenarios used in this application are availble from the SciencBase repository in zipped csv format"),
+                         tags$li("An un-run version of the ", a("California LUCAS Model", href="https://www.sciencebase.gov/catalog/item/5d03f5a3e4b0e3d3115806df", target="_blank"), "developed within the ", 
+                                 a("SyncroSim software framework" , href="http://doc.syncrosim.com/index.php?title=Reference_Guide", target="_blank"), "is also available for download.")
+                         
+                       ),
+                       tags$p("Steps for setting up and running the model as well as code used for post-processing tabular scenario results are
+                              available on ", a("Github." , href="https://github.com/bsleeter/california-carbon-scenarios", target="_blank"),"Methods, scenarios, and results for the 32 scenarios available through this web applcation are 
+                              full described in the paper",a("Effects of 21st century climate, land use, and disturbances on ecosystem carbon balance in California.",
+                                 href="https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.14677", target="_blank")," More information about the California LUCAS model and other LUCAS modeling efforts
+                                 may be found in our ",a("team website", href="https://www.usgs.gov/centers/wgsc/science/land-use-and-climate-change-team")),
                    class="container")
                  )
         ),
@@ -490,7 +496,10 @@ ui = fluidPage(
                    tags$div(  
                        tags$h1("Contact"),
                        tags$hr(),
-                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                       tags$p("For questions about California LUCAS Model results please email the USGS LUCC team"),
+                       a(actionButton(inputId = "email1", label = "Email our team", 
+                                      icon = icon("glyphicon glyphicon-envelope")),
+                         href="mailto:bsleeter@usgs.gov"),
                    class="container")
                  )
         )
@@ -506,7 +515,7 @@ server = (function(input, output, session) {
   ## starts app in dashboard app with first tab selected
   #updateTabsetPanel(session, "navTabset",
                     #selected = "dashboardPanel")
-  
+
   observeEvent(input$jumpToP1, {
     updateTabsetPanel(session, "navTabset",
                       selected = "dashboardPanel")
