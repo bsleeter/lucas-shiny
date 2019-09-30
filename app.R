@@ -830,7 +830,7 @@ server = (function(input, output, session) {
     
 ##### Flux Plot 3 ##### 
     selectData20 = reactive({
-      netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, Flux %in% input$netflux, EcoregionName!="State", Flux=="NECB") %>%
+      netFlux %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, Flux %in% input$netflux, EcoregionName==input$ecoregion, Flux=="NECB") %>%
         filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,Flux) %>% mutate(CumSum=cumsum(Mean)) %>%
         mutate(positive = ifelse(CumSum>=0, CumSum,0),
                negative = ifelse(CumSum<0,CumSum, -1e-36))
