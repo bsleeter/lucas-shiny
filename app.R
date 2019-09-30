@@ -70,7 +70,7 @@ ui = fluidPage(
        includeHTML("www/header.html"),
        tags$head(includeCSS("www/common.css")),
        navbarPage("California Carbon Scenarios",id="navTabset",
-
+        #Home layout
         tabPanel("Home",value = "homePanel",  
            #Banner
            tags$div(
@@ -82,7 +82,7 @@ ui = fluidPage(
                         tags$p("Land change and carbon balance scenario projections for the State of California with the LUCAS model", id="bannerText"),
                         offset = 2),
                  class="row"),
-               class = "container"),
+               class = "container container-home"),
              class="row", id="banner"),
            #Tools Row
            tags$div(
@@ -141,7 +141,7 @@ ui = fluidPage(
                      class ="row"),
                    class="toolBox"),     
                  id="toolsRow"),    
-               class = "container"),      
+               class = "container container-home"),      
              class="row", id="tools")    
 
             ),
@@ -444,20 +444,57 @@ ui = fluidPage(
             ),
         tabPanel("About",value ="aboutPanel",
                  fluidPage(
-                   "About Panel"
+                   #About Title
+                   tags$div(  
+                       tags$h1("About"),
+                       tags$hr(),
+                       tags$p("Lorem ipsum dolor sit amet", a("Example Link", href="https://www.google.com/", target="_blank"), "consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
+                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
+                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam, vulputate feugiat accumsan vitae, rhoncus vitae tellus. Curabitur risus lorem, commodo
+                              quis magna" , a("Example Link2", href="https://www.google.com/", target="_blank"),"sit amet, rhoncus ultricies leo. Nam vestibulum varius diam non fringilla. Morbi elementum nisi purus, ut sagittis neque maximus volutpat. Nunc congue maximus
+                              euismod. Sed ac tempor nibh, quis iaculis est. Donec lobortis lectus vitae dui gravida, ut rhoncus risus accumsan. Aliquam porta congue nibh, et suscipit nisi tincidunt 
+                              facilisis. Proin tristique ipsum at felis sagittis efficitur. Donec maximus est eget libero aliquam, eu sollicitudin ante dapibus."),
+                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
+                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
+                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
+                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
+                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
+                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
+                   class="container")
                  )
         ),
         tabPanel("Data",value ="dataPanel",
                  fluidPage(
-                   "Data Panel"
+                   #Data Title
+                   tags$div(  
+                       tags$h1("Data"),
+                       tags$hr(),
+                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
+                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
+                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam, vulputate feugiat accumsan vitae, rhoncus vitae tellus. Curabitur risus lorem, commodo
+                              quis magna sit amet, rhoncus ultricies leo. Nam vestibulum varius diam non fringilla. Morbi elementum nisi purus, ut sagittis neque maximus volutpat. Nunc congue maximus
+                              euismod. Sed ac tempor nibh, quis iaculis est. Donec lobortis lectus vitae dui gravida, ut rhoncus risus accumsan. Aliquam porta congue nibh, et suscipit nisi tincidunt 
+                              facilisis. Proin tristique ipsum at felis sagittis efficitur. Donec maximus est eget libero aliquam, eu sollicitudin ante dapibus."),
+                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
+                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
+                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
+                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris finibus, eros id tincidunt laoreet, lectus risus consequat magna, et blandit elit metus in erat. 
+                              In vitae massa et leo pellentesque condimentum. Cras pretium id justo in commodo. Praesent placerat tortor id vestibulum elementum. Sed rutrum convallis venenatis. 
+                              Maecenas luctus est quam, ac commodo risus faucibus luctus. Praesent nibh diam"),
+                   class="container")
                  )
         ),
-        tabPanel("Contact",value ="contactPanel",
+        tabPanel("Contact",value ="contactPanel",   
                  fluidPage(
-                   "Contact Panel"
+                   #Contact Title
+                   tags$div(  
+                       tags$h1("Contact"),
+                       tags$hr(),
+                       tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
+                   class="container")
                  )
         )
-       ),
+       ), 
        
        includeHTML("www/footer.html") 
        

@@ -432,9 +432,12 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	margin-right:10px;
 	
 }
+.container-fluid{
+	padding-bottom:30px;
+}
 
 @media (min-width: 1800px){
-	.container {
+	.container-home {
 		width: 1600px;
 	}
 }
