@@ -66,7 +66,7 @@ ecoPal = c("Coast Range"="#31a354", "Cascades"="#78c679", "East Cascades"="#ffff
 
 
 # Define UI for application that draws a histogram
-ui = fluidPage(shinythemes::themeSelector(),
+ui = fluidPage(theme = shinytheme("flatly"),
        useShinyjs(),
        includeHTML("www/header.html"),
        tags$head(includeCSS("www/common.css")),
@@ -287,7 +287,7 @@ ui = fluidPage(shinythemes::themeSelector(),
                                
                                tabPanel("Land Use Fluxes", value="Land Use Fluxes", width=12,
                                         tabsetPanel(
-                                          tabPanel("Fluxes by Land Use Change",
+                                          tabPanel("Fluxes by Land Use Change & Disturbance",
                                                    
                                                              fluidRow(
                                                                column(width=12, h2("Carbon fluxes from land use change and disturbance")),
@@ -304,15 +304,16 @@ ui = fluidPage(shinythemes::themeSelector(),
                                                                              direction = "horizontal",
                                                                              checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
                                                               plotOutput("transitionFlows1", height="600")))),
-                                          tabPanel("...by Flux Type",
+                                          tabPanel("Carbon Fluxes by Flux Type",
                                                    
                                                              fluidRow(
-                                                                      column(width=12, align="left", h2("This is the plot title")),
-                                                                      column(width=12, align="left", "This is the plot subtitle which is used to convey additional information about the plot and the controls."),
+                                                                      column(width=12, align="left", h2("Carbon Fluxes by Flux Type")),
+                                                                      column(width=12, align="left", "This plot shows the average annual total carbon flux for each land use/land cover or distrubance related flux type. Each colored area represents the
+                                                                             contribution from one LULC or disturbance type. "),
                                                                       column(width=12, align="center",
                                                                              radioGroupButtons(width="100%",
                                                                                 inputId = "transfluxTypes", 
-                                                                                label = "Select Carbon Flux Type", 
+                                                                                label = "", 
                                                                                 choices = c("Deadfall","Emission","Harvest","Mortality"),
                                                                                 selected = "Emission",
                                                                                 size = "sm",
@@ -323,17 +324,27 @@ ui = fluidPage(shinythemes::themeSelector(),
                                           tabPanel("Cumulative Land Use Fluxes",
                                                    
                                                              fluidRow(
-                                                                      column(width=12, align="left", h2("This is the plot title")),
-                                                                      column(width=12, align="left", "This is the plot subtitle which is used to convey additional information about the plot and the controls."),
+                                                                      column(width=12, align="left", h2("Cumulative Carbon Fluxes from LULC Change and Disturbance")),
+                                                                      column(width=12, align="left", "This plot shows the mean cumulative carbon flux of the specified time interval for each of the main land use/land cover change or disturbance types."),
                                                                       column(width=12, align="center",
                                                                              checkboxGroupButtons(width="100%",
                                                                                 inputId="transitionTypes2", 
-                                                                                label="Select Transition Type", 
+                                                                                label="", 
                                                                                 choices = c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"),
                                                                                 selected = c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"),
                                                                                 direction = "horizontal",
                                                                                 size="sm",
+                                                                                justified=TRUE,
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
+                                                                             checkboxGroupButtons(width="100%",
+                                                                                                  inputId="transfluxTypes2", 
+                                                                                                  label="", 
+                                                                                                  choices = c("Emission","Harvest","Mortality"),
+                                                                                                  selected = c("Emission","Harvest","Mortality"),
+                                                                                                  direction = "horizontal",
+                                                                                                  size="sm",
+                                                                                                  justified=TRUE,
+                                                                                                  checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
                                                                              plotOutput("transitionFlows3", height="600")))))),
                                
                                
@@ -1149,7 +1160,7 @@ server = (function(input, output, session) {
       
       
       selectData10 = reactive({
-        transFlows %>% filter(LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionTypes2) %>%
+        transFlows %>% filter(LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionTypes2, Flow %in% input$transfluxTypes2) %>%
           filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% 
           group_by(LUC,GCM,RCP,EcoregionName,TransitionGroup,Flow) %>% summarize(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
       })
