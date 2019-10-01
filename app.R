@@ -18,6 +18,8 @@ library(readr)
 library(zoo)
 library(DT)
 library(colorspace)
+library(leaflet)
+library(rgdal)
 
 
 
@@ -64,6 +66,8 @@ ecoPal = c("Coast Range"="#31a354", "Cascades"="#78c679", "East Cascades"="#ffff
            "Central B&R"="#feedde", "Northern B&R"="#fdbe85", "Mojave B&R"="#fd8d3c", "Sonoran B&R"="#d94701",
            "Central Valley"="#41b6c4", "Oak Woodlands"="#225ea8", "SoCal Mtns."="#a1dab4")
 
+#Define ecoregion shapefile
+ecoregions <- readOGR("www/ca_eco_l3/ca_diss_simp.shp",layer = "ca_diss_simp", GDAL1_integer64_policy = TRUE) 
 
 # Define UI for application that draws a histogram
 ui = fluidPage(theme = shinytheme("flatly"),
@@ -148,15 +152,60 @@ ui = fluidPage(theme = shinytheme("flatly"),
             ),
             tabPanel("Dashboard",value ="dashboardPanel",
                 fluidPage(
-                    actionButton(inputId = "jumpToP10", label = "Carbon Stocks"),
-                    actionButton(inputId = "jumpToP20", label = "Net Fluxes"),
-                    actionButton(inputId = "jumpToP50", label = "Land Use Fluxes"),
-                    actionButton(inputId = "jumpToP30", label = "Land Use & Land Cover"),
-                    actionButton(inputId = "jumpToP40", label = "Wildfire & Drought"),
+                  tags$div(
+                    tags$button(
+                      id = "jumpToP10",
+                      class = "btn btn-default action-button shiny-bound-inputs dashboard-type",
+                      img(src = "stocks_80.png",
+                          height = "70px"),
+                      tags$span("Carbon Stocks")
+                    ),
+                    tags$button(
+                      id = "jumpToP20",
+                      class = "btn btn-default action-button shiny-bound-inputs dashboard-type",
+                      img(src = "net_flux_80.png",
+                          height = "70px"),
+                      tags$span("Net Fluxes")
+                    ),
+                    tags$button(
+                      id = "jumpToP50",
+                      class = "btn btn-default action-button shiny-bound-inputs dashboard-type",
+                      img(src = "transition_80.png",
+                          height = "70px"),
+                      tags$span("Land Use Fluxes")
+                    ),
+                    tags$button(
+                      id = "jumpToP30",
+                      class = "btn btn-default action-button shiny-bound-inputs dashboard-type",
+                      img(src = "landuse_80.png",
+                          height = "70px"),
+                      tags$span("Land Use & Land Cover")
+                    ),
+                    tags$button(
+                      id = "jumpToP40",
+                      class = "btn btn-default action-button shiny-bound-inputs dashboard-type",   
+                      img(src = "disturbance_80.png",
+                          height = "70px"),
+                      tags$span("Wildfire & Drought")
+                    ),
+                   id="buttomRow"),
+                    #actionButton(inputId = "jumpToP10", label = "Carbon Stocks"),
+                    #actionButton(inputId = "jumpToP20", label = "Net Fluxes"),
+                    #actionButton(inputId = "jumpToP50", label = "Land Use Fluxes"),
+                    #actionButton(inputId = "jumpToP30", label = "Land Use & Land Cover"),
+                    #actionButton(inputId = "jumpToP40", label = "Wildfire & Drought"),
                     hr(),
                 
                     sidebarLayout(
                        sidebarPanel(width=3, 
+                          prettySwitch(
+                            inputId = "view_map",
+                            label = "View on map", 
+                            value=FALSE,
+                            status="success",
+                            fill = TRUE),      
+                            leafletOutput("mymap"),
+                            #actionButton("show", "View on Map"),         
                            awesomeRadio(
                              inputId="ecoregion",
                              label="Region of Interest",
@@ -509,10 +558,33 @@ ui = fluidPage(theme = shinytheme("flatly"),
 
 
 server = (function(input, output, session) {
-  ## starts app in dashboard app with first tab selected
-  #updateTabsetPanel(session, "navTabset",
-                    #selected = "dashboardPanel")
 
+ observeEvent(input$mymap_shape_click, {
+  
+    eco = input$mymap_shape_click$id
+    print(eco)
+    updateAwesomeRadio(
+      session = session, inputId = "ecoregion",
+      selected=eco
+    )
+  })
+  
+  factpal <- colorFactor(c("#31a354", "#78c679","#ffffcc","#c2e699","#006837","#feedde","#fdbe85","#fd8d3c","#d94701","#41b6c4","#225ea8","#a1dab4"), ecoList)
+ 
+  
+  output$mymap <- renderLeaflet({
+    leaflet(ecoregions) %>%
+      addProviderTiles(providers$CartoDB.Positron) %>%
+      addPolygons(layerId=~eco_name,color = ~factpal(eco_name), weight = 1, smoothFactor = 0.5,label = ~eco_name,
+                  opacity = 1.0, fillOpacity = 0.5,
+                  highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                      bringToFront = TRUE))
+  })
+  
+  observeEvent(input$view_map, {
+    toggle("mymap")
+  })
+  
   observeEvent(input$jumpToP1, {
     updateTabsetPanel(session, "navTabset",
                       selected = "dashboardPanel")
