@@ -1,6 +1,9 @@
 @charset "UTF-8";
 /* CSS Document */
-
+body{
+	font-weight: 400;
+    line-height: 1.7;
+}
 .action-button {
 	color: #00264c;
 	background-color: #f3f3f3;
@@ -66,6 +69,10 @@ hr {
 	width: 100%; 
 	margin-top: 42px;
 	clear: both;
+}
+
+.abouthr{
+	margin-top: 20px;
 }
 @media only screen and (max-width:490px) {
     hr {
@@ -389,6 +396,7 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 }
 #bannerText{
 	font-size: 18px;
+	max-width: 700px;;
 }
 #tools{
 	background-color:#ffffff;
@@ -452,7 +460,7 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 	margin-right:10px;
 	
 }
-.container-fluid{
+.tab-content{
 	padding-bottom:30px;
 }
 
@@ -465,53 +473,11 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 #toolsTitleRows{
 	display:flex;
 	justify-content: center;
-)
-
-
-
-/* 	
-.nav > li > a[data-value='Carbon StocksProjected Carbon Storage in California']{
-	background-image: url("stocks_80.png");                     
-    background-repeat:   no-repeat;
-	height:85px;
-	padding-left:90px;
-	padding-top: 30px;
-	background-color: #e7e7e7 !important;
-	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
 }
-.nav > li > a[data-value='Net Carbon Fluxes']{
-	background-image: url("fluxes_80.png");                     
-    background-repeat:   no-repeat;
-	height:85px;
-	padding-left:90px;
-	padding-top: 30px;
-	background-color: #e7e7e7 !important;
-	margin-left:25px;
-	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
-	
+
+section{
+	margin-bottom:40px
 }
-.nav > li > a[data-value='Landcover Totals']{
-	background-image: url("landuse_80.png");                     
-    background-repeat:   no-repeat;
-	height:85px;
-	padding-left:90px;
-	padding-top: 30px;
-	background-color: #e7e7e7 !important;
-	margin-left:25px;
-	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
-	
-}
-.nav > li > a[data-value='Landcover Transition']{
-	background-image: url("transition_80.png");                     
-    background-repeat:   no-repeat;
-	height:85px;
-	padding-left:90px;
-	padding-top: 30px;
-	background-color: #e7e7e7 !important;
-	margin-left:25px;
-	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18)
-	
-}*/
 .navbar-default {
     border-color: white !important;
 }
