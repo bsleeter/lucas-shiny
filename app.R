@@ -65,7 +65,7 @@ ecoPal = c("Coast Range"="#31a354", "Cascades"="#78c679", "East Cascades"="#ffff
 
 
 # Define UI for application that draws a histogram
-ui = fluidPage(
+ui = fluidPage(shinythemes::themeSelector(),
        useShinyjs(),
        includeHTML("www/header.html"),
        tags$head(includeCSS("www/common.css")),
