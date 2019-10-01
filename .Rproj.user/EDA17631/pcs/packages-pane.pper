@@ -2,6 +2,6 @@
     "installOptions" : {
         "installDependencies" : true,
         "installFromRepository" : true,
-        "libraryPath" : "C:/Users/bsleeter.GS/Documents/R/R-3.5.2/library"
+        "libraryPath" : "C:/Users/bsleeter.GS/Documents/R/R-3.6.1/library"
     }
 }
