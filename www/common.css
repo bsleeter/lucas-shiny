@@ -134,7 +134,9 @@ input,button{font-family:inherit;font-size:inherit;line-height:inherit}
 .navbar-header {
   float: left;
 }
-
+.navbar{
+margin-bottom: 20px;
+}
 /* footer (only) css */
 
 .menu.nav {

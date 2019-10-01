@@ -21,7 +21,7 @@ library(colorspace)
 library(leaflet)
 library(rgdal)
 
-
+ 
 
 # Process Carbon Stock Data
 stocks = read_csv("data/stocks.csv")
