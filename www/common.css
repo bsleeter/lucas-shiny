@@ -134,7 +134,9 @@ input,button{font-family:inherit;font-size:inherit;line-height:inherit}
 .navbar-header {
   float: left;
 }
-
+.navbar{
+margin-bottom: 20px;
+}
 /* footer (only) css */
 
 .menu.nav {
@@ -396,12 +398,42 @@ For simplification, search bar is visible on larger screens but is hidden on sma
 }
 #bannerText{
 	font-size: 18px;
-	max-width: 700px;;
+	max-width: 700px;
+}
+#scenariosText{
+	font-size: 18px;
+	max-width: 700px;
+	text-align:center;
 }
 #tools{
 	background-color:#ffffff;
 	padding-top:25px;
 	padding-bottom:25px
+}
+#sidebarTitle{
+ margin-top:0px;
+}
+#sidebarBreak{
+	    border-top: 1px solid #ffffff;
+}
+#aboutCarbonStocks{
+border-width:0px
+}
+#aboutModelVariables{
+border-width:0px
+}
+#aboutCumulativeCarbonFluxes{
+border-width:0px
+}
+#aboutCarbonFluxes{
+	border-width:0px
+}
+button.selected{
+	background-color:#00264c;
+	color:#ffffff;
+}
+.modal-dialog {
+    width: 700px;
 }
 .toolsRows{
 	padding-top:25px;
@@ -484,9 +516,14 @@ section{
 .dashboard-type{
 	width:275px;
 	margin-bottom:10px;
+	padding-left:0px;
 }
 #buttomRow{
     text-align: center;
     margin-bottom: 20px;
 }
 
+h2{
+	font-size: 32px;
+    text-align: center;
+}
