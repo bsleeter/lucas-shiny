@@ -55,7 +55,7 @@ stockList = unique(stocks$StockGroup)
 
 # Define color palettes
 stockPal = c("DOM"="#D55E00", "Live"="#009E73", "Soil"="#E69F00", "TEC"="#f3f3f3")
-gcmPal = c("CanESM2"="#F0E442", "CNRM-CM5"="#0072B2", "HadGEM2-ES"="#D55E00", "MIROC5"="#CC79A7")
+gcmPal = c("CanESM2"="#35f06d", "CNRM-CM5"="#0072B2", "HadGEM2-ES"="#D55E00", "MIROC5"="#CC79A7")
 fluxPal = c("NPP"="#2CA02C", "Rh"="#8C564B", "NEP"="#1F77B4", "NECB"="#E1750E")
 sevPal = c("High"="#f03b20", "Medium"="#feb24c", "Low"="#ffeda0")
 statePal = c("Forest"="#38814E", "Grassland"="#FDE9AA", "Shrubland"="#DCCA8F")
@@ -284,7 +284,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                          checkIcon = list(yes = icon("signal", lib = "glyphicon")))
                                                                 ),
                                                                 column(width=12, align="right",
-                                                                        plotOutput("stocksPlot1", height="600", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
+                                                                        plotOutput("stocksPlot1", height="700", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
                                                                         uiOutput("stocksPlot1_hover_info"),
                                                                         prettySwitch(
                                                                           inputId = "showStockTable",
@@ -320,7 +320,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                         column(width=12, align="right",
                                                                radioGroupButtons(width=250,inputId = "netflux", label = actionButton("aboutCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon")),choices = c("NPP","Rh","NEP","NECB"),selected="NECB",size="sm",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="right",
-                                                               plotOutput("fluxplot1", height="600"),
+                                                               plotOutput("fluxplot1", height="700"),
                                                                prettySwitch(inputId = "showFluxTable",label = "View Chart Data", value=FALSE,status="success",fill = TRUE),
                                                                prettySwitch(inputId="annual",label="Add Annual Projections",value=FALSE,status="primary",slim=TRUE),
                                                                prettySwitch(inputId="smooth",label="Add Trend Line",value=FALSE,status="primary",slim=TRUE),
@@ -336,7 +336,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                       column(width=6, align="right",
                                                              checkboxGroupButtons(inputId="netflux2",label=actionButton("aboutCumulativeCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon")), choices=c("NPP","Rh","NEP","NECB"),selected=c("NPP","Rh","NEP","NECB"),direction="horizontal",size="sm",width="100%",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                       column(width=12, align="right",
-                                                             plotOutput("fluxplot2", height="600")))),
+                                                             plotOutput("fluxplot2", height="700")))),
                                         
                                         tabPanel("Cumulative Carbon Balance",
                                                  
@@ -371,7 +371,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                              justified = TRUE,
                                                                              direction = "horizontal",
                                                                              checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                              plotOutput("transitionFlows1", height="600")))),
+                                                              plotOutput("transitionFlows1", height="700")))),
                                           tabPanel("Disturbance Fluxes by Type",
                                                    
                                                              fluidRow(
@@ -382,13 +382,13 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                              radioGroupButtons(width="100%",
                                                                                 inputId = "transfluxTypes", 
                                                                                 label = "", 
-                                                                                choices = c("Deadfall","Emission","Harvest","Mortality"),
+                                                                                choices = c("Emission","Harvest","Mortality"),
                                                                                 selected = "Emission",
                                                                                 size = "sm",
                                                                                 justified = TRUE,
                                                                                 direction = "horizontal",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                           plotOutput("transitionFlows2", height="600")))),
+                                                           plotOutput("transitionFlows2", height="700")))),
                                           tabPanel("Cumulative Fluxes from Land Use Change and Disturbance",
                                                    
                                                              fluidRow(
@@ -413,7 +413,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                                   size="sm",
                                                                                                   justified=TRUE,
                                                                                                   checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                                             plotOutput("transitionFlows3", height="600")))))),
+                                                                             plotOutput("transitionFlows3", height="700")))))),
                                
                                
                                
@@ -442,14 +442,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                     status="primary",
                                                                     slim=TRUE)),
                                                            column(width=12, align="right",
-                                                                  plotOutput("transitionsDistPlot", height="600"),
-                                                                  prettySwitch(
-                                                                    inputId = "showTransitionTable",
-                                                                    label = "View Chart Data", 
-                                                                    value=FALSE,
-                                                                    status="success",
-                                                                    fill = TRUE),
-                                                                  DTOutput("transitiontable")))),
+                                                                  plotOutput("transitionsDistPlot", height="700")))),
                                           tabPanel("Fire Disturbance by Severity Class",
                                             
                                                       fluidRow(
@@ -465,7 +458,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                 width="100%",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="center",
-                                                           plotOutput("transitionsFirePlot", height="600")))),
+                                                           plotOutput("transitionsFirePlot", height="700")))),
                                           tabPanel("Land Cover Change from Disturbance",
                                             
                                                       fluidRow(
@@ -481,7 +474,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                 width="100%",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="center",
-                                                           plotOutput("transitionsFirePlot2", height="600")))))),
+                                                           plotOutput("transitionsFirePlot2", height="700")))))),
                                
                                
                                
@@ -1275,7 +1268,7 @@ server = (function(input, output, session) {
 ##### Transition Flows Page #####
 
   selectData8 = reactive({
-    transFlows %>% filter(LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionTypes) %>%
+    transFlows %>% filter(LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionTypes, Flow!="Deadfall") %>%
        filter(Timestep>=input$years[1], Timestep<=input$years[2]) 
 })
 
