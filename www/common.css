@@ -5,26 +5,27 @@ body{
     line-height: 1.7;
 }
 .action-button {
-	color: #00264c;
+	color: #2c3e50;
 	background-color: #f3f3f3;
 	border-radius: 1px;
+	
 }
 
 .action-button:focus, .action-button:hover  {
 	color: white;
-	background-color: #00264c;
+	background-color: #798d8f;
 	border-radius: 1px;
 	outline: 3px auto white;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
-	background-color: #00264c;
+	background-color: #798d8f;
 	color: white;	
 }
 
 .nav-tabs>li>a, .nav-tabs>li>a:focus, .nav-tabs>li>a:hover {
 	background-color: #f3f3f3;
-	color: #00264c;
+	color: #2c3e50;
 }
 
 
@@ -429,11 +430,11 @@ border-width:0px
 	border-width:0px
 }
 button.selected{
-	background-color:#00264c;
+	background-color:#798d8f;
 	color:#ffffff;
 }
 .modal-dialog {
-    width: 700px;
+    width: 750px;
 }
 .toolsRows{
 	padding-top:25px;
@@ -517,6 +518,11 @@ section{
 	width:275px;
 	margin-bottom:10px;
 	padding-left:0px;
+	margin-left:5px;
+	margin-right:5px;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,.18), 0 1px 5px 0 rgba(0,0,0,.15);
+    border: 1px solid rgba(33,37,41,.125);
+	
 }
 #buttomRow{
     text-align: center;
