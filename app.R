@@ -697,7 +697,7 @@ server = (function(input, output, session) {
           "NECB - Net ecosystem carbon balance (NEP minus carbon losses from land use and disturbances)."  
         )
       ),
-      
+      tags$div(img(src='images/cabonFluxOverTime.png', width="700px")),  
       easyClose = TRUE,
       footer = modalButton("Dismiss")
     ))
@@ -962,7 +962,7 @@ server = (function(input, output, session) {
             theme_light(18) +
             labs(fill="Climate Model",
                  color="Climate Model",
-                 y="Million Metric Tons of Carbon", 
+                 y="Million Metric Tons of Carbon (MMT C)", 
                  x="") +
             theme(legend.position = "top",
                   legend.justification = "left",
@@ -1031,7 +1031,7 @@ server = (function(input, output, session) {
             theme_light(18) +
             labs(fill="Carbon Stock Type",
                  x="Climate Scenario (RCP)", 
-                 y="Million Metric Tons Carbon") +
+                 y="Million Metric Tons Carbon (MMT C)") +
             theme(legend.position = "top",
                 legend.justification = "left",
                 legend.title = element_text(size=14),
@@ -1139,7 +1139,7 @@ server = (function(input, output, session) {
           labs(fill="Climate Model",
                color="Climate Model",
                x="", 
-               y="Million Metric Tons Carbon") +
+               y="Million Metric Tons Carbon (MMT C)") +
           theme(legend.position = "top",
                 legend.justification = "left",
                 legend.title = element_text(size=14),
@@ -1190,7 +1190,7 @@ server = (function(input, output, session) {
             theme_minimal(20) +
           labs(fill="Carbon Flux Type",
                x="",
-               y="Million Metric Tons Carbon") +
+               y="Million Metric Tons Carbon (MMT C)") +
           theme(legend.position = "top",
                 legend.justification = "left",
                 legend.title = element_text(size=14),
@@ -1444,7 +1444,7 @@ server = (function(input, output, session) {
           labs(fill="Carbon Flux Type",
                color="Carbon Flux Type",
                x="", 
-               y="Million Metric Tons Carbon per Year") +
+               y="Million Metric Tons Carbon (MMT C) per Year") +
           theme(legend.position = "top",
               legend.justification = "center",
               legend.title = element_text(size=14),
@@ -1485,7 +1485,7 @@ server = (function(input, output, session) {
           labs(fill="Transition Type",
                color="Transition Type",
                x="", 
-               y="Million Metric Tons Carbon per Year") +
+               y="Million Metric Tons Carbon (MMT C) per Year") +
           theme(legend.position = "top",
                 legend.justification = "left",
                 legend.title = element_text(size=14),
@@ -1528,7 +1528,7 @@ server = (function(input, output, session) {
           labs(fill="Carbon Flux Type",
                color="Carbon Flux Type",
                x="", 
-               y="Million Metric Tons Carbon per Year") +
+               y="Million Metric Tons Carbon (MMT C) per Year") +
           theme(legend.position = "top",
                 legend.justification = "left",
                 legend.title = element_text(size=14),
