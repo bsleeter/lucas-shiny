@@ -1392,7 +1392,7 @@ server = (function(input, output, session) {
         geom_boxplot(outlier.alpha=0.9, outlier.size = 2, outlier.shape = 16) +
         facet_wrap(~GCM, ncol=4) +
         scale_fill_manual(values=statePal) +
-        scale_color_manual(values=statePal) +
+        scale_color_manual(values=statePal) + 
         theme_minimal(20) +
         labs(fill="State Class",
              color="State Class",
