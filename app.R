@@ -456,7 +456,8 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                 size="sm",
                                                                                 width="100%",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
-                                                        column(width=12, align="center",
+                                                        column(width=12, 
+                                                           column(4, htmlOutput("range2")),
                                                            plotOutput("transitionsFirePlot", height="700")))),
                                           tabPanel("Land Cover Change from Disturbance",
                                             
@@ -472,7 +473,8 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                 size="sm",
                                                                                 width="100%",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
-                                                        column(width=12, align="center",
+                                                        column(width=12, 
+                                                           column(4, htmlOutput("range3")),
                                                            plotOutput("transitionsFirePlot2", height="700")))))),
                                
                                
@@ -1275,6 +1277,7 @@ server = (function(input, output, session) {
     
     ##### Disturbances Page #####    
 ##### Disturbance Area #####    
+    
     selectData5 = reactive({
       disturbanceData %>% filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup==input$transitionsDist) %>%
         filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>% 
@@ -1329,6 +1332,7 @@ server = (function(input, output, session) {
    }) 
     
     
+    output$range2  = renderUI({HTML(paste("Start year: ","<b>",as.character(input$years[1]),"</b>","<br/>", "End year: ", "<b>",as.character(input$years[2]),"</b>"))})
     
     selectData6 = reactive({
       disturbanceData %>% 
@@ -1373,6 +1377,7 @@ server = (function(input, output, session) {
     
     })
     
+    output$range3  = renderUI({HTML(paste("Start year: ","<b>",as.character(input$years[1]),"</b>","<br/>", "End year: ", "<b>",as.character(input$years[2]),"</b>"))})
     
     selectData7 = reactive({
       disturbanceData %>% 
