@@ -292,7 +292,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                for each climate model (GCM). Soil includes soil organic carbon, DOM includes all dead organic matter sotred in litter and 
                                                                standing and dowed dead vegetation, and Live includes all above- and below-ground living vegetation. TEC is total ecosystem 
                                                                carbon and is the sum of the Soil, DOM, and Live pools. Error bars represent the 95% interval based on 100 MC iterations."),
-                                                        column(width=12, align="right",actionButton("aboutNetChangeCarbon", " Carbon Stocks",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),,class="aboutButton")),
+                                                        column(width=12, align="right",actionButton("aboutNetChangeCarbon", " Carbon Stocks",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
                                                         column(width=12,
                                                                column(4, htmlOutput("range")),
                                                                 plotOutput("stocksPlot2", height="700", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
@@ -552,6 +552,17 @@ ui = fluidPage(theme = shinytheme("flatly"),
                               available on ", a("Github." , href="https://github.com/bsleeter/california-carbon-scenarios", target="_blank"), "More information about the California LUCAS model and other LUCAS modeling efforts
                               may be found in our ",a("team website", href="https://www.usgs.gov/centers/wgsc/science/land-use-and-climate-change-team"))
                        ),
+                       tags$section(
+                         tags$h1("Partners"),
+                         tags$hr(class="abouthr"),  
+                         fluidRow(
+                           column(width=3, align="left", img(src="logos/apexrms.png", class="center"), class="logoCol"),
+                           column(width=3, align="left", img(src="logos/ca_energy_comission.png", class="center"), class="logoCol"),
+                           column(width=3, align="left", img(src="logos/apexrms.png", class="center"), class="logoCol"),
+                           column(width=3, align="left", img(src="logos/tnc.svg",  class="center"), class="logoCol"),   
+                            
+                         class="partnersRow")  
+                         ), 
                        tags$section(
                          tags$h1("Contact"),
                          tags$hr(class="abouthr"), 
