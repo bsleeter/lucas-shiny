@@ -524,6 +524,9 @@ section{
     border: 1px solid rgba(33,37,41,.125);
 	
 }
+.aboutButton {
+	margin-top:10px;
+}
 #buttomRow{
     text-align: center;
     margin-bottom: 20px;

@@ -97,10 +97,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                   tags$p("Explore 32 unique scenarios, consisting of 4 land-use scenarios and 2 radiative forcing scenarios as simulated by 4 global climate models for the State of California", id="scenariosText"),
                class="row", id="toolsTitleRows"),  
                tags$hr(),
-               #Tools Title
-               #tags$div(
-              #   tags$h1("Explore Projections", id="toolsTitle"), 
-              #   class="row", id="toolsTitleRows"),  
+                
                tags$div(
                  tags$div(
                    tags$h3("Carbon Stocks"),
@@ -126,14 +123,6 @@ ui = fluidPage(theme = shinytheme("flatly"),
                      actionButton('jumpToP5', 'Explore fluxes'),
                      class ="row"),
                    class="toolBox"),  
-                # tags$div(
-                #   tags$h3("Carbon Flows"),
-                #   tags$div(
-                #     tags$img(src = "fluxes_80.png", height = "80px", class="toolBoxImg"),
-                #     tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing eli. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst."),
-                #     actionButton('jumpToP', 'Explore flows'),
-                #     class ="row"),
-                #   class="toolBox"),      
                  tags$div(
                    tags$h3("Land Use & Land Cover"),
                    tags$div(
@@ -160,9 +149,9 @@ ui = fluidPage(theme = shinytheme("flatly"),
                   tags$div(
                     tags$button(
                       id = "jumpToP10",
-                      class = "btn btn-default action-button shiny-bound-inputs dashboard-type",
+                      class = "btn btn-default action-button shiny-bound-inputs dashboard-type selected",
                       name =  "stocks_80.png",
-                      img(src = "stocks_80.png",
+                      img(src = "stocks_80_white.png",
                           height = "60px"),
                       tags$span("Carbon Stocks")
                     ),
@@ -199,11 +188,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                       tags$span("Wildfire & Drought")
                     ),
                    id="buttomRow"),
-                    #actionButton(inputId = "jumpToP10", label = "Carbon Stocks"),
-                    #actionButton(inputId = "jumpToP20", label = "Net Fluxes"),
-                    #actionButton(inputId = "jumpToP50", label = "Land Use Fluxes"),
-                    #actionButton(inputId = "jumpToP30", label = "Land Use & Land Cover"),
-                    #actionButton(inputId = "jumpToP40", label = "Wildfire & Drought"),
+                   
                     hr(),
                 
                     sidebarLayout(
@@ -269,19 +254,19 @@ ui = fluidPage(theme = shinytheme("flatly"),
                            tabsetPanel(id="dashboardTabset",
                                tabPanel("Carbon Stocks",value = "Carbon Stocks", width=12,        
                                   tabsetPanel(
-                                    tabPanel("Projected Ecosystem Carbon Storage",    
+                                    tabPanel("Ecosystem Carbon Storage Over Time",    
                                              
                                              
                                                        fluidRow(
-                                                                column(width=12, align="left", h2("Projected Ecosystem Carbon Storage")),
-                                                                column(width=12, align="left", "Use the selection tools at left to plot projected carbon storage over time over your preferred region, scenario, and range of years. The gray shaded area shows the full
-                                                                       range of values projected under the 32 alternative futures. The colored lines and ribbons show the range for each unique scenario.
-                                                                       Select one of the four carbon stock groups from the buttons on the upper right. Soil includes soil organic carbon, DOM includes all 
+                                                                column(width=12, align="left", h2("Ecosystem Carbon Storage Over Time")),
+                                                                column(width=12, align="left", "Use the selection tools at left to plot projected carbon storage in millions of metric tons of carbon (y-axis) by year (x-axis) over your preferred region, scenario, and range of years. The gray shaded area shows the full
+                                                                       range of values projected under the 32 alternative scenarios. The colored lines and ribbons show the range for each unique scenario.
+                                                                       Toggle between the four carbon stock groups using the buttons on the upper right to show carbon storage by stock groups. Soil includes soil organic carbon, DOM includes all 
                                                                        dead organic matter sotred in litter and standing and dowed dead vegetation, and Live includes all above- and below-ground living vegetation.
                                                                        TEC is total ecosystem carbon and is the sum of the Soil, DOM, and Live pools."),
                                                                 column(width=12, align="right",
                                                                        radioGroupButtons(width=250,
-                                                                                         inputId = "stockGroup", label = actionButton("aboutCarbonStocks", " Carbon Stocks",icon("glyphicon glyphicon-info-sign", lib = "glyphicon")),  
+                                                                                         inputId = "stockGroup", label = actionButton("aboutCarbonStocks", " Carbon Stocks",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"),  
                                                                                          choices = c("TEC","Soil","Live","DOM"),
                                                                                          selected="TEC",
                                                                                          size="sm",
@@ -298,16 +283,18 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                           status="success",
                                                                           fill = TRUE),
                                                                         DTOutput("stocktable")))),
-                                    tabPanel("Net Change in Ecosystem Carbon Stocks by Scenario",
+                                    tabPanel("Net Change in Ecosystem Carbon Storage",
                                             
                                                       fluidRow(
-                                                        column(width=12, align="left", h2("Net Change in Ecosystem Carbon Stocks by Scenario")),
-                                                        column(width=12, align="left", " Use the selection tools at left to plot net change in carbon storage for each of the stock groups between two dates, over your preferred region, scenario, and range of years.
+                                                        column(width=12, align="left", h2("Net Change in Ecosystem Carbon Storage")),
+                                                        column(width=12, align="left", " Use the selection tools at left to plot net change in carbon storage in  millions of metric tons of carbon (y-axis) for each of the stock groups between two dates, over your preferred region, scenario, and range of years.
                                                                Negative values indicate a net loss of carbon from ecosystems. RCP scenarios are shown on the x-axis and can be disaggregated 
                                                                for each climate model (GCM). Soil includes soil organic carbon, DOM includes all dead organic matter sotred in litter and 
                                                                standing and dowed dead vegetation, and Live includes all above- and below-ground living vegetation. TEC is total ecosystem 
                                                                carbon and is the sum of the Soil, DOM, and Live pools. Error bars represent the 95% interval based on 100 MC iterations."),
+                                                        column(width=12, align="right",actionButton("aboutNetChangeCarbon", " Carbon Stocks",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),,class="aboutButton")),
                                                         column(width=12,
+                                                               column(4, htmlOutput("range")),
                                                                 plotOutput("stocksPlot2", height="700", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
                                                                 uiOutput("stocksPlot2_hover_info")))))),
 
@@ -315,32 +302,32 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                tabPanel("Net Carbon Fluxes", value="Net Carbon Fluxes", width=12,
                                         tabsetPanel(
                                           
-                                          tabPanel("Carbon fluxes over time",
+                                          tabPanel("Carbon Fluxes Over Time",
                                                
                                                       fluidRow(
-                                                        column(width=12, align="left", h2("Carbon fluxes over time")),
-                                                        column(width=12, align="left", "Use the selection tools at left to plot the rolling 10-year average of four different carbon fluxes plotted over time over your preferred region, scenario, and range of years. In each plot the colored line
+                                                        column(width=12, align="left", h2("Carbon Fluxes Over Time")),
+                                                        column(width=12, align="left", "Use the selection tools at left to plot the rolling 10-year average of four different carbon fluxes in millions of metric tons of carbon (y-axis) plotted over time (x-axis) over your preferred region, scenario, and range of years. In each plot the colored line
                                                                represents the 10 year rolling average carbon flux. The dotted line represents the mean value over all scenarios and the grey area represents the min and max values over all scenarios. 
                                                                NPP is net primary productivity, Rh is heterotrophic respiration (respiration from dead organic matter and soils), NEP is net ecosystem productivity (NPP minus Rh),
                                                                and NECB is net ecosystem carbon balance (NEP minus carbon losses from land use and disturbances). Select different Land Use and Climate Scenarios from the sidebar to explore their effects on carbon fluxes through time."),
                                                         column(width=12, align="right",
-                                                               radioGroupButtons(width=250,inputId = "netflux", label = actionButton("aboutCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon")),choices = c("NPP","Rh","NEP","NECB"),selected="NECB",size="sm",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                                               radioGroupButtons(width=250,inputId = "netflux", label = actionButton("aboutCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"),choices = c("NPP","Rh","NEP","NECB"),selected="NECB",size="sm",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="right",
                                                                plotOutput("fluxplot1", height="700"),
                                                                prettySwitch(inputId = "showFluxTable",label = "View Chart Data", value=FALSE,status="success",fill = TRUE),
                                                                prettySwitch(inputId="annual",label="Add Annual Projections",value=FALSE,status="primary",slim=TRUE),
                                                                prettySwitch(inputId="smooth",label="Add Trend Line",value=FALSE,status="primary",slim=TRUE),
                                                                DTOutput("fluxtable")))),
-                                        tabPanel("Cumulative Carbon Fluxes by Scenario",  
+                                        tabPanel("Cumulative Carbon Fluxes",  
                                           
                                                     fluidRow(
-                                                      column(width=12, align="left", h2("Cumulative Carbon Fluxes by Scenario")),
-                                                      column(width=12, align="left", "Use the selection tools at left to plot the mean cumulative net carbon flux and corresponding 95% confidence intervals over your preferred region, scenario, and range of years.
+                                                      column(width=12, align="left", h2("Cumulative Carbon Fluxes")),
+                                                      column(width=12, align="left", "Use the selection tools at left to plot the mean cumulative net carbon flux in million metric tons carbon (x-axis) according to flux type (y-axis) over your preferred region, scenario, and range of years.
                                                              Negative values indicate a loss of carbon from ecosystems while positive values indicate ecosystems were a net sink of carbon. Rh is heterotrophic respiration (respiration from dead organic matter and soils), NEP is net ecosystem productivity (NPP minus Rh),
                                                                and NECB is net ecosystem carbon balance (NEP minus carbon losses from land use and disturbances). Select different Land Use and Climate Scenarios from the sidebar to explore their effects on cumulative carbon fluxes."),
                                                       column(width=6, align="left"),
                                                       column(width=6, align="right",
-                                                             checkboxGroupButtons(inputId="netflux2",label=actionButton("aboutCumulativeCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon")), choices=c("NPP","Rh","NEP","NECB"),selected=c("NPP","Rh","NEP","NECB"),direction="horizontal",size="sm",width="100%",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                                             checkboxGroupButtons(inputId="netflux2",label=actionButton("aboutCumulativeCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"), choices=c("NPP","Rh","NEP","NECB"),selected=c("NPP","Rh","NEP","NECB"),direction="horizontal",size="sm",width="100%",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                       column(width=12, align="right",
                                                              plotOutput("fluxplot2", height="700")))),
                                         
@@ -349,11 +336,14 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                  fluidRow(
                                                    column(width=12, align="left", h2("Cumulative Carbon Balance")),
                                                    column(width=12, align="left", "Use the selection tools at left to plot cumulative net ecosystem carbon balance, or the net amount of carbon that was either gained (sequestered) 
-                                                          or lost (emitted) from ecosystems over your preferred region, scenario, and range of years. The colored areas show how each ecoregion's cumulative ecosystem carbon balance changes through time. Positive 
+                                                          or lost (emitted) from ecosystems over your preferred region, scenario, and range of years. Values are in millions of metric tons of carbon (y-axis) over time (x-axis). The colored areas show how each ecoregion's cumulative ecosystem carbon balance changes through time. Positive 
                                                           values indicate the region was accumulating more carbon than it emitted back to the atmosphere (net carbon sink) and negative values indicate the 
                                                           region lost more carbon through removal, leaching, and emission to the atmosphere, than it gained (net carbon source). The gray area outline on the graph
-                                                          represents the cumulative net ecosustem carbon balance for the entire state of California. Select different Land Use 
+                                                          represents the cumulative net ecosystem carbon balance for the entire state of California. Select different Land Use 
                                                           and Climate Scenarios from the sidebar to explore their effects on ecosystem carbon balance. "),
+                                                   
+                                                   
+                                                   column(width=12, align="Right", actionButton("aboutCarbonBalance", "Carbon Balance",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
                                                    column(width=12,
                                                           plotOutput("netfluxPlot3", height="700px"))))
                                         
@@ -366,12 +356,13 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                           tabPanel("Carbon Fluxes by Disturbance Type",
                                                    
                                                              fluidRow(
-                                                               column(width=12, h2("Carbon fluxes by Disturbance Type")),
-                                                               column(width=12, "Use the selection tools at left to plot carbon fluxes resulting from land use change and disturbance over your preferred region, scenario, and range of years. Toggle between land change categories
+                                                               column(width=12, h2("Carbon Fluxes by Disturbance Type")),
+                                                               column(width=12, "Use the selection tools at left to plot carbon fluxes in millions of metric tons of carbon (y-axis) by year(x-axis) resulting from land use change and disturbance over your preferred region, scenario, and range of years. Toggle between land change categories
                                                                         to view the mean annual estimate of mortality, harvest, and emissions. Select different Land Use Scenarios from the siderbar to explore the effects of Land Use and climate model on carbon fluxes."),
-                                                               column(width=12, align="center",
+                                                               #column(width=12, align="Right", actionButton("aboutCarbonFluxesByDisturbance", "Disturbance and Flux",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
+                                                               column(width=12, align="right",
                                                                       radioGroupButtons(width="100%",
-                                                                             inputId = "transitionTypes", label = "", 
+                                                                             inputId = "transitionTypes", label = actionButton("aboutCarbonFluxesByDisturbance", "Disturbance and Flux",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"), 
                                                                              choices = c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"),
                                                                              selected = "Urbanization",
                                                                              size = "sm",
@@ -379,20 +370,21 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                              direction = "horizontal",
                                                                              checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
                                                               plotOutput("transitionFlows1", height="700")))),
-                                          tabPanel("Disturbance Fluxes by Type",
+                                          tabPanel("Disturbance Type Contribution by Carbon Flux",
                                                    
                                                              fluidRow(
-                                                                      column(width=12, align="left", h2("Disturbance Fluxes by Type")),
-                                                                      column(width=12, align="left", "Use the selection tools at left to plot average annual total carbon flux for each land use/land cover or disturbance related flux type over your preferred region, scenario, and range of years. Each colored area represents the
+                                                                      column(width=12, align="left", h2("Disturbance Type Contribution by Flux")),
+                                                                      column(width=12, align="left", "Use the selection tools at left to plot average annual total carbon flux in millions of metric tons of carbon (y-axis) by year (x-axis) for each land use/land cover or disturbance related flux type over your preferred region, scenario, and range of years. Each colored area represents the
                                                                              contribution from one LULC or disturbance type. Toggle between carbon fluxes to view cabon flux plots. Select different Land Use and Climate Scenarios from the sidebar to explore their effects on disturbance fluxes"),
-                                                                      column(width=12, align="center",
+                                                                      #column(width=12, align="Right", actionButton("aboutDisturbancebyType", "Disturbance and Flux",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
+                                                                      column(width=12, align="right", 
                                                                              radioGroupButtons(width="100%",
                                                                                 inputId = "transfluxTypes", 
-                                                                                label = "", 
+                                                                                label = actionButton("aboutDisturbancebyType", "Disturbance and Flux",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"), 
                                                                                 choices = c("Emission","Harvest","Mortality"),
-                                                                                selected = "Emission",
+                                                                                selected = "Emission",  
                                                                                 size = "sm",
-                                                                                justified = TRUE,
+                                                                                justified = TRUE,  
                                                                                 direction = "horizontal",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
                                                            plotOutput("transitionFlows2", height="700")))),
@@ -400,15 +392,15 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                    
                                                              fluidRow(
                                                                       column(width=12, align="left", h2("Cumulative Fluxes from Land Use Change and Disturbance")),
-                                                                      column(width=12, align="left", "Use the selection tools at left to plot cumulative carbon fluxes caused by land use change and disturbance over your preferred region, scenario, and range of years. Compare land use change and disturbance types and the impact of different flux types. Select different land Use and climate scenarios from the sidebar to explore how they influence fluxes from land use change and disturbance."),
-                                                                      column(width=12, align="center",
+                                                                      column(width=12, align="left", "Use the selection tools at left to plot cumulative carbon fluxes in  millions of metric tons of carbon (x-axis) caused by land use change and disturbance (y-axis) over your preferred region, scenario, and range of years. Compare land use change and disturbance types and the impact of different flux types. Select different land Use and climate scenarios from the sidebar to explore how they influence fluxes from land use change and disturbance."),
+                                                                      column(width=12, align="right",
                                                                              checkboxGroupButtons(width="100%",
                                                                                 inputId="transitionTypes2", 
-                                                                                label="", 
+                                                                                label=actionButton("aboutCumulativeFluxFromDisturbance", "Disturbance and Flux",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"),
                                                                                 choices = c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"),
                                                                                 selected = c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"),
                                                                                 direction = "horizontal",
-                                                                                size="sm",
+                                                                                size="sm",  
                                                                                 justified=TRUE,
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
                                                                              checkboxGroupButtons(width="100%",
@@ -431,11 +423,11 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                             
                                                   fluidRow(
                                                            column(width=12, align="left", h2("Annual Disturbance Area by Scenario")),
-                                                           column(width=12, align="left", "Use the selection tools at left to create a time series of disturbed area for each selected climate model, climate scenario, and land use scenario. Values shown represent the mean (square kilometers) amount of disturbed area along with the 95% confidence intervals. The gray shaded area in the background shows the maximum range calculated over all scenarios. Use the buttons on the upper right to toggle between wildfire and drought induced tree mortality and add a time series trend line."),
+                                                           column(width=12, align="left", "Use the selection tools at left to create a time series of disturbed area in square kilometers (y-axis) by year (x-axis) for each selected climate model, climate scenario, and land use scenario. Values shown represent the mean (square kilometers) amount of disturbed area along with the 95% confidence intervals. The gray shaded area in the background shows the maximum range calculated over all scenarios. Use the buttons on the upper right to toggle between wildfire and drought induced tree mortality and add a time series trend line."),
                                                            column(width=12, align="right",
                                                                   radioGroupButtons(width="200px",
                                                                                     inputId = "transitionsDist", 
-                                                                                    label = "", 
+                                                                                    label = "Disturbance Type", 
                                                                                     choices = unique(disturbanceData$TransitionGroup),
                                                                                     selected="Fire",
                                                                                     size="sm",
@@ -454,7 +446,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                             
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Fire Disturbance by Severity Class")),
-                                                        column(width=12, align="left", "Use the selection tools at left to create boxplot diagrams showing wildfire area burned for each selected climate model, climate scenario, land use scenario and timeframe. The boxplots show the distribution of mean annual are burned by scenario and have been disaggregated by fire severity class (i.e. low, medium, and high). The boxes represent the 25th and 75th percentiles while the whiskers represent the 10th and 90th percentiles; outliers are shown as points. Because the plot only shows the distribution of annual mean projections, the range is likely much larger due to uncertainty associated with fire projections (see the disturbance over time tab)."),
+                                                        column(width=12, align="left", "Use the selection tools at left to create boxplot diagrams showing wildfire area burned for each selected climate model, climate scenario, land use scenario and timeframe. The boxplots show the distribution of mean annual are burned (km2) (y-axis) by scenario (x-axis) and have been disaggregated by fire severity class (i.e. low, medium, and high). The boxes represent the 25th and 75th percentiles while the whiskers represent the 10th and 90th percentiles; outliers are shown as points. Because the plot only shows the distribution of annual mean projections, the range is likely much larger due to uncertainty associated with fire projections (see the disturbance over time tab)."),
                                                         column(width=12, align="right",
                                                            checkboxGroupButtons(inputId="severityTypes", 
                                                                                 label="Fire Severity Class", 
@@ -470,7 +462,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                             
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Land Cover Change from Disturbance")),
-                                                        column(width=12, align="left", "Use the selection tools at left to create box plot diagrams of total land use and land cover change from wildfire and drought occurrence over your preferred region, scenario, and range of years. The boxplot shows the distribution of mean annual disturbance-based change (km2) in the selected land cover class by scenario and has been disaggregated by land cover class. The boxes represent the 25th and 75th percentiles while the whiskers represent the 10th and 90th percentiles; outliers are shown as points. Because the plot only shows the distribution of annual mean projections, the range is likely much larger due to uncertainty associated with fire projections (see the disturbance over time tab)."),
+                                                        column(width=12, align="left", "Use the selection tools at left to create box plot diagrams of total land use and land cover change from wildfire and drought occurrence over your preferred region, scenario, and range of years. The boxplot shows the distribution of mean annual disturbance-based change (km2) (y-axis) in the selected land cover class by scenario (x-axis) and has been disaggregated by land cover class. The boxes represent the 25th and 75th percentiles while the whiskers represent the 10th and 90th percentiles; outliers are shown as points. Because the plot only shows the distribution of annual mean projections, the range is likely much larger due to uncertainty associated with fire projections (see the disturbance over time tab)."),
                                                         column(width=12, align="right",
                                                            checkboxGroupButtons(inputId="stateTypes", 
                                                                                 label="Land Cover Class", 
@@ -487,18 +479,18 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                
                                tabPanel("Land Cover Totals", value="Land Cover Totals",
                                   tabsetPanel(
-                                    tabPanel("Land Use/Land Cover over Time",
+                                    tabPanel("Land Use/Land Cover Composition Over Time",
                                              
                                              fluidRow(
                                                column(width=12, align="left", h2("Land Use/Land Cover Composition Over Time")),
                                                column(width=12, align="left", "Use the selection tools at left to create line graph time series of land use and land cover change over your preferred region, scenario, 
-                                                      and range of years. Use the toggle buttons below to add and remove land Use/land cover class graphs from the visualization. Values in the line graphs represent the 
+                                                      and range of years. Use the toggle buttons below to add and remove land use/land cover class graphs from the visualization. Values in the line graphs represent the 
                                                       number of square kilometers (y-axis) of the selected land use/land cover in the region over time (x-axis), 
                                                       grey background of each line graph shows the full range of outcomes across all scenarios."),
                                                column(width=12, align="right",
                                                       
                                                       checkboxGroupButtons(width="100%",
-                                                                           inputId = "lulcType", label = "", 
+                                                                           inputId = "lulcType", label = actionButton("aboutLanduseCompositionTime", "Landuse Composition",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"), 
                                                                            choices = c("Agriculture","Developed","Forest","Grassland","Shrubland","Wetland"),
                                                                            selected = c("Agriculture","Developed","Forest","Grassland","Shrubland","Wetland"),
                                                                            size="sm",
@@ -509,12 +501,12 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                column(width=12, align="left",
                                                       
                                                       tags$p("Note: Land Use/Land Cover composition was modeled independent of climate scenario and climate model. Changing climate scenario and climate model will have no effect.")))),
-                                    tabPanel("Land Use/Land Cover Area",
+                                    tabPanel("Land Use/Land Cover Composition",
                                         
                                                   fluidRow(
                                                     column(width=12, align="left", h2("Land Use/Land Cover Composition")),
                                                     column(width=12, align="left", "Use the selection tools at left to create bar graphs depicting land use/land cover composition by your preferred region, land use scenario, and range of years. 
-                                                    Values in the bar graphs represent percent of the regions total land area within each land use/land cover class. Bar graph at left is the starting year, bar graph at right is the ending year in user-selected time range."),
+                                                    Values in the bar graphs represent percent of the region's total land area (y-axis) within each land use/land cover class. Bar graph at left is the starting year, bar graph at right is the ending year in user-selected time range."),
                                                     column(width=12, align="left",
                                                           plotOutput("lulcPlot2", height="700"),
                                                           tags$p("Note: Land Use/Land Cover composition was modeled independent of climate scenario and climate model. Changing climate scenario and climate model will have no effect.")
@@ -605,7 +597,6 @@ ui = fluidPage(theme = shinytheme("flatly"),
 
 server = (function(input, output, session) {
   
-  
   #Modal for model variables
   observeEvent(input$aboutModelVariables, {
     showModal(modalDialog(
@@ -623,7 +614,7 @@ server = (function(input, output, session) {
       ),
       tags$div(img(src='images/ToolDescription.png', width="700px") 
       ),
-      #HTML('<img src="model_variables.png" width="400px>'),
+     
       easyClose = TRUE,
       footer = modalButton("Dismiss")
     ))
@@ -646,12 +637,35 @@ server = (function(input, output, session) {
           "DOM - Dead Organic Matter on the surface, includes litter, standing deadwood and down deadwood but not soil."  
         )
       ),
-      
-      #HTML('<img src="model_variables.png" width="400px>'),
+    
       easyClose = TRUE,
       footer = modalButton("Dismiss")
       ))
   })
+  #modal for carbon stocks net change
+  observeEvent(input$aboutNetChangeCarbon, {
+    showModal(modalDialog(
+      title = "Carbon Stock Definitions",
+      tags$ul(
+        tags$li(
+          "TEC - Total Ecosystem Carbon, represents the sum of all live and dead ecosystem carbon stocks."
+        ),
+        tags$li(
+          "Soil - Soil organic carbon to 1-m depth below the surface." 
+        ),
+        tags$li(
+          "Live - Total live plant biomass carbon (above- and below-ground)."  
+        ),
+        tags$li(
+          "DOM - Dead Organic Matter on the surface, includes litter, standing deadwood and down deadwood but not soil."  
+        )
+      ),
+      
+      easyClose = TRUE,
+      footer = modalButton("Dismiss")
+    ))
+  })
+ 
   #modal for carbon fluxes
   observeEvent(input$aboutCarbonFluxes, {
     showModal(modalDialog(
@@ -671,7 +685,6 @@ server = (function(input, output, session) {
         )
       ),
       
-      #HTML('<img src="model_variables.png" width="400px>'),
       easyClose = TRUE,
       footer = modalButton("Dismiss")
     ))
@@ -694,12 +707,111 @@ server = (function(input, output, session) {
           "NECB - Net ecosystem carbon balance (NEP minus carbon losses from land use and disturbances)."  
         )
       ),
-      
-      #HTML('<img src="model_variables.png" width="400px>'),
+    
       easyClose = TRUE,
       footer = modalButton("Dismiss")
     ))
   })
+  
+  #modal aboutCumulativeCarbonBalance
+  observeEvent(input$aboutCarbonBalance, {
+    showModal(modalDialog(
+      title = "Cumulative Carbon Balance Graph",
+      tags$p("This plot shows cumulative net ecosystem carbon balance, or the net amount of carbon that was either gained (sequestered) or lost (emitted) from ecosystems over time.
+             Positive values indicate the region was accumulating more carbon than it emitted back to the atmosphere (net carbon sink) and negative values indicate the region lost
+             more carbon through removal, leaching, and emission to the atmosphere, than it gained (net carbon source). Values are reported in Millions of Metric Tons of Carbon (MMTC)."
+      ),
+      tags$div(img(src='images/cumulativeBalanaceDescription.png', width="700px")   
+      ),
+      easyClose = TRUE,
+      footer = modalButton("Dismiss")
+    ))
+  })
+  #modal aboutCarbonFluxesByDisturbance
+  observeEvent(input$aboutCarbonFluxesByDisturbance, {
+    showModal(modalDialog(
+      title = "Disturbance Types and Carbon Fluxes",
+      tags$p(" The LUCAS model tracks transitions between state types defined to represent the processes associated with urbanization, agricultural expansion, orchard removal, forest harvest, wildfire, and drought mortality.
+              Select a disturbance type to plot fluxes according to disturbance type. Fluxes are reported by emission, harvest, and mortality."),
+      tags$h4("Carbon Fluxes"),
+      tags$ul(
+        tags$li(
+          "Emission - Total amount of carbon emitted to the atmosphere due to disturbance." 
+        ),
+        tags$li(
+          "Harvest - Total amount of tree biomass carbon transferrred to the wood products due to disturbance."
+        ),
+        tags$li(
+          "Mortality - Total amount of tree live biomass carbon transferred to standing dead due to disturbance. Carbon flux due to biomass death."
+        )
+      ),
+      
+      easyClose = TRUE,
+      footer = modalButton("Dismiss")
+    ))
+  })
+  
+  #modal aboutDisturbancebyType
+  observeEvent(input$aboutDisturbancebyType, {
+    showModal(modalDialog(
+      title = "Disturbance Types and Carbon Fluxes",
+      tags$p("The LUCAS model tracks transitions between state types defined to represent the processes associated with urbanization, agricultural expansion, orchard removal, forest harvest, wildfire, and drought mortality.
+             Select a carbon flux to plot the contributions of each disturbance type to the total carbon flux."),
+      tags$h4("Carbon Fluxes"),
+      tags$ul(
+        tags$li(
+          "Emission - Total amount of carbon emitted to the atmosphere due to disturbance." 
+        ),
+        tags$li(
+          "Harvest - Total amount of tree biomass carbon transferrred to the wood products due to disturbance."
+        ),
+        tags$li(
+          "Mortality - Total amount of tree live biomass carbon transferred to standing dead due to disturbance. Carbon flux due to biomass death."
+        )
+      ),
+      
+      easyClose = TRUE,
+      footer = modalButton("Dismiss")
+      ))
+  })
+  
+ #modal for aboutCumulativeFluxFromDisturbance
+  observeEvent(input$aboutCumulativeFluxFromDisturbance, {
+    showModal(modalDialog(
+      title = "Disturbance Types and Carbon Fluxes",
+      tags$p("The LUCAS model tracks transitions between state types defined to represent the processes associated with urbanization, agricultural expansion, orchard removal, forest harvest, wildfire, and drought mortality.
+             Select carbon fluxes and disturbance types to compare carbon flux according to disturbance type."),
+      tags$h4("Carbon Fluxes"),
+      tags$ul(
+        tags$li(
+          "Emission - Total amount of carbon emitted to the atmosphere due to disturbance." 
+        ),
+        tags$li(
+          "Harvest - Total amount of tree biomass carbon transferrred to the wood products due to disturbance."
+        ),
+        tags$li(
+          "Mortality - Total amount of tree live biomass carbon transferred to standing dead due to disturbance. Carbon flux due to biomass death."
+        )
+      ),
+      
+      easyClose = TRUE,
+      footer = modalButton("Dismiss")
+      ))
+  })
+  #Modal aboutLanduseCompositionTime
+  observeEvent(input$aboutLanduseCompositionTime, {
+    showModal(modalDialog(
+      title = "About Land Use/Land Cover Composition Over Time",
+      tags$p("This plot shows land use/land cover composition over time in square kilometers. Toggle land use/land cover classes to add or remove them from the chart."),
+      tags$p("Note: Land Use/Land Cover composition was modeled independent of climate scenario and climate model. Therefore changing climate scenario and climate model will have no effect."),
+      tags$div(img(src='images/landuseCompositionDescription.png', width="700px")   
+      ),
+      
+      easyClose = TRUE,
+      footer = modalButton("Dismiss")
+      ))
+  })
+ #Onclick event for california ecoregion map
  observeEvent(input$mymap_shape_click, {
   
     eco = input$mymap_shape_click$id
@@ -731,7 +843,7 @@ server = (function(input, output, session) {
                       selected = "dashboardPanel")
     updateTabsetPanel(session, "dashboardTabset", selected = "Carbon Stocks")
     click("jumpToP10")
-    #addClass(id = "jumpToP10", class = "selected")
+   
     
   })
   observeEvent(input$jumpToP2, {
@@ -740,7 +852,7 @@ server = (function(input, output, session) {
     updateTabsetPanel(session, "dashboardTabset",
                       selected = "Net Carbon Fluxes")
     click("jumpToP20")
-    #addClass(id = "jumpToP20", class = "selected")
+   
   })
   observeEvent(input$jumpToP3, {
     updateTabsetPanel(session, "navTabset",
@@ -748,7 +860,7 @@ server = (function(input, output, session) {
     updateTabsetPanel(session, "dashboardTabset",
                       selected = "Land Cover Totals") 
     click("jumpToP30")
-    #addClass(id = "jumpToP30", class = "selected")
+    
   })
   observeEvent(input$jumpToP4, {
     updateTabsetPanel(session, "navTabset",
@@ -756,7 +868,7 @@ server = (function(input, output, session) {
     updateTabsetPanel(session, "dashboardTabset",
                       selected = "Land Cover Disturbance")
     click("jumpToP40")
-    #addClass(id = "jumpToP40", class = "selected")
+    
   })
   observeEvent(input$jumpToP5, {
     updateTabsetPanel(session, "navTabset",
@@ -764,7 +876,7 @@ server = (function(input, output, session) {
     updateTabsetPanel(session, "dashboardTabset",
                       selected = "Land Use Fluxes")
     click("jumpToP50")
-   #addClass(id = "jumpToP50", class = "selected")
+  
   })
   
   
@@ -805,6 +917,7 @@ server = (function(input, output, session) {
   
 ##### Carbon Stocks Page #####
 ##### Stock Plot 1 #####
+   
     selectData1 = reactive({
         stocks %>% filter(Ecosystem=="Yes", LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, StockGroup==input$stockGroup) %>%
                           filter(Timestep>=input$years[1], Timestep<=input$years[2])
@@ -889,7 +1002,7 @@ server = (function(input, output, session) {
     
 
 ##### Stock Plot 2 #####    
-    
+    output$range  = renderUI({HTML(paste("Start year: ","<b>",as.character(input$years[1]),"</b>","<br/>", "End year: ", "<b>",as.character(input$years[2]),"</b>"))})
     selectData2 = reactive({
         stocks %>% filter(Ecosystem=="Yes", LUC %in% input$luc, GCM %in% input$gcm,  RCP %in% input$rcp, EcoregionName==input$ecoregion) %>%
             filter(Timestep==input$years[1] | Timestep==input$years[2]) %>% group_by(LUC,GCM,RCP,EcoregionName,StockGroup) %>% mutate(MeanChange=Mean-lag(Mean), LowerChange=Lower-lag(Lower), UpperChange=Upper-lag(Upper))
