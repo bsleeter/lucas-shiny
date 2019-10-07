@@ -94,7 +94,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
              tags$div( 
                tags$hr(),
                tags$div(
-                  tags$p("Explore 32 unique scenarios, consisting of 4 land-use scenarios and 2 radiative forcing scenarios as simulated by 4 global climate models for the State of California", id="scenariosText"),
+                  tags$p("Explore 32 unique land change and carbon balance scenarios, consisting of 4 land-use scenarios and 2 radiative forcing scenarios as simulated by 4 global climate models for the State of California", id="scenariosText"),
                class="row", id="toolsTitleRows"),  
                tags$hr(),
                 
@@ -560,7 +560,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                          fluidRow(
                            column(width=3, align="left", img(src="logos/apexrms.png", class="center"), class="logoCol"),
                            column(width=3, align="left", img(src="logos/ca_energy_comission.png", class="center"), class="logoCol"),
-                           column(width=3, align="left", img(src="logos/apexrms.png", class="center"), class="logoCol"),
+                           column(width=3, align="left", img(src="logos/salo.svg", class="center"), class="logoCol"),
                            column(width=3, align="left", img(src="logos/tnc.svg",  class="center"), class="logoCol"),   
                             
                          class="partnersRow")  
