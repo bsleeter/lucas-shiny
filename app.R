@@ -682,7 +682,8 @@ server = (function(input, output, session) {
   #modal for carbon fluxes
   observeEvent(input$aboutCarbonFluxes, {
     showModal(modalDialog(
-      title = "Carbon Flux Definitions",
+      #title = "Carbon Fluxes Over Time",
+      tags$h4("Carbon Flux Definitions"),
       tags$ul(
         tags$li(
           "NPP - Net primary prodution"
@@ -697,6 +698,7 @@ server = (function(input, output, session) {
           "NECB - Net ecosystem carbon balance (NEP minus carbon losses from land use and disturbances)."  
         )
       ),
+      tags$h4("Carbon Flux Plot Example"),
       tags$div(img(src='images/cabonFluxOverTime.png', width="700px")),  
       easyClose = TRUE,
       footer = modalButton("Dismiss")
@@ -814,7 +816,7 @@ server = (function(input, output, session) {
   #Modal aboutLanduseCompositionTime
   observeEvent(input$aboutLanduseCompositionTime, {
     showModal(modalDialog(
-      title = "About Land Use/Land Cover Composition Over Time",
+      title = "Land Use/Land Cover Composition Over Time",
       tags$p("This plot shows land use/land cover composition over time in square kilometers. Toggle land use/land cover classes to add or remove them from the chart."),
       tags$p("Note: Land Use/Land Cover composition was modeled independent of climate scenario and climate model. Therefore changing climate scenario and climate model will have no effect."),
       tags$div(img(src='images/landuseCompositionDescription.png', width="700px")   
