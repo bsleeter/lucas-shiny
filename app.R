@@ -447,7 +447,16 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Fire Disturbance by Severity Class")),
                                                         column(width=12, align="left", "Use the selection tools at left to create boxplot diagrams showing wildfire area burned for each selected climate model, climate scenario, land use scenario and timeframe. The boxplots show the distribution of mean annual are burned (km2) (y-axis) by scenario (x-axis) and have been disaggregated by fire severity class (i.e. low, medium, and high). The boxes represent the 25th and 75th percentiles while the whiskers represent the 10th and 90th percentiles; outliers are shown as points. Because the plot only shows the distribution of annual mean projections, the range is likely much larger due to uncertainty associated with fire projections (see the disturbance over time tab)."),
-                                                        column(width=12, align="right",
+                                                        column(width=9, align="right",
+                                                               radioGroupButtons(width="200px",
+                                                                                 inputId = "transitionsDist1", 
+                                                                                 label = "Disturbance Type", 
+                                                                                 choices = unique(disturbanceData$TransitionGroup),
+                                                                                 selected="Fire",
+                                                                                 size="sm",
+                                                                                 justified = TRUE,
+                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                                        column(width=3, align="right",
                                                            checkboxGroupButtons(inputId="severityTypes", 
                                                                                 label="Fire Severity Class", 
                                                                                 choices=c("High", "Medium", "Low"),
@@ -464,7 +473,16 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Land Cover Change from Disturbance")),
                                                         column(width=12, align="left", "Use the selection tools at left to create box plot diagrams of total land use and land cover change from wildfire and drought occurrence over your preferred region, scenario, and range of years. The boxplot shows the distribution of mean annual disturbance-based change (km2) (y-axis) in the selected land cover class by scenario (x-axis) and has been disaggregated by land cover class. The boxes represent the 25th and 75th percentiles while the whiskers represent the 10th and 90th percentiles; outliers are shown as points. Because the plot only shows the distribution of annual mean projections, the range is likely much larger due to uncertainty associated with fire projections (see the disturbance over time tab)."),
-                                                        column(width=12, align="right",
+                                                        column(width=9, align="right",
+                                                               radioGroupButtons(width="200px",
+                                                                                 inputId = "transitionsDist2", 
+                                                                                 label = "Disturbance Type", 
+                                                                                 choices = unique(disturbanceData$TransitionGroup),
+                                                                                 selected="Fire",
+                                                                                 size="sm",
+                                                                                 justified = TRUE,
+                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
+                                                        column(width=3, align="right",
                                                            checkboxGroupButtons(inputId="stateTypes", 
                                                                                 label="Land Cover Class", 
                                                                                 choices=c("Forest", "Grassland", "Shrubland"),
@@ -1338,7 +1356,7 @@ server = (function(input, output, session) {
     
     selectData6 = reactive({
       disturbanceData %>% 
-        filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionsDist, Severity %in% input$severityTypes) %>%  
+        filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionsDist1, Severity %in% input$severityTypes) %>%  
         filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>%
         group_by(LUC,GCM,RCP,Timestep,EcoregionName,TransitionGroup, Severity) %>% 
         summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
@@ -1383,7 +1401,7 @@ server = (function(input, output, session) {
     
     selectData7 = reactive({
       disturbanceData %>% 
-        filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionsDist, StateClass %in% input$stateTypes) %>%  
+        filter(LUC %in% input$luc, GCM %in% input$gcm, RCP %in% input$rcp, EcoregionName==input$ecoregion, TransitionGroup %in% input$transitionsDist2, StateClass %in% input$stateTypes) %>%  
         filter(Timestep>=input$years[1], Timestep<=input$years[2]) %>%
         group_by(LUC,GCM,RCP,Timestep,EcoregionName,TransitionGroup, StateClass) %>% 
         summarise(Mean=sum(Mean), Lower=sum(Lower), Upper=sum(Upper))
