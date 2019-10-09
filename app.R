@@ -50,7 +50,7 @@ lulc$LUC = factor(lulc$LUC, levels=c("BAU", "High", "Medium", "Low"))
 
 # Define unique lists
 ecoList = unique(stocks$EcoregionName)
-lucList = unique(stocks$LUC)
+lucList = unique(stocks$LUC) 
 stockList = unique(stocks$StockGroup)
 
 # Define color palettes
