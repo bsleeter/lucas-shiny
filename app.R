@@ -94,7 +94,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
              tags$div( 
                tags$hr(),
                tags$div(
-                  tags$p("Explore 32 unique land change and carbon balance scenarios, consisting of 4 land-use scenarios and 2 radiative forcing scenarios as simulated by 4 global climate models for the State of California", id="scenariosText"),
+                  tags$p("Explore future projections of land cover, land use, and ecosystem carbon balance for the State of California. Future annual projections to the year 2100 are based on four land-use scenarios and two radiative forcing scenarios as simulated by four global climate models, for a total of 32 unique scenarios.", id="scenariosText"),
                class="row", id="toolsTitleRows"),  
                tags$hr(),
                 
@@ -103,7 +103,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                    tags$h3("Carbon Stocks"),
                    tags$div(
                      tags$img(src = "stocks_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Explore projections of carbon stored in Living Biomass, Dead Organic Matter, and Soils"),
+                     tags$p("Future projections of carbon stored in Living Biomass, Dead Organic Matter, and Soils"),
                      actionButton('jumpToP1', 'Explore stocks'), 
                      class ="row"),
                    class="toolBox"),     
@@ -111,7 +111,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                    tags$h3("Carbon Fluxes"),
                    tags$div(
                      tags$img(src = "net_flux_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Explore projections of net carbon fluxes including NPP, NEP, and NECB"),
+                     tags$p("Future projections of ecosystem carbon fluxes including NPP and NECB"),
                      actionButton('jumpToP2', 'Explore fluxes'),
                      class ="row"),
                    class="toolBox"),   
@@ -119,7 +119,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                    tags$h3("Carbon Flux from Land Change"), 
                    tags$div(
                      tags$img(src = "transition_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Explore projections of carbon fluxes resulting from land use change and ecosystem disturbance"),
+                     tags$p("Future projections of carbon emissions from land use change and ecosystem disturbance"),
                      actionButton('jumpToP5', 'Explore fluxes'),
                      class ="row"),
                    class="toolBox"),  
@@ -127,15 +127,15 @@ ui = fluidPage(theme = shinytheme("flatly"),
                    tags$h3("Land Use & Land Cover"),
                    tags$div(
                      tags$img(src = "landuse_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Explore model scenario output for land use and land cover change over time"),
-                     actionButton('jumpToP3', 'Explore state classes'), 
+                     tags$p("Future projections of land use and land cover change over time"),
+                     actionButton('jumpToP3', 'Explore land use'), 
                      class ="row"),
                    class="toolBox"), 
                  tags$div(
                    tags$h3("Wildfire & Drought"),
                    tags$div(
                      tags$img(src = "disturbance_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Explore climate based scenario trends in both wildfire and drought occurrence"),
+                     tags$p("Climate-based scenario trends for the future occurrence of both wildfire and drought"),
                      actionButton('jumpToP4', 'Explore disturbance'),
                      class ="row"),
                    class="toolBox"),     
@@ -259,11 +259,14 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                              
                                                        fluidRow(
                                                                 column(width=12, align="left", h2("Ecosystem Carbon Storage Over Time")),
-                                                                column(width=12, align="left", "Use the selection tools at left to plot projected carbon storage in millions of metric tons of carbon (y-axis) by year (x-axis) over your preferred region, scenario, and range of years. The gray shaded area shows the full
-                                                                       range of values projected under the 32 alternative scenarios. The colored lines and ribbons show the range for each unique scenario.
-                                                                       Toggle between the four carbon stock groups using the buttons on the upper right to show carbon storage by stock groups. Soil includes soil organic carbon, DOM includes all 
-                                                                       dead organic matter sotred in litter and standing and dowed dead vegetation, and Live includes all above- and below-ground living vegetation.
-                                                                       TEC is total ecosystem carbon and is the sum of the Soil, DOM, and Live pools."),
+                                                                column(width=12, align="left", "Use the selection tools at left to create custom graphs of ecosystem carbon storage over time,
+                                                                                                with ecosystem carbon in millions of metric tons on the vertical (y) axis and time in years on the horizontal
+                                                                                                (x) axis. The graph can be customized using your preferences for region, scenario, and time span. The colored
+                                                                                                lines and ribbons show the range for each scenario, and the gray shaded area shows the full range of values
+                                                                                                projected under all 32 alternative scenarios. Toggle among the four carbon stock groups using the buttons on the
+                                                                                                upper right to show ecosystem carbon storage by stock groups. Soil includes soil organic carbon, DOM includes all
+                                                                                                dead organic matter stored in litter and standing and downed dead woody vegetation, and Live includes all above-and
+                                                                                                belowground parts of living vegetation. TEC is total ecosystem carbon and is the sum of the Soil, DOM, and Live carbon stocks."),
                                                                 column(width=12, align="right",
                                                                        radioGroupButtons(width=250,
                                                                                          inputId = "stockGroup", label = actionButton("aboutCarbonStocks", " Carbon Stocks",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"),  
@@ -287,11 +290,12 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                             
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Net Change in Ecosystem Carbon Storage")),
-                                                        column(width=12, align="left", " Use the selection tools at left to plot net change in carbon storage in  millions of metric tons of carbon (y-axis) for each of the stock groups between two dates, over your preferred region, scenario, and range of years.
-                                                               Negative values indicate a net loss of carbon from ecosystems. RCP scenarios are shown on the x-axis and can be disaggregated 
-                                                               for each climate model (GCM). Soil includes soil organic carbon, DOM includes all dead organic matter sotred in litter and 
-                                                               standing and dowed dead vegetation, and Live includes all above- and below-ground living vegetation. TEC is total ecosystem 
-                                                               carbon and is the sum of the Soil, DOM, and Live pools. Error bars represent the 95% interval based on 100 MC iterations."),
+                                                        column(width=12, align="left", "Use the selection tools at left to create custom graphs of net change in ecosystem carbon storage over a 
+                                                               given time period, with net change in ecosystem carbon in millions of metric tons on the vertical (y) axis. The graph can be customized
+                                                               using your preferences for region, scenario, and time span. Scenarios for Representative Concentration Pathways (RCPs) are shown below 
+                                                               the horizontal (x) axis and can be disaggregated for each global climate model (GCM). Soil includes soil organic carbon, DOM includes
+                                                               all dead organic matter stored in litter and standing and downed dead woody vegetation, and Live includes all above-and belowground
+                                                               parts of living vegetation. TEC is total ecosystem carbon and is the sum of the Soil, DOM, and Live carbon stocks."),
                                                         column(width=12, align="right",actionButton("aboutNetChangeCarbon", " Carbon Stocks",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
                                                         column(width=12,
                                                                column(4, htmlOutput("range")),
@@ -306,10 +310,16 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                
                                                       fluidRow(
                                                         column(width=12, align="left", h2("Carbon Fluxes Over Time")),
-                                                        column(width=12, align="left", "Use the selection tools at left to plot the rolling 10-year average of four different carbon fluxes in millions of metric tons of carbon (y-axis) plotted over time (x-axis) over your preferred region, scenario, and range of years. In each plot the colored line
-                                                               represents the 10 year rolling average carbon flux. The dotted line represents the mean value over all scenarios and the grey area represents the min and max values over all scenarios. 
-                                                               NPP is net primary productivity, Rh is heterotrophic respiration (respiration from dead organic matter and soils), NEP is net ecosystem productivity (NPP minus Rh),
-                                                               and NECB is net ecosystem carbon balance (NEP minus carbon losses from land use and disturbances). Select different Land Use and Climate Scenarios from the sidebar to explore their effects on carbon fluxes through time."),
+                                                        column(width=12, align="left", "Use the selection tools at left to create custom graphs of the rolling ten-year average of 
+                                                               ecosystem carbon fluxes over time, with ecosystem carbon in millions of metric tons on the vertical (y) axis and time
+                                                               (in years) on the horizontal (x) axis. The graph can be customized using your preferences for region, scenario, and time 
+                                                               span. The colored line represents the 10-year rolling average for the selected carbon flux. The dotted line represents the
+                                                               mean value averaged across all scenarios and the gray shaded area shows the full range of values projected under all scenarios. 
+                                                               Negative values indicate a loss of carbon from ecosystems, while positive values indicate ecosystems are a net sink for carbon. 
+                                                               Toggle among the four carbon fluxes using the buttons on the upper right to show ecosystem carbon flux by group. NPP is net primary
+                                                               productivity, Rh is heterotrophic respiration (respiration from dead organic matter and soils), NEP is net ecosystem production
+                                                               (NPP - Rh), and NECB is net ecosystem carbon balance (NEP minus carbon losses from land use change and ecosystem disturbances).
+                                                               Select different Land Use and Climate Scenarios from the sidebar at left to explore their effects on ecosystem carbon fluxes through time."),
                                                         column(width=12, align="right",
                                                                radioGroupButtons(width=250,inputId = "netflux", label = actionButton("aboutCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"),choices = c("NPP","Rh","NEP","NECB"),selected="NECB",size="sm",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="right",
@@ -322,9 +332,13 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                           
                                                     fluidRow(
                                                       column(width=12, align="left", h2("Cumulative Carbon Fluxes")),
-                                                      column(width=12, align="left", "Use the selection tools at left to plot the mean cumulative net carbon flux in million metric tons carbon (x-axis) according to flux type (y-axis) over your preferred region, scenario, and range of years.
-                                                             Negative values indicate a loss of carbon from ecosystems while positive values indicate ecosystems were a net sink of carbon. Rh is heterotrophic respiration (respiration from dead organic matter and soils), NEP is net ecosystem productivity (NPP minus Rh),
-                                                               and NECB is net ecosystem carbon balance (NEP minus carbon losses from land use and disturbances). Select different Land Use and Climate Scenarios from the sidebar to explore their effects on cumulative carbon fluxes."),
+                                                      column(width=12, align="left", "Use the selection tool at left to create custom graphs of the mean cumulative net ecosystem carbon
+                                                             flux over time, with ecosystem carbon flux in millions of metric tons on the horizontal (x) axis. The graph can be customized
+                                                             using your preferences for region, scenario, and timespan. Negative values indicate a loss of carbon from ecosystems, while 
+                                                             positive values indicate ecosystems are a net sink for carbon. NPP is net primary productivity, Rh is heterotrophic respiration
+                                                             (respiration from dead organic matter and soils), NEP is net ecosystem production (NPP - Rh), and NECB is net ecosystem carbon 
+                                                             balance (NEP minus carbon losses from land use change and ecosystem disturbances). Select different Land Use and Climate Scenarios
+                                                             from the sidebar at left to explore their effects on ecosystem carbon fluxes through time."),
                                                       column(width=6, align="left"),
                                                       column(width=6, align="right",
                                                              checkboxGroupButtons(inputId="netflux2",label=actionButton("aboutCumulativeCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"), choices=c("NPP","Rh","NEP","NECB"),selected=c("NPP","Rh","NEP","NECB"),direction="horizontal",size="sm",width="100%",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
@@ -335,17 +349,21 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                  
                                                  fluidRow(
                                                    column(width=12, align="left", h2("Cumulative Carbon Balance")),
-                                                   column(width=12, align="left", "Use the selection tools at left to plot cumulative net ecosystem carbon balance, or the net amount of carbon that was either gained (sequestered) 
-                                                          or lost (emitted) from ecosystems over your preferred region, scenario, and range of years. Values are in millions of metric tons of carbon (y-axis) over time (x-axis). The colored areas show how each ecoregion's cumulative ecosystem carbon balance changes through time. Positive 
-                                                          values indicate the region was accumulating more carbon than it emitted back to the atmosphere (net carbon sink) and negative values indicate the 
-                                                          region lost more carbon through removal, leaching, and emission to the atmosphere, than it gained (net carbon source). The gray area outline on the graph
-                                                          represents the cumulative net ecosystem carbon balance for the entire state of California. Select different Land Use 
-                                                          and Climate Scenarios from the sidebar to explore their effects on ecosystem carbon balance. "),
+                                                   column(width=12, align="left", "Use the selection tools at left to create custom graphs of cumulative ecosystem 
+                                                          carbon balance, or the net amount of carbon that was either gained (sequestered) or lost (emitted) by ecosystems.
+                                                          The graph can be customized using your preferences for region, scenario, and timespan. Values are in millions of 
+                                                          metric tons of carbon (vertical axis) over time (horizontal axis). The colored areas show how each ecoregion's 
+                                                          cumulative ecosystem carbon balance changes through time. Positive values indicate the region was a net carbon 
+                                                          sink (accumulating more carbon than it emitted back to the atmosphere), and negative values indicate the region 
+                                                          was a net carbon source the atmosphere (lost more carbon through removal, leaching, and emissions than it gained
+                                                          via plant growth). The gray area outline on the graph represents the cumulative net ecosystem carbon balance for
+                                                          the entire state of California. Select different Land Use and Climate scenarios from the sidebar at left to explore 
+                                                          their effects on ecosystem carbon balance."),
                                                    
                                                    
                                                    column(width=12, align="Right", actionButton("aboutCarbonBalance", "Carbon Balance",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
                                                    column(width=12,
-                                                          plotOutput("netfluxPlot3", height="700px"))))
+                                                          plotOutput("netfluxPlot3", height="700px")))) 
                                         
                                         
                                         )),
@@ -423,7 +441,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                             
                                                   fluidRow(
                                                            column(width=12, align="left", h2("Annual Disturbance Area by Scenario")),
-                                                           column(width=12, align="left", "Use the selection tools at left to create a time series of disturbed area in square kilometers (y-axis) by year (x-axis) for each selected climate model, climate scenario, and land use scenario. Values shown represent the mean (square kilometers) amount of disturbed area along with the 95% confidence intervals. The gray shaded area in the background shows the maximum range calculated over all scenarios. Use the buttons on the upper right to toggle between wildfire and drought induced tree mortality and add a time series trend line."),
+                                                           column(width=12, align="left", "Use the selection tools at left to create a time series of disturbed area in square kilometers (y-axis) by year (x-axis) for each selected climate model, climate scenario, and land use scenario.Select disturbance type at upper right. Values shown represent the mean (square kilometers) amount of disturbed area along with the 95% confidence intervals. The gray shaded area in the background shows the maximum range calculated over all scenarios. Use the buttons on the upper right to toggle between wildfire and drought induced tree mortality and add a time series trend line."),
                                                            column(width=12, align="right",
                                                                   radioGroupButtons(width="200px",
                                                                                     inputId = "transitionsDist", 
@@ -442,11 +460,11 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                     slim=TRUE)),
                                                            column(width=12, align="right",
                                                                   plotOutput("transitionsDistPlot", height="700")))),
-                                          tabPanel("Fire Disturbance by Severity Class",
+                                          tabPanel("Disturbance by Severity Class",
                                             
                                                       fluidRow(
-                                                        column(width=12, align="left", h2("Fire Disturbance by Severity Class")),
-                                                        column(width=12, align="left", "Use the selection tools at left to create boxplot diagrams showing wildfire area burned for each selected climate model, climate scenario, land use scenario and timeframe. The boxplots show the distribution of mean annual are burned (km2) (y-axis) by scenario (x-axis) and have been disaggregated by fire severity class (i.e. low, medium, and high). The boxes represent the 25th and 75th percentiles while the whiskers represent the 10th and 90th percentiles; outliers are shown as points. Because the plot only shows the distribution of annual mean projections, the range is likely much larger due to uncertainty associated with fire projections (see the disturbance over time tab)."),
+                                                        column(width=12, align="left", h2("Disturbance by Severity Class")),
+                                                        column(width=12, align="left", "Use the selection tools at left to create boxplot diagrams showing wildfire area burned or area impacted by drought for each selected climate model, climate scenario, land use scenario and timeframe. The boxplots show the distribution of mean annual area burned or impacted by drought (km2) (y-axis) by scenario (x-axis) and have been disaggregated by severity class (i.e. low, medium, and high). The boxes represent the 25th and 75th percentiles while the whiskers represent the 10th and 90th percentiles; outliers are shown as points. Because the plot only shows the distribution of annual mean projections, the range is likely much larger due to uncertainty associated with fire projections (see the disturbance over time tab)."),
                                                         column(width=9, align="right",
                                                                radioGroupButtons(width="200px",
                                                                                  inputId = "transitionsDist1", 
@@ -458,7 +476,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                  checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=3, align="right",
                                                            checkboxGroupButtons(inputId="severityTypes", 
-                                                                                label="Fire Severity Class", 
+                                                                                label="Severity Class", 
                                                                                 choices=c("High", "Medium", "Low"),
                                                                                 selected=c("High", "Medium", "Low"),
                                                                                 direction="horizontal",
@@ -1369,8 +1387,8 @@ server = (function(input, output, session) {
         scale_fill_manual(values=sevPal) +
         scale_color_manual(values=sevPal) +
         theme_minimal(20) +
-        labs(fill="Fire Severity",
-             color="Fire Severity",
+        labs(fill="Severity",
+             color="Severity",
              x="",
              y=expression(square~kilometers~(km^2~yr))) +
         theme(legend.position = "top",

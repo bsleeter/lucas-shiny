@@ -526,6 +526,7 @@ section{
 }
 .aboutButton {
 	margin-top:10px;
+	border-width: 0px;
 }
 .center {
   display: block;
