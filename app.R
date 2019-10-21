@@ -214,7 +214,9 @@ ui = fluidPage(theme = shinytheme("flatly"),
                            awesomeRadio(
                              inputId="luc",
                              label="Land Use Scenario",
-                             choices=sort(unique(stocks$LUC)),
+                             #Uncomment to set choices programatically
+                             #choices=sort(unique(stocks$LUC)),
+                             choices=c("BAU","Low","Medium","High"),
                              selected="BAU",
                              width="100%",
                              checkbox=TRUE),
