@@ -5,9 +5,7 @@ body{
     line-height: 1.7;
 }
 .action-button {
-	color: #2c3e50;
-	background-color: #f3f3f3;
-	border-radius: 1px;
+	border-color: #95a5a6 !important;
 	
 }
 
@@ -556,4 +554,9 @@ h2{
     text-align: center;
 	padding-top: 20px;
     padding-bottom: 10px;
+}
+.btn-default {
+    color: #2c3e50;
+    background-color: #f3f3f3;
+	border-color: #f3f3f3;
 }

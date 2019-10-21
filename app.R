@@ -135,8 +135,8 @@ ui = fluidPage(theme = shinytheme("flatly"),
                    tags$h3("Wildfire & Drought"),
                    tags$div(
                      tags$img(src = "disturbance_80.png", height = "80px", class="toolBoxImg"),
-                     tags$p("Climate-based scenario trends for the future occurrence of both wildfire and drought"),
-                     actionButton('jumpToP4', 'Explore disturbance'),
+                     tags$p("Climate-based scenario trends for the future occurrence of both wildfire and drought"), 
+                     actionButton('jumpToP4', 'Explore disturbance'), 
                      class ="row"),
                    class="toolBox"),     
                  id="toolsRow"),    
@@ -363,7 +363,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                    
                                                    column(width=12, align="Right", actionButton("aboutCarbonBalance", "Carbon Balance",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
                                                    column(width=12,
-                                                          plotOutput("netfluxPlot3", height="700px")))) 
+                                                          plotOutput("netfluxPlot3", height="700px"))))                
                                         
                                         
                                         )),
@@ -566,8 +566,8 @@ ui = fluidPage(theme = shinytheme("flatly"),
                          tags$p("The Land Use and Carbon Scenario Simulator - or LUCAS Model - was developed to explore alternative scenarios of land-use and land-cover (LULC) change and its impact on ecosystem carbon balance.
                                 The LUCAS model developed for California combines a state-and-transition simulation model (STSM) with a carbon stock-flow model, to estimate changes in carbon storage and flux across terrestrial ecosystems.
                                 The LUCAS STSM-SF approach has been described in numerous scientific publications. The LUCAS model uses the SyncroSim modeling framework - a general purpose software application for ecosystem-absed modeling applications.
-                                The modeling framework is thoroughly described in publications by", a("Daniel et al, 2016", href="", target="_blank"), "and", a("Daniel et al, 2018", href="", target="_blank")),
-                         tags$p("For a complete desctiption of the methods and models used to develop the projections used in these visualizations, see the publication by Sleeter et al., 2019 in", 
+                                The modeling framework is thoroughly described in publications by", a("Daniel et al, 2016", href="https://doi.org/10.1111/2041-210X.12597", target="_blank"), "and", a("Daniel et al, 2018", href="https://doi.org/10.1111/2041-210X.12952", target="_blank")),
+                         tags$p("For a complete description of the methods and models used to develop the projections used in these visualizations, see the publication by Sleeter et al., 2019 in", 
                                 a("Global Change Biology", href="https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.14677", target="_blank")),
                          tags$p("Land use scenarios used in this study were developed to support California's Fourth Climate Change Assessment and are described in detail in Sleeter et al., 2018 in the journal",
                                 a("Earth's Future", href="https://agupubs.onlinelibrary.wiley.com/doi/10.1002/2017EF000560", target="_blank"))
@@ -582,7 +582,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                          tags$h4("Data available for download"),  
                          tags$ul(
                          tags$li("All", a("tabular simulation results", href="https://www.sciencebase.gov/catalog/item/5d03f536e4b0e3d3115806dc", target="_blank"), "for the 32 scenarios used in this application are availble from the SciencBase repository in zipped csv format."),
-                         tags$li("An un-run version of the ", a("California LUCAS Model", href="https://www.sciencebase.gov/catalog/item/5d03f5a3e4b0e3d3115806df", target="_blank"), "developed within the ", 
+                         tags$li("An empty base model ready to run version of the ", a("California LUCAS Model", href="https://www.sciencebase.gov/catalog/item/5d03f5a3e4b0e3d3115806df", target="_blank"), "developed within the ", 
                                  a("SyncroSim software framework" , href="http://doc.syncrosim.com/index.php?title=Reference_Guide", target="_blank"), "is also available for download.")
                          
                          ),
