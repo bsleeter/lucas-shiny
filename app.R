@@ -82,7 +82,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
              tags$div(  
                tags$div(
                  column(8, 
-                        tags$img(src = "ca_boxes.png", height = "200px", class="toolBoxImg"),
+                        tags$img(src = "ca_boxes.png", height = "200px", class="toolBoxImg", alt="Logo for California carbon scenarios website showing ca broken into simulation cells of land-cover."),
                         tags$h1("California Carbon Scenarios", id="bannerHeader"),
                         tags$p("Land change and carbon balance scenario projections for the State of California with the LUCAS model", id="bannerText"),
                         offset = 3),
@@ -102,7 +102,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                  tags$div(
                    tags$h3("Carbon Stocks"),
                    tags$div(
-                     tags$img(src = "stocks_80.png", height = "80px", class="toolBoxImg"),
+                     tags$img(src = "stocks_80.png", height = "80px", class="toolBoxImg", alt="Circular logo for button linking to the carbon stocks tab of the dashboard showing several carbon stocks"),
                      tags$p("Future projections of carbon stored in Living Biomass, Dead Organic Matter, and Soils"),
                      actionButton('jumpToP1', 'Explore stocks'), 
                      class ="row"),
@@ -110,7 +110,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                  tags$div(
                    tags$h3("Carbon Fluxes"),
                    tags$div(
-                     tags$img(src = "net_flux_80.png", height = "80px", class="toolBoxImg"),
+                     tags$img(src = "net_flux_80.png", height = "80px", class="toolBoxImg", alt="Circular logo for button linking to the carbon flux tab of the dashboard showing several carbon stocks with arrows between them"),
                      tags$p("Future projections of ecosystem carbon fluxes including NPP and NECB"),
                      actionButton('jumpToP2', 'Explore fluxes'),
                      class ="row"),
@@ -118,7 +118,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                  tags$div(  
                    tags$h3("Carbon Flux from Land Change"), 
                    tags$div(
-                     tags$img(src = "transition_80.png", height = "80px", class="toolBoxImg"),
+                     tags$img(src = "transition_80.png", height = "80px", class="toolBoxImg", alt="Circular logo for button linking to the Carbon Flux from Land Change tab of the dashboard showing forest transitioning to developed land"),
                      tags$p("Future projections of carbon emissions from land use change and ecosystem disturbance"),
                      actionButton('jumpToP5', 'Explore fluxes'),
                      class ="row"),
@@ -126,7 +126,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                  tags$div(
                    tags$h3("Land Use & Land Cover"),
                    tags$div(
-                     tags$img(src = "landuse_80.png", height = "80px", class="toolBoxImg"),
+                     tags$img(src = "landuse_80.png", height = "80px", class="toolBoxImg", alt="Circular logo for button linking to the Landuse and Landcover tab of the dashboard showing several landuse classes"),
                      tags$p("Future projections of land use and land cover change over time"),
                      actionButton('jumpToP3', 'Explore land use'), 
                      class ="row"),
@@ -134,7 +134,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                  tags$div(
                    tags$h3("Wildfire & Drought"),
                    tags$div(
-                     tags$img(src = "disturbance_80.png", height = "80px", class="toolBoxImg"),
+                     tags$img(src = "disturbance_80.png", height = "80px", class="toolBoxImg", alt="Circular logo for button linking to the wildfire and drought tab of the dashboard showing fire and forest"),
                      tags$p("Climate-based scenario trends for the future occurrence of both wildfire and drought"), 
                      actionButton('jumpToP4', 'Explore disturbance'), 
                      class ="row"),
@@ -151,40 +151,35 @@ ui = fluidPage(theme = shinytheme("flatly"),
                       id = "jumpToP10",
                       class = "btn btn-default action-button shiny-bound-inputs dashboard-type selected",
                       name =  "stocks_80.png",
-                      img(src = "stocks_80_white.png",
-                          height = "60px"),
+                      img(src = "stocks_80_white.png",height = "60px",alt="Circular logo for button linking to the carbon stocks tab of the dashboard showing several carbon stocks"),
                       tags$span("Carbon Stocks")
                     ),
                     tags$button(
                       id = "jumpToP20",
                       class = "btn btn-default action-button shiny-bound-inputs dashboard-type",
                       name =  "net_flux_80.png",
-                      img(src = "net_flux_80.png",
-                          height = "60px"),
+                      img(src = "net_flux_80.png",height = "60px", alt="Circular logo for button linking to the carbon flux tab of the dashboard showing several carbon stocks with arrows between them"),
                       tags$span("Carbon Fluxes")
                     ),
                     tags$button(
                       id = "jumpToP50",
                       class = "btn btn-default action-button shiny-bound-inputs dashboard-type",
                       name =  "transition_80.png",
-                      img(src = "transition_80.png",
-                          height = "60px"),
+                      img(src = "transition_80.png", height = "60px",alt="Circular logo for button linking to the Carbon Flux from Land Change tab of the dashboard showing forest transitioning to developed land"),
                         tags$span("Carbon Flux from Land Change")
                     ),
                     tags$button(
                       id = "jumpToP30",
                       class = "btn btn-default action-button shiny-bound-inputs dashboard-type",
                       name =  "landuse_80.png", 
-                      img(src = "landuse_80.png", 
-                          height = "60px"),
+                      img(src = "landuse_80.png", height = "60px", alt="Circular logo for button linking to the Landuse and Landcover tab of the dashboard showing several landuse classes"),
                       tags$span("Land Use & Land Cover")
                     ),
                     tags$button(
                       id = "jumpToP40",
                       class = "btn btn-default action-button shiny-bound-inputs dashboard-type",   
                       name =  "disturbance_80.png",
-                      img(src = "disturbance_80.png",
-                          height = "60px"),  
+                      img(src = "disturbance_80.png", height = "60px", alt="Circular logo for button linking to the wildfire and drought tab of the dashboard showing fire and forest"),  
                       tags$span("Wildfire & Drought")
                     ),
                    id="buttomRow"),
@@ -279,7 +274,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                          checkIcon = list(yes = icon("signal", lib = "glyphicon")))
                                                                 ),
                                                                 column(width=12, align="right",
-                                                                        plotOutput("stocksPlot1", height="700", hover = hoverOpts("stocksPlot1_hover", delay = 20, delayType = "debounce")),
+                                                                        plotOutput("stocksPlot1", height="700", hover = hoverOpts("stocksPlot1_hover", delay = 5, delayType = "debounce")),
                                                                         uiOutput("stocksPlot1_hover_info"),
                                                                         prettySwitch(
                                                                           inputId = "showStockTable",
@@ -301,8 +296,7 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                         column(width=12, align="right",actionButton("aboutNetChangeCarbon", " Carbon Stocks",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
                                                         column(width=12,
                                                                column(4, htmlOutput("range")),
-                                                                plotOutput("stocksPlot2", height="700", hover = hoverOpts("stocksPlot2_hover", delay = 20, delayType = "debounce")),
-                                                                uiOutput("stocksPlot2_hover_info")))))),
+                                                                plotOutput("stocksPlot2", height="700")))))),
 
                                
                                tabPanel("Net Carbon Fluxes", value="Net Carbon Fluxes", width=12,
@@ -325,7 +319,8 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                         column(width=12, align="right",
                                                                radioGroupButtons(width=250,inputId = "netflux", label = actionButton("aboutCarbonFluxes", " Carbon Fluxes",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton"),choices = c("NPP","Rh","NEP","NECB"),selected="NECB",size="sm",checkIcon = list(yes = icon("signal", lib = "glyphicon")))),
                                                         column(width=12, align="right",
-                                                               plotOutput("fluxplot1", height="700"),
+                                                               plotOutput("fluxplot1", height="700", hover = hoverOpts("fluxplot1_hover", delay = 5, delayType = "debounce")),
+                                                               uiOutput("fluxplot1_hover_info"),
                                                                prettySwitch(inputId = "showFluxTable",label = "View Chart Data", value=FALSE,status="success",fill = TRUE),
                                                                prettySwitch(inputId="annual",label="Add Annual Projections",value=FALSE,status="primary",slim=TRUE),
                                                                prettySwitch(inputId="smooth",label="Add Trend Line",value=FALSE,status="primary",slim=TRUE),
@@ -365,7 +360,10 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                    
                                                    column(width=12, align="Right", actionButton("aboutCarbonBalance", "Carbon Balance",icon("glyphicon glyphicon-info-sign", lib = "glyphicon"),class="aboutButton")),
                                                    column(width=12,
-                                                          plotOutput("netfluxPlot3", height="700px"))))                
+                                                          plotOutput("netfluxPlot3", height="700px", hover = hoverOpts("netfluxPlot3_hover", delay = 5, delayType = "debounce")),
+                                                          uiOutput("netfluxPlot3_hover_info"))))       
+                                        
+                                        
                                         
                                         
                                         )),
@@ -390,6 +388,9 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                              direction = "horizontal",
                                                                              checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
                                                               plotOutput("transitionFlows1", height="700")))),
+                                          
+                                          
+                                        
                                           tabPanel("Disturbance Type Contribution by Carbon Flux",
                                                    
                                                              fluidRow(
@@ -408,6 +409,8 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                                 direction = "horizontal",
                                                                                 checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
                                                            plotOutput("transitionFlows2", height="700")))),
+                                          
+                                          
                                           tabPanel("Cumulative Fluxes from Land Use Change and Disturbance",
                                                    
                                                              fluidRow(
@@ -461,7 +464,10 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                     status="primary",
                                                                     slim=TRUE)),
                                                            column(width=12, align="right",
-                                                                  plotOutput("transitionsDistPlot", height="700")))),
+                                                                  plotOutput("transitionsDistPlot", height="700", hover = hoverOpts("transitionsDistPlot_hover", delay = 5, delayType = "debounce")),
+                                                                  uiOutput("transitionsDistPlot_hover_info")))),
+                                          
+                                        
                                           tabPanel("Disturbance by Severity Class",
                                             
                                                       fluidRow(
@@ -536,9 +542,13 @@ ui = fluidPage(theme = shinytheme("flatly"),
                                                                            size="sm",
                                                                            justified = TRUE, 
                                                                            checkIcon = list(yes = icon("signal", lib = "glyphicon"))),
-                                                      plotOutput("lulcPlot1", height="700")),
+                                                      plotOutput("lulcPlot1", height="700",hover = hoverOpts("lulcPlot1_hover", delay = 5, delayType = "debounce")),
+                                                      uiOutput("lulcPlot1_hover_info")
+                                                      ),
                                                
                                                column(width=12, align="left",
+                                                      
+                    
                                                       
                                                       tags$p("Note: Land Use/Land Cover composition was modeled independent of climate scenario and climate model. Changing climate scenario and climate model will have no effect.")))),
                                     tabPanel("Land Use/Land Cover Composition",
@@ -596,10 +606,10 @@ ui = fluidPage(theme = shinytheme("flatly"),
                          tags$h1("Partners"),
                          tags$hr(class="abouthr"),  
                          fluidRow(
-                           column(width=3, align="left", img(src="logos/apexrms.png", class="center"), class="logoCol"),
-                           column(width=3, align="left", img(src="logos/ca_energy_comission.png", class="center"), class="logoCol"),
-                           column(width=3, align="left", img(src="logos/salo.svg", class="center"), class="logoCol"),
-                           column(width=3, align="left", img(src="logos/tnc.svg",  class="center"), class="logoCol"),   
+                           column(width=3, align="left", img(src="logos/apexrms.png", class="center", alt="logo for apexrms"), class="logoCol"),
+                           column(width=3, align="left", img(src="logos/ca_energy_comission.png", class="center", alt="logo for california energy comission"), class="logoCol"),
+                           column(width=3, align="left", img(src="logos/salo.svg", class="center", alt="logo for salo"), class="logoCol"),
+                           column(width=3, align="left", img(src="logos/tnc.svg",  class="center", alt="logo for The Nature Conservancy"), class="logoCol"),   
                             
                          class="partnersRow")  
                          ), 
@@ -652,7 +662,7 @@ server = (function(input, output, session) {
   observeEvent(input$aboutModelVariables, {
     showModal(modalDialog(
       title = "Model Variables",
-      tags$p("The model vairables panel on the left side of the application
+      tags$p("The model variables panel on the left side of the application
               contains variable choices used to filter results within the main
               graph section of the application. Use the toggle boxes and buttons to
              select combinations among 4 LULC scenarios, 2 radiative forcing
@@ -661,9 +671,18 @@ server = (function(input, output, session) {
       tags$p("Combinations of variables chosen in the 
       model variables panel will filter all data visualizations within the main
       section of the application. See the descriptions below
-      for more information about each variable choice."
+      for more information about each variable choice." 
       ),
-      tags$div(img(src='images/ToolDescription.png', width="700px") 
+      tags$div(img(src='images/ToolDescription.png', width="700px", alt="Image explaining the layout and use of the left hand side model variables panel. Panel items are defined as follows. 
+                   Region of interest: Scenario values are summarized at the level 3 ecoregion level for California. Choose an ecoregion to summarize by
+                   that ecoregion or select 'State' to show statewide summary values. Choose ecoregion on map: Toggle the button to expand a map of ecoregions.
+                    Hover to show an ecoregion name or click to select an ecoregion. Land Use Scenario: Choose among land use scenarios. BAU (Business as Usual), and three scenarios exploring
+                    alternate projections of population growth (High, Low, or Medium). Climate Scenarios: Compare among two climate scenarios. Downscaled climate
+                    data from the localized climate analogs (LOCA) dataset were used to represent future climate conditions for RCP 4.5 and RCP 8.5 radiative
+                    forcing scenarios. Climate Models: Compare among four climate scenarios which are a subset of global climate models selected from the
+                    California Fourth Climate Change Assessment. Select years to plot: Use the slider bar to summarize the graphs on the right according to the
+                    chosen date range. Toggle 95% confidence intervals: For each scneario the LUCAS model was run over 100 Monte Carlo realizations. Toggle
+                    the 95% confidence intervals button to show the 95% confidence interval on the graphs on the right.") 
       ),
      
       easyClose = TRUE,
@@ -737,7 +756,11 @@ server = (function(input, output, session) {
         )
       ),
       tags$h4("Carbon Flux Plot Example"),
-      tags$div(img(src='images/cabonFluxOverTime.png', width="700px")),  
+      tags$div(img(src='images/cabonFluxOverTime.png', width="700px", alt = "The image shows an example carbon flux plot with the following descriptions:
+                   The colored line represents the 10 year rolling average carbon flux in million metric tons of carbon. The colored area represents
+                    the 95th percentile of the 10 year rolling average carbon flux in millions of metric tons of carbon. The Grey area represents the min
+                    and max values of the 10 year rolling average of carbon flux over all scenarios. The dotted line represents the average
+                    value of the 10 year rolling average of carbon flux over all scenarios.")),  
       easyClose = TRUE,
       footer = modalButton("Dismiss")
     ))
@@ -774,7 +797,9 @@ server = (function(input, output, session) {
              Positive values indicate the region was accumulating more carbon than it emitted back to the atmosphere (net carbon sink) and negative values indicate the region lost
              more carbon through removal, leaching, and emission to the atmosphere, than it gained (net carbon source). Values are reported in Millions of Metric Tons of Carbon (MMTC)."
       ),
-      tags$div(img(src='images/cumulativeBalanaceDescription.png', width="700px")   
+      tags$div(img(src='images/cumulativeBalanaceDescription.png', width="700px", alt = "The image shows an example carbon flux plot with the following descriptions:
+                        The colored area outline on the graph represents the selected ecoregion's cumulative ecosystem carbon balance changes through time. 
+                        the gray area outline on the graph represents the cumulative ecosystem carbon balance changes through time for the entire State of California")   
       ),
       easyClose = TRUE,
       footer = modalButton("Dismiss")
@@ -857,7 +882,10 @@ server = (function(input, output, session) {
       title = "Land Use/Land Cover Composition Over Time",
       tags$p("This plot shows land use/land cover composition over time in square kilometers. Toggle land use/land cover classes to add or remove them from the chart."),
       tags$p("Note: Land Use/Land Cover composition was modeled independent of climate scenario and climate model. Therefore changing climate scenario and climate model will have no effect."),
-      tags$div(img(src='images/landuseCompositionDescription.png', width="700px")   
+      tags$div(img(src='images/landuseCompositionDescription.png', width="700px", alt = "The image shows an example carbon flux plot with the following descriptions:
+                 The dark colored line of each line graph shows the mean land use/land cover over time in square kilometers. The grey background of each line graph shows
+                shows the full range of outcomes across all scenarios over time. The colored background of each line graph shows the 95% percentile over 100 model runs 
+                for the selected land use/land cover over time.")   
       ),
       
       easyClose = TRUE,
@@ -1031,7 +1059,7 @@ server = (function(input, output, session) {
     output$stocksPlot1_hover_info <- renderUI({
         hover <- input$stocksPlot1_hover
         
-        point <- nearPoints(selectData1(), hover, threshold = 5, maxpoints = 1, addDist = TRUE)
+        point <- nearPoints(selectData1(), hover, threshold = 20, maxpoints = 1, addDist = TRUE)
         if (nrow(point) == 0) return(NULL)
         left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
         top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
@@ -1098,42 +1126,6 @@ server = (function(input, output, session) {
         
     })
     
-    output$stocksPlot2_hover_info <- renderUI({
-        hover <- input$stocksPlot2_hover
-        
-        point <- nearPoints(selectData2(), hover, threshold = 20, maxpoints = 1, addDist = TRUE)
-        if (nrow(point) == 0) return(NULL)
-        left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
-        top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
-        left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
-        top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
-        
-        style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.95); ",
-                        "left:", left_px + 2, "px; top:", top_px + 2, "px;")
-        
-        wellPanel(
-            style = style,
-            p(HTML(paste0(
-                "<b> Timestep: </b>", point$Timestep, "<br/>",
-                "<b> Landuse Scenario: </b>", point$LUC, "<br/>",
-                "<b> RCP: </b>", point$RCP, "<br/>",
-                "<b> Climate Model: </b>", point$GCM, "<br/>",
-                "<b> Stock Group: </b>", point$StockGroup, "<br/>",
-                "<b> Mean Carbon (MMT): </b>", round(point$Mean,1), "<br/>",
-                "<b> Lower Bound (MMT): </b>", round(point$Lower,1), "<br/>",
-                "<b> Upper Bound (MMT): </b>", round(point$Upper,1), "<br/>"))))
-    })
-    
-    
-    
-    
-
-    
-    
-
-    
-
-    
     ##### Carbon Flux Page  ##### 
 ##### Flux Plot 1 #####
     selectData3 = reactive({
@@ -1144,6 +1136,8 @@ server = (function(input, output, session) {
                Upper10=rollmean(Upper, 10, fill=NA, align=c("center"))) %>%
         filter(Timestep>=input$years[1], Timestep<=input$years[2])
     })
+    
+    
     
     fluxRange = reactive({
       netFlux %>% filter(EcoregionName==input$ecoregion, Flux==input$netflux) %>% 
@@ -1209,6 +1203,32 @@ server = (function(input, output, session) {
         
         p3
         
+    })
+    
+    output$fluxplot1_hover_info <- renderUI({
+      hover <- input$fluxplot1_hover
+      
+      point <- nearPoints(selectData3(), hover,yvar="Mean10", threshold = 20, maxpoints = 1, addDist = TRUE)
+      if (nrow(point) == 0) return(NULL)
+      left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
+      top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
+      left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
+      top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
+      style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.95); ",
+                      "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+      
+     
+      wellPanel(
+        style = style,
+        p(HTML(paste0(
+          "<b> Timestep: </b>", point$Timestep, "<br/>",
+          "<b> Landuse Scenario: </b>", point$LUC, "<br/>",
+          "<b> RCP: </b>", point$RCP, "<br/>",
+          "<b> Climate Model: </b>", point$GCM, "<br/>",
+          "<b> Carbon Flux: </b>", point$Flux, "<br/>",
+          "<b> Mean Carbon (MMT): </b>", round(point$Mean10,1), "<br/>",
+          "<b> Lower Bound (MMT): </b>", round(point$Lower10,1), "<br/>",
+          "<b> Upper Bound (MMT): </b>", round(point$Upper10,1), "<br/>"))))
     })
     
     
@@ -1312,7 +1332,27 @@ server = (function(input, output, session) {
     })
     
 
-    
+    output$netfluxPlot3_hover_info <- renderUI({
+      hover <- input$netfluxPlot3_hover
+      
+      point <- nearPoints(selectData20(), hover,yvar="negative", threshold = 20, maxpoints = 1, addDist = TRUE)
+      if (nrow(point) == 0) return(NULL)
+      left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
+      top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
+      left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
+      top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
+      style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.95); ",
+                      "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+      wellPanel(
+        style = style,
+        p(HTML(paste0(
+          "<b> Timestep: </b>", point$Timestep, "<br/>",
+          "<b> Landuse Scenario: </b>", point$LUC, "<br/>",
+          "<b> RCP: </b>", point$RCP, "<br/>",
+          "<b> Climate Model: </b>", point$GCM, "<br/>",
+          "<b> Carbon Flux: </b>", point$negative, "<br/>"
+          ))))
+    })
 
     
     ##### Disturbances Page #####    
@@ -1370,6 +1410,33 @@ server = (function(input, output, session) {
        p5
 
    }) 
+    
+    output$transitionsDistPlot_hover_info <- renderUI({
+      hover <- input$transitionsDistPlot_hover
+      
+      point <- nearPoints(selectData5(), hover,yvar="Mean", threshold = 20, maxpoints = 1, addDist = TRUE)
+      if (nrow(point) == 0) return(NULL)
+      left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
+      top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
+      left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
+      top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
+      style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.95); ",
+                      "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+     
+      
+      wellPanel(
+        style = style,
+        p(HTML(paste0(
+          "<b> Timestep: </b>", point$Timestep, "<br/>",
+          "<b> Landuse Scenario: </b>", point$LUC, "<br/>",
+          "<b> RCP: </b>", point$RCP, "<br/>",
+          "<b> Climate Model: </b>", point$GCM, "<br/>",
+          "<b> Disturbance Type: </b>", point$TransitionGroup, "<br/>",
+          "<b> Disturbed Area (km2): </b>", round(point$Mean,1), "<br/>",
+          "<b> Lower Bound (km2): </b>", round(point$Lower,1), "<br/>",
+          "<b> Upper Bound (km2): </b>", round(point$Upper,1), "<br/>"))))
+    })
+    
     
     
     output$range2  = renderUI({HTML(paste("Start year: ","<b>",as.character(input$years[1]),"</b>","<br/>", "End year: ", "<b>",as.character(input$years[2]),"</b>"))})
@@ -1507,7 +1574,8 @@ server = (function(input, output, session) {
               axis.line = element_line(color="gray60", size=0.5))
   
         p8
-})
+      })
+      
 
       
       selectData9 = reactive({
@@ -1549,6 +1617,7 @@ server = (function(input, output, session) {
         
         p9
       })
+      
       
       
       selectData10 = reactive({
@@ -1645,6 +1714,28 @@ server = (function(input, output, session) {
         
         p11
       })
+      
+      output$lulcPlot1_hover_info <- renderUI({
+        hover <- input$lulcPlot1_hover
+        
+        point <- nearPoints(selectData11(), hover, yvar="Mean", threshold = 20, maxpoints = 1, addDist = TRUE)
+        if (nrow(point) == 0) return(NULL)
+        left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
+        top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
+        left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
+        top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
+        style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.95); ",
+                        "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+        wellPanel(
+          style = style,
+          p(HTML(paste0(
+            "<b> Landuse </b>", point$LULC, "<br/>",
+            
+            "<b> Total Area (km2): </b>", round(point$Mean,1), "<br/>"
+
+            ))))
+      })
+      
       
       
       
