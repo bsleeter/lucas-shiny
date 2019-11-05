@@ -799,7 +799,8 @@ server = (function(input, output, session) {
       title = "Cumulative Carbon Balance Graph",
       tags$p("This plot shows cumulative net ecosystem carbon balance, or the net amount of carbon that was either gained (sequestered) or lost (emitted) from ecosystems over time.
              Positive values indicate the region was accumulating more carbon than it emitted back to the atmosphere (net carbon sink) and negative values indicate the region lost
-             more carbon through removal, leaching, and emission to the atmosphere, than it gained (net carbon source). Values are reported in Millions of Metric Tons of Carbon (MMTC)."
+             more carbon through removal, leaching, and emission to the atmosphere, than it gained (net carbon source). Values are reported in Millions of Metric Tons of Carbon (MMTC). Choose an Ecoregion
+             and hover over the red line to see a tooltip showing information about the point on the plot."
       ),
       tags$div(img(src='images/cumulativeBalanaceDescription.png', width="700px", alt = "The image shows an example carbon flux plot with the following descriptions:
                         The colored area outline on the graph represents the selected ecoregion's cumulative ecosystem carbon balance changes through time. 
