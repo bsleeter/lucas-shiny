@@ -34,18 +34,18 @@ unique(netFlux$Flux)
 
 # Process Transition Flows Data
 transFlows = read_csv("data/transitionFlows.csv") %>% mutate(Mean=Mean/1000, Lower=Lower/1000, Upper=Upper/1000)
-transFlows$LUC = factor(transFlows$LUC, levels=c("BAU", "High", "Medium", "Low"))
+transFlows$LUC = factor(transFlows$LUC, levels=c("Business as Usual", "High", "Medium", "Low"))
 transFlows$TransitionGroup = factor(transFlows$TransitionGroup, levels=c("Drought","Fire","Forest Clearcut", "Forest Selection","Orchard Removal","Ag Expansion","Urbanization"))
 
 # Process Transition Data
 disturbanceData = read_csv("data/disturbances.csv")
-disturbanceData$Severity = factor(disturbanceData$Severity, levels=c("High", "Medium", "Low"))
-disturbanceData$LUC = factor(disturbanceData$LUC, levels=c("BAU", "High", "Medium", "Low"))
+disturbanceData$Severity = factor(disturbanceData$Severity, levels=c("High", "Medium", "Low"))   
+disturbanceData$LUC = factor(disturbanceData$LUC, levels=c("Business as Usual", "High", "Medium", "Low"))
 
 
 # Process LULC Data
 lulc = read_csv("data/lulc.csv")
-lulc$LUC = factor(lulc$LUC, levels=c("BAU", "High", "Medium", "Low"))
+lulc$LUC = factor(lulc$LUC, levels=c("Business as Usual", "High", "Medium", "Low"))
 
 
 # Define unique lists
@@ -62,9 +62,9 @@ statePal = c("Forest"="#38814E", "Grassland"="#FDE9AA", "Shrubland"="#DCCA8F")
 flowPal = c("Emission"="#a6cee3", "Harvest"="#33a02c", "Mortality"="#b2df8a", "Deadfall"="#1f78b4")
 transPal = c("Urbanization"="#e5c494", "Ag Expansion"="#fc8d62", "Orchard Removal"="#8da0cb", "Forest Selection"="#a6d854", "Forest Clearcut"="#66c2a5", "Fire"="#ffd92f", "Drought"="#e78ac3")
 lulcPal = c("Agriculture"="#CA9146","Barren"="#D2CDC0","Developed"="#B50000","Forest"="#38814E","Grassland"="#FDE9AA","Shrubland"="#DCCA8F","Water"="#5475A8","Wetland"="#C8E6F8", "SnowIce"="#ffffff")
-ecoPal = c("Coast Range"="#31a354", "Cascades"="#78c679", "East Cascades"="#ffffcc", "Klamath Mtns."="#c2e699", "Sierra Nevada"="#006837",
-           "Central B&R"="#feedde", "Northern B&R"="#fdbe85", "Mojave B&R"="#fd8d3c", "Sonoran B&R"="#d94701",
-           "Central Valley"="#41b6c4", "Oak Woodlands"="#225ea8", "SoCal Mtns."="#a1dab4")
+ecoPal = c("Coast Range"="#31a354", "Cascades"="#78c679", "East Cascades"="#ffffcc", "Klamath Mountains"="#c2e699", "Sierra Nevada"="#006837",
+           "Central Basin & Range"="#feedde", "Northern Basin & Range"="#fdbe85", "Mojave Basin & Range"="#fd8d3c", "Sonoran Basin & Range"="#d94701",
+           "Central Valley"="#41b6c4", "Oak Woodlands"="#225ea8", "SoCal Mountains"="#a1dab4")
 
 #Define ecoregion shapefile
 ecoregions <- readOGR("www/ca_eco_l3/ca_diss_simp.shp",layer = "ca_diss_simp", GDAL1_integer64_policy = TRUE) 
@@ -211,8 +211,8 @@ ui = fluidPage(theme = shinytheme("flatly"),
                              label="Land Use Scenario",
                              #Uncomment to set choices programatically
                              #choices=sort(unique(stocks$LUC)),
-                             choices=c("BAU","Low","Medium","High"),
-                             selected="BAU",
+                             choices=c("Business as Usual","Low","Medium","High"),
+                             selected="Business as Usual",
                              width="100%",
                              checkbox=TRUE),
                            checkboxGroupButtons(inputId="rcp", 
@@ -666,13 +666,16 @@ server = (function(input, output, session) {
               contains variable choices used to filter results within the main
               graph section of the application. Use the toggle boxes and buttons to
              select combinations among 4 LULC scenarios, 2 radiative forcing
-             scenarios and 4 climate models. You may also choose an ecoregion to summarize
+             scenarios and 4 climate models. More information about the four global climate scenarios used in the model is available" , a("here." , href="http://loca.ucsd.edu/~pierce/IEPR_Clim_proj_using_LOCA_and_VIC_2016-06-13b.pdf", target="_blank"), "You may also choose an ecoregion to summarize
              by or summarize by the entire state of California."),
+      
       tags$p("Combinations of variables chosen in the 
       model variables panel will filter all data visualizations within the main
       section of the application. See the descriptions below
       for more information about each variable choice." 
       ),
+      
+      
       tags$div(img(src='images/ToolDescription.png', width="700px", alt="Image explaining the layout and use of the left hand side model variables panel. Panel items are defined as follows. 
                    Region of interest: Scenario values are summarized at the level 3 ecoregion level for California. Choose an ecoregion to summarize by
                    that ecoregion or select 'State' to show statewide summary values. Choose ecoregion on map: Toggle the button to expand a map of ecoregions.
@@ -684,6 +687,7 @@ server = (function(input, output, session) {
                     chosen date range. Toggle 95% confidence intervals: For each scneario the LUCAS model was run over 100 Monte Carlo realizations. Toggle
                     the 95% confidence intervals button to show the 95% confidence interval on the graphs on the right.") 
       ),
+      
      
       easyClose = TRUE,
       footer = modalButton("Dismiss")
